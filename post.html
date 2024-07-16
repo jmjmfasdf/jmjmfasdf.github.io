@@ -6,10 +6,67 @@
   <title>Post - JeongminSeo</title>
   <link rel="stylesheet" href="https://latex.vercel.app/style.css">
   <link rel="stylesheet" href="https://latex.vercel.app/prism/prism.css" />
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background-color: #333;
+      color: #ddd;
+      margin: 0;
+    }
+    a {
+      color: #76c7c0;
+    }
+    header, .abstract, .content {
+      text-align: center;
+    }
+    header {
+      margin-bottom: 20px;
+    }
+    h1 {
+      font-family: 'Times New Roman', serif;
+      font-size: 48px;
+      font-weight: bold;
+      display: inline-block;
+      position: relative;
+    }
+    h1 .latex span {
+      font-size: 24px;
+      position: absolute;
+      top: -12px;
+    }
+    .author {
+      margin: 10px 0;
+    }
+    .content {
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 20px;
+      background-color: #444;
+      border-radius: 8px;
+    }
+    .category {
+      margin-bottom: 40px;
+    }
+    .category h2 {
+      margin-bottom: 20px;
+    }
+    .category ul {
+      list-style: none;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .category ul li {
+      margin-bottom: 10px;
+    }
+  </style>
 </head>
 <body class="latex-dark">
   <header>
-    <h1><span class="latex">J<span style="left: 18px;"> e</span>O<span style="left: 34px;">N</span>G</span>Min.Seo</h1>
+    <h1><a href="index.html" class="latex" style="text-decoration: none; color: inherit;">J<span style="left: 18px;"> e</span>O<span style="left: 34px;">N</span>G</a>Min.Seo</h1>
     <p class="author">
       Blog <br />
       May 28, 2000
@@ -25,47 +82,66 @@
     <section class="category">
       <h2>Vision</h2>
       <ul>
-        <li><a href="post_vision1.html">Post Title 1</a></li>
-        <li><a href="post_vision2.html">Post Title 2</a></li>
-        <li><a href="post_vision3.html">Post Title 3</a></li>
+        <li><a href="markdown/vision1.md">Post Title 1</a></li>
+        <li><a href="markdown/vision2.md">Post Title 2</a></li>
+        <li><a href="markdown/vision3.md">Post Title 3</a></li>
       </ul>
     </section>
 
     <section class="category">
       <h2>NLP</h2>
       <ul>
-        <li><a href="post_nlp1.html">Post Title 1</a></li>
-        <li><a href="post_nlp2.html">Post Title 2</a></li>
-        <li><a href="post_nlp3.html">Post Title 3</a></li>
+        <li><a href="markdown/nlp1.md">Post Title 1</a></li>
+        <li><a href="markdown/nlp2.md">Post Title 2</a></li>
+        <li><a href="markdown/nlp3.md">Post Title 3</a></li>
       </ul>
     </section>
 
     <section class="category">
       <h2>LLM</h2>
       <ul>
-        <li><a href="post_llm1.html">Post Title 1</a></li>
-        <li><a href="post_llm2.html">Post Title 2</a></li>
-        <li><a href="post_llm3.html">Post Title 3</a></li>
+        <li><a href="markdown/llm1.md">Post Title 1</a></li>
+        <li><a href="markdown/llm2.md">Post Title 2</a></li>
+        <li><a href="markdown/llm3.md">Post Title 3</a></li>
       </ul>
     </section>
 
     <section class="category">
       <h2>RL</h2>
       <ul>
-        <li><a href="post_rl1.html">Post Title 1</a></li>
-        <li><a href="post_rl2.html">Post Title 2</a></li>
-        <li><a href="post_rl3.html">Post Title 3</a></li>
+        <li><a href="markdown/rl1.md">Post Title 1</a></li>
+        <li><a href="markdown/rl2.md">Post Title 2</a></li>
+        <li><a href="markdown/rl3.md">Post Title 3</a></li>
       </ul>
     </section>
 
     <section class="category">
       <h2>Graph</h2>
       <ul>
-        <li><a href="post_graph1.html">Post Title 1</a></li>
-        <li><a href="post_graph2.html">Post Title 2</a></li>
-        <li><a href="post_graph3.html">Post Title 3</a></li>
+        <li><a href="markdown/graph1.md">Post Title 1</a></li>
+        <li><a href="markdown/graph2.md">Post Title 2</a></li>
+        <li><a href="markdown/graph3.md">Post Title 3</a></li>
       </ul>
     </section>
   </article>
+
+  <script>
+    document.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', function(event) {
+        event.preventDefault();
+        const mdFile = this.getAttribute('href');
+        fetch(mdFile)
+          .then(response => response.text())
+          .then(text => {
+            const mdContent = document.createElement('div');
+            mdContent.innerHTML = marked(text);
+            document.body.innerHTML = '';
+            document.body.appendChild(mdContent);
+          });
+      });
+    });
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </body>
 </html>
+
