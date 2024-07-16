@@ -14,6 +14,7 @@
       background-color: #333;
       color: #ddd;
       margin: 0;
+      text-align: center;
     }
     a {
       color: #76c7c0;
@@ -66,7 +67,7 @@
 </head>
 <body class="latex-dark">
   <header>
-    <h1><a href="index.html" class="latex" style="text-decoration: none; color: inherit;">J<span style="left: 18px;"> e</span>O<span style="left: 34px;">N</span>G</a>Min.Seo</h1>
+    <h1><a href="index.html" class="latex" style="text-decoration: none; color: inherit;">J<span> e</span>O<span>N</span>G</a>Min.Seo</h1>
     <p class="author">
       Blog <br />
       May 28, 2000
@@ -126,7 +127,7 @@
   </article>
 
   <script>
-    document.querySelectorAll('a').forEach(link => {
+    document.querySelectorAll('a[href$=".md"]').forEach(link => {
       link.addEventListener('click', function(event) {
         event.preventDefault();
         const mdFile = this.getAttribute('href');
@@ -144,4 +145,3 @@
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </body>
 </html>
-
