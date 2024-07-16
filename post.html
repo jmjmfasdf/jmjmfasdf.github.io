@@ -5,31 +5,114 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Post - JeongminSeo</title>
   <link rel="stylesheet" href="https://latex.vercel.app/style.css">
+  <link rel="stylesheet" href="https://latex.vercel.app/prism/prism.css" />
   <style>
-    .main-title {
+    body {
+      background-color: #333;
+      color: #ddd;
+    }
+    a {
+      color: #76c7c0;
+    }
+    header, .abstract, section {
+      text-align: center;
+    }
+    h1 {
       font-family: 'Times New Roman', serif;
       font-size: 48px;
       font-weight: bold;
-      position: relative;
       display: inline-block;
+      position: relative;
     }
-    .main-title .superscript {
+    h1 .superscript {
       font-size: 24px;
       position: absolute;
       top: -12px;
       left: 24px;
     }
+    .author {
+      margin: 10px 0;
+    }
+    .content {
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 20px;
+      background-color: #444;
+      border-radius: 8px;
+    }
+    .category {
+      margin-bottom: 40px;
+    }
+    .category h2 {
+      margin-bottom: 20px;
+    }
+    .category ul {
+      list-style: none;
+      padding: 0;
+    }
+    .category ul li {
+      margin-bottom: 10px;
+    }
   </style>
 </head>
-<body>
-  <article class="indent-pars">
-    <h1 class="main-title">LAT<span class="superscript">E</span>X.css Blog</h1>
-    <p class="author">John Doe <br> July 15, 2024</p>
+<body class="latex-dark">
+  <header>
+    <h1><span class="latex">J<span style="left: 18px;">e</span>O<span style="left: 34px;">N</span>G</span>Min.Seo</h1>
+    <p class="author">
+      Blog <br />
+      May 28, 2000
+    </p>
+  </header>
 
-    <section>
-      <h2>Post</h2>
-      <p>Recent posts and updates.</p>
-      <!-- Add blog post content here -->
+  <div class="abstract">
+    <h2>Abstract</h2>
+    <p>A SUPER SALTY SPITOON only uses html. Footlose hitchhiker travels wisdom.</p>
+  </div>
+
+  <article class="indent-pars content">
+    <section class="category">
+      <h2>Vision</h2>
+      <ul>
+        <li><a href="post_vision1.html">Post Title 1</a></li>
+        <li><a href="post_vision2.html">Post Title 2</a></li>
+        <li><a href="post_vision3.html">Post Title 3</a></li>
+      </ul>
+    </section>
+
+    <section class="category">
+      <h2>NLP</h2>
+      <ul>
+        <li><a href="post_nlp1.html">Post Title 1</a></li>
+        <li><a href="post_nlp2.html">Post Title 2</a></li>
+        <li><a href="post_nlp3.html">Post Title 3</a></li>
+      </ul>
+    </section>
+
+    <section class="category">
+      <h2>LLM</h2>
+      <ul>
+        <li><a href="post_llm1.html">Post Title 1</a></li>
+        <li><a href="post_llm2.html">Post Title 2</a></li>
+        <li><a href="post_llm3.html">Post Title 3</a></li>
+      </ul>
+    </section>
+
+    <section class="category">
+      <h2>RL</h2>
+      <ul>
+        <li><a href="post_rl1.html">Post Title 1</a></li>
+        <li><a href="post_rl2.html">Post Title 2</a></li>
+        <li><a href="post_rl3.html">Post Title 3</a></li>
+      </ul>
+    </section>
+
+    <section class="category">
+      <h2>Graph</h2>
+      <ul>
+        <li><a href="post_graph1.html">Post Title 1</a></li>
+        <li><a href="post_graph2.html">Post Title 2</a></li>
+        <li><a href="post_graph3.html">Post Title 3</a></li>
+      </ul>
     </section>
   </article>
 </body>
