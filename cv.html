@@ -65,7 +65,7 @@
 
   <script>
     // Load the CV markdown file
-    fetch('/post/CV/cv.md')
+    fetch('./post/CV/cv.md')
       .then(response => response.text())
       .then(text => {
         const cvContent = document.getElementById('cv-content');
