@@ -30,6 +30,31 @@
       text-decoration: none;
       color: inherit;
     }
+    .content {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-top: 1px solid #ddd;
+      border-bottom: 1px solid #ddd;
+      margin: 20px 0;
+      padding: 10px 0;
+    }
+    .content ul {
+      display: flex;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      justify-content: center;
+      width: 100%;
+      max-width: 600px;
+    }
+    .content ul li {
+      margin: 0 20px;
+    }
+    .content ul li a {
+      color: inherit;
+      text-decoration: none;
+    }
   </style>
 </head>
 <body class="latex-dark">
@@ -65,7 +90,7 @@
 
   <script>
     // Load the CV markdown file
-    fetch('./post/CV/cv.md')
+    fetch('post/CV/cv.md')
       .then(response => response.text())
       .then(text => {
         const cvContent = document.getElementById('cv-content');
