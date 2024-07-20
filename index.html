@@ -5,7 +5,40 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>JeongminSeo</title>
   <link rel="stylesheet" href="https://latex.vercel.app/style.css">
-  <link rel="stylesheet" href="prism/prism.css" />
+  <link rel="stylesheet" href="https://latex.vercel.app/prism/prism.css" />
+  <style>
+    .content {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-top: 1px solid #ddd;
+      border-bottom: 1px solid #ddd;
+      margin: 20px 0;
+      padding: 10px 0;
+    }
+    .content ul {
+      display: flex;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      justify-content: space-around;
+      width: 100%;
+      max-width: 600px;
+    }
+    .content ul li {
+      margin: 0 20px;
+    }
+    .recent-posts {
+      padding: 20px;
+      text-align: center;
+    }
+    .recent-posts h2 {
+      margin-bottom: 20px;
+    }
+    .recent-posts div {
+      text-align: left;
+    }
+  </style>
 </head>
 <body class="latex-dark">
   <header>
@@ -17,18 +50,46 @@
   </header>
 
   <div class="abstract">
-      <h2>Abstract</h2>
-      <p>A SUPER SALTY SPITOON only uses html. Footlose hitchhiker travels wisdom.</p>
-    </div>
+    <h2>Abstract</h2>
+    <p>A SUPER SALTY SPITOON only uses html. Footlose hitchhiker travels wisdom.</p>
+  </div>
 
-    <section>
-      <h2>Content</h2>
-      <ul>
-        <li><a href="cv.html">Curriculum Vitae</a></li>
-        <li><a href="post.html">Post</a></li>
-        <li><a href="contact.html">Contact</a></li>
-      </ul>
-    </section>
-  </article>
+  <section class="content">
+    <ul>
+      <li><a href="cv.html">Curriculum Vitae</a></li>
+      <li><a href="post.html">Post</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+  </section>
+
+  <section class="recent-posts">
+    <h2>Recent Posts</h2>
+    <div id="post-content">
+      <!-- 최근 포스트가 여기에 로드됩니다. -->
+    </div>
+  </section>
+
+  <script>
+    // 최근 포스트를 로드하는 스크립트
+    const recentPosts = [
+      'markdown/recent_post1.md',
+      'markdown/recent_post2.md',
+      'markdown/recent_post3.md'
+    ];
+
+    const postContent = document.getElementById('post-content');
+
+    recentPosts.forEach(post => {
+      fetch(post)
+        .then(response => response.text())
+        .then(text => {
+          const postDiv = document.createElement('div');
+          postDiv.innerHTML = marked(text);
+          postContent.appendChild(postDiv);
+        });
+    });
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </body>
 </html>
+
