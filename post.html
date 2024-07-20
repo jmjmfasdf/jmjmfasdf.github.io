@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="https://latex.vercel.app/prism/prism.css" />
   <style>
     .category {
-      border: 1px solid #ddd;
+      background-color: #444;
       padding: 20px;
       border-radius: 8px;
       margin-bottom: 20px;
@@ -30,6 +30,31 @@
       text-decoration: none;
       color: inherit;
     }
+    .content {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-top: 1px solid #ddd;
+      border-bottom: 1px solid #ddd;
+      margin: 20px 0;
+      padding: 10px 0;
+    }
+    .content ul {
+      display: flex;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      justify-content: center;
+      width: 100%;
+      max-width: 600px;
+    }
+    .content ul li {
+      margin: 0 20px;
+    }
+    .content ul li a {
+      color: inherit;
+      text-decoration: none;
+    }
   </style>
 </head>
 <body class="latex-dark">
@@ -45,6 +70,14 @@
     <h2>Abstract</h2>
     <p>A SUPER SALTY SPITOON only uses html. Footlose hitchhiker travels wisdom.</p>
   </div>
+
+  <section class="content">
+    <ul>
+      <li><a href="cv.html">Curriculum Vitae</a></li>
+      <li><a href="post.html">Post</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+  </section>
 
   <article class="indent-pars">
     <section class="category">
@@ -112,3 +145,4 @@
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </body>
 </html>
+
