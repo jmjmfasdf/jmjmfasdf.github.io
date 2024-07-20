@@ -91,12 +91,22 @@
   <script>
     // Load the CV markdown file
     fetch('post/CV/cv.md')
-      .then(response => response.text())
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok ' + response.statusText);
+        }
+        return response.text();
+      })
       .then(text => {
         const cvContent = document.getElementById('cv-content');
         cvContent.innerHTML = marked(text);
+        console.log(text);  // 콘솔에 마크다운 파일의 내용 출력
+      })
+      .catch(error => {
+        console.error('There has been a problem with your fetch operation:', error);
       });
   </script>
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </body>
 </html>
+
