@@ -5,32 +5,73 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Curriculum Vitae - JeongminSeo</title>
   <link rel="stylesheet" href="https://latex.vercel.app/style.css">
+  <link rel="stylesheet" href="https://latex.vercel.app/prism/prism.css" />
   <style>
-    .main-title {
-      font-family: 'Times New Roman', serif;
-      font-size: 48px;
-      font-weight: bold;
-      position: relative;
-      display: inline-block;
+    .category {
+      border: 1px solid #ddd;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
     }
-    .main-title .superscript {
-      font-size: 24px;
-      position: absolute;
-      top: -12px;
-      left: 24px;
+    .category h2 {
+      margin-top: 0;
+    }
+    .category ul {
+      list-style: none;
+      padding: 0;
+    }
+    .category ul li {
+      margin-bottom: 10px;
+    }
+    header h1 a {
+      display: inline-block;
+      width: 100%;
+      height: 100%;
+      text-decoration: none;
+      color: inherit;
     }
   </style>
 </head>
-<body>
-  <article class="indent-pars">
-    <h1 class="main-title">LAT<span class="superscript">E</span>X.css Blog</h1>
-    <p class="author">John Doe <br> July 15, 2024</p>
+<body class="latex-dark">
+  <header>
+    <h1><a href="index.html" class="latex">J<span> e</span>O<span>N</span>GMin.Seo</a></h1>
+    <p class="author">
+      Blog <br />
+      May 28, 2000
+    </p>
+  </header>
 
-    <section>
+  <div class="abstract">
+    <h2>Abstract</h2>
+    <p>A SUPER SALTY SPITOON only uses html. Footlose hitchhiker travels wisdom.</p>
+  </div>
+
+  <section class="content">
+    <ul>
+      <li><a href="cv.html">Curriculum Vitae</a></li>
+      <li><a href="post.html">Post</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+  </section>
+
+  <article class="indent-pars">
+    <section class="category">
       <h2>Curriculum Vitae</h2>
-      <p>Details about your career and qualifications.</p>
-      <!-- Add detailed CV content here -->
+      <div id="cv-content">
+        <!-- CV content from markdown file will be loaded here -->
+      </div>
     </section>
   </article>
+
+  <script>
+    // Load the CV markdown file
+    fetch('post/CV/cv.md')
+      .then(response => response.text())
+      .then(text => {
+        const cvContent = document.getElementById('cv-content');
+        cvContent.innerHTML = marked(text);
+      });
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </body>
 </html>
