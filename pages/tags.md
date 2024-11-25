@@ -1,8 +1,8 @@
 ---
 layout: tags
-title: Tags
+title: "Post"
 permalink: /tags/
 icon: "fa-tags"
-position: 5
+position: 3
 ---
 

@@ -4,6 +4,7 @@ title: 'Author:Jeongmin Seo'
 permalink: /about/
 feature-img: "assets/img/pexels/travel.jpeg"
 tags: [Page]
+position: 0
 ---
 
 ## Greetings!
