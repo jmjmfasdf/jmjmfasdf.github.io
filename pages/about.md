@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Author`:`Jeongmin Seo
+title: 'Author:Jeongmin Seo'
 permalink: /about/
 feature-img: "assets/img/pexels/travel.jpeg"
 tags: [Page]
@@ -19,6 +19,8 @@ I wish this blog to be precious record for peliminary investigators who love to 
 Best wishes,
 Jeongmin Seo. November 2024.
  
+ <br>
+
 ## 인사말
 
 제 블로그를 방문해 주셔서 감사합니다.

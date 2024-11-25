@@ -1,15 +1,14 @@
 # coding: utf-8
 
 Gem::Specification.new do |spec|
-  spec.name          = "type-on-strap"
+  spec.name          = "Github"
   spec.version       = "2.4.10"
   spec.authors       = ["Sylhare", "Rohan Chandra"]
   spec.email         = ["sylhare@outlook.com", "hellorohan@outlook.com"]
 
   spec.summary       = "A simple and responsive jekyll theme template"
   spec.description   = %q{A simple and responsive jekyll theme template based on type-theme. Great for blogs, easy to customize and responsive.}
-  spec.homepage      = "https://github.com/sylhare/Type-on-Strap"
-  spec.license       = "MIT"
+  spec.homepage      = "https://github.com/jmjmfasdf"
 
   spec.rdoc_options            = ["--charset=UTF-8"]
   spec.extra_rdoc_files        = %w(README.md LICENSE)
