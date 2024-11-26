@@ -10,7 +10,7 @@ favicon: assets/favicon.ico                             # Icon displayed in the 
 
 # Header and footer text
 header_text: Techlog  # Change Blog header text
-header_feature_image: assets/img/header/triangular.jpeg
+header_feature_image: assets/img/header/computer.png
 header_feature_image_responsive: true
 footer_text: >
   Copyright ⓒ 2024. jeongmin.seo All rights reserved.
