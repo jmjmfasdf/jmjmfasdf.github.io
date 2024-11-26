@@ -3,7 +3,8 @@ layout: page
 title: Gallery
 subtitle: From the pexels folder
 permalink: /gallery/
-gallery_path: "assets/img/gallery/vector.jpg"
+feature-img: "assets/img/portfolio/portfolio.png"
+gallery_path: "assets/img/pexels"
 position: 2
 tags: [Page]
 ---
