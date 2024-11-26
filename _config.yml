@@ -3,8 +3,8 @@ baseurl: ""
 url: "https://jmjmfasdf.github.io"
 
 # THEME-SPECIFIC CONFIGURATION
-title: Jeongmin Seo                                    # site's title
-description: "A tech blog with Computational Neuroscience, Artificial Inteligence and Reinforcement Learning."      # used by search engines
+title: JMINSEO                                  # site's title
+description: "인공지능지능"      # used by search engines
 avatar: assets/img/triangle.png                         # Empty for no avatar in navbar
 favicon: assets/favicon.ico                             # Icon displayed in the tab
 
