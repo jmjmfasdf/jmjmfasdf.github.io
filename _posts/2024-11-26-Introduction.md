@@ -1,7 +1,7 @@
 ---
 layout: post
 title: >
-    Blogging with title 
+    시험용 포스트 
 tags: [Test, Chat]
 ---
 

@@ -2,7 +2,7 @@
 layout: page
 title: 'Author:Jeongmin Seo'
 permalink: /about/
-feature-img: "assets/img/pexels/travel.jpeg"
+feature-img: "assets/img/about/author.png"
 tags: [Page]
 position: 0
 ---
