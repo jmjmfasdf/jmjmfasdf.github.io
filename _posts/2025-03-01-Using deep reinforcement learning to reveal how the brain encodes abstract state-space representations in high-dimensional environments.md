@@ -17,7 +17,7 @@ thumbnail:
 
 저자는 실험 디자인에 아타리 게임 중 Pong, Enduro, Space invaders를 사용하였다. Pong은 양 쪽에서 판들이 왔다갔다 하며 움직이는 공을 넘기는 게임, Enduro는 3인칭 시점에서 차를 좌우로 운전하며 차를 피하는 게임, 그리고 Space Invaders는 비행기를 조종하며 적을 맞추는 슈팅 게임이다. 게임의 플레이 화면은 아래의 그림에 나타나 있다.
 
-![figure 1. atari game setup and DQN](images/2025-03-01-Using deep reinforcement learning to reveal how the brain encodes abstract state-space representations in high-dimensional environments\/igure1.jpg)
+{% include aligner.html images="images/2025-03-01-Using deep reinforcement learning to reveal how the brain encodes abstract state-space representations in high-dimensional environments/figure1.jpg" caption="figure 1. atari game setup and DQN" %}
 
 위의 두 번째 그림은 연구에서 사용한 DQN의 구조이다. DQN은 4개의 Conv layer, 1개의 FC layer, 그리고 Q-value output layer로 구성되어 있다. 
 
@@ -25,5 +25,6 @@ thumbnail:
 
 ## Figure 2. Basic concepts
 
-![figure 2. basic concepts](images/2025-03-01-Using deep reinforcement learning to reveal how the brain encodes abstract state-space representations in high-dimensional environments/figure2.jpg)
+{% include aligner.html images="images/2025-03-01-Using deep reinforcement learning to reveal how the brain encodes abstract state-space representations in high-dimensional environments/figure2.jpg" caption="figure 2. basic concepts" %}
+
 
