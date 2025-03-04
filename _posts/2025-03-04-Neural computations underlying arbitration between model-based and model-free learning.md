@@ -6,7 +6,7 @@ tags: [Arbitration, fMRI, Reinforcement Learning]
 categories: Paper Review
 color: rgb(25, 25, 112)
 feature-img:
-thumbnail: "images/2025-03-05-Neural computations underlying arbitration between model-based and model-free learning/figure1.jpg"
+thumbnail: "images/2025-03-04-Neural computations underlying arbitration between model-based and model-free learning/figure1.jpg"
 ---
 
 우리의 뇌에는 행동 선택을 조절하는 두 가지 시스템, model-based와 model-free 시스템이 존재한다는 신경학적인 증거가 존재한다. 하지만 특정한 순간에, 어떤 시스템이 행동을 주도하는지에 대한 메커니즘은 정확하게 밝혀진 바가 없다. 본 논문에서는 두 모델 사이의 중재(arbitration) 메커니즘이 존재하며, 각 시스템의 신뢰도(reliability)에 따라 행동 제어 **비율**을 할당한다는 증거를 제시하고 있다. 이러한 arbitration system은 model-based system의 제어 정도에 따라 model-free system과의 connectivity를 negative direction으로 조절하는 것으로 밝혀졌는데, 즉 arbitrator가 model-based system을 신뢰할 경우 model-free system의 영향력을 감소시키는 방향으로 행동을 조절할 수 있다는 것이다.
@@ -29,7 +29,7 @@ thumbnail: "images/2025-03-05-Neural computations underlying arbitration between
 
 다른 디자인인 유연한 목표 조건에서는 어떤 색상 토큰이라도 금전적 보상을 취할 수 있으며, 참가자에게 MF system으로의 의존을 유도한다. 특정 목표가 변하지 않기 때문에 **경험에 의존하는 습관적 행동**을 유도하는 것이 핵심이다.
 
-{% include aligner.html images="images/2025-03-05-Neural computations underlying arbitration between model-based and model-free learning/figure1.jpg" caption="figure 1. task design" %}
+{% include aligner.html images="images/2025-03-04-Neural computations underlying arbitration between model-based and model-free learning/figure1.jpg" caption="figure 1. task design" %}
 
 #### 실험 디자인 2. 전이 확률
 
