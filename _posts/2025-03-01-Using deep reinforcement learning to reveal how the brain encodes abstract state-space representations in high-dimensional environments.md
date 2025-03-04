@@ -5,8 +5,8 @@ author: jeongmin seo
 tags: [Reinforcement Learning, fMRI, Task Representation]
 categories: Paper Review
 color: rgb(25, 25, 112)
-feature-img: 
-thumbnail: 
+feature-img:
+thumbnail: "images/2025-03-01-Using deep reinforcement learning to reveal how the brain encodes abstract state-space representations in high-dimensional environments/title.PNG"
 ---
 
 - 논문의 이해를 위해 SARSA, Q-learning, DQN 등의 기본적인 강화학습 알고리즘, 그리고 뇌에서 일어나는 시각 처리 과정(Visual pathway)에 대한 이해를 권장합니다.
@@ -91,5 +91,22 @@ DQN의 hidden layer는 state-space를 이용, Q value를 최종 output으로 하
 
 ## Figure 7. Filter-based Neural Predictivity in the Brain
 
+이전까지에서의 분석 결과로 DQN의 layer 3, 4가 뇌의 활동을 더 많이 반영하며, 게임을 플레이하는 데 있어서 몇 번의 cortical representation로부터 유용한 정보를 얻기 위해 몇 번의 nonlinear transformation이 필요하다는 것을 알게 되었다. 그런데 뇌의 서로 다른 영역은 이 layer의 다른 representation을 필요로 하지 않을까? 이런 질문은 뇌의 internal representation이 어떻게 다른 지역으로 전파되는가? 라는 질문으로도 이어질 수 있다.
+
+DQN의 Conv filter는 모델이 input으로부터 탐지하고자 하는 바를 내포하고 있으며, 이러한 feature는 backpropagation/deconvolution을 통해 시각화할 수 있다. 이를 이용하여, 각 filter가 얼마나 voxel response를 예측할 수 있는지 알아볼 것이다. 사용자의 게임 플레이 데이터를 DQN에 입력한 후 DQN의 마지막 Conv layer (64 filters)에서 activation 값을 추출, 이를 독립적으로 사용하여 fMRI voxel 예측을 시도하였고 neural predictivity score(pearson correlation with ground truth & ridge regression result)를 통해 평가하였다.
+
 {% include aligner.html images="images/2025-03-01-Using deep reinforcement learning to reveal how the brain encodes abstract state-space representations in high-dimensional environments/figure7.jpg" caption="figure 7. filter based neural predictivity in the brain" %}
 
+figure 7의 첫 번째 그림은 pong의 hand drawn feature과 상관 관계를 나타내었으며, 각각 공의 위치, 속도, paddle position과의 관계를 나타낸다. 그 결과 위 3가지 feature와 높은 상관관계를 갖는 필터가 발견되었다. 두 번째 그림은 region에 따른 nerual predictivity score의 상관관계를 나타낸 것이다. pong에서는 대체로 모든 roi에서 유사한 필터를 선호하는 경향성이 관찰되었다. 하지만 enduro, space invader에서는 서로 다른 roi는 서로 다른 필터와 높은 상관관계를 가지는 것으로 분석되었다. 또한 이러한 경향성은 모든 참가자 간에서 일관성 있게 유지되는 모습을 보였다. 
+
+<br>
+
+## Figure 8. Representations become more insensitive to nuisances in posterior parietal cortex
+
+{% include aligner.html images="images/2025-03-01-Using deep reinforcement learning to reveal how the brain encodes abstract state-space representations in high-dimensional environments/figure8.jpg" caption="figure 8. representations become more insensitive to nuisances in posterior parietal cortex" %}
+
+<br>
+
+## Conclusion/Contribution
+
+blahblahblah
