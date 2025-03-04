@@ -65,7 +65,7 @@ thumbnail: "images/2025-03-04-Neural computations underlying arbitration between
 
 저자들은 또한 arbitration model이 MB system을 에측하는 경우와 MF system을 에측하는 경우를 비교하였다. 참가자들이 동일한 선택(좌/우)을 유지하는 경향은 일관성이 높은 MF system이라고 간주하였다. arbitrator가 계산한 PMB가 0.5보다 낮을 때는 참가자들이 같은 선택을 반복하는 경향이 강했다. 반대로 PMB가 0.5보다 높을 때에는 참가자들은 선택을 바꾸는 행동이 많았다. 다만 이 행동의 결과를 실험 조건으로 나누어 분석하면 차이를 설명할 수 없었다(figure 3C). 즉 **과제 조건만으로는 선택 행동의 변화를 설명할 수 없고, arbitrator의 모델 신뢰도를 직접 고려해야한다**는 것이 요지이다. 결과를 보면 state 1,4만 표시되어 있는데 나머지는 상대적으로 낮은 보상을 제공해 샘플링된 횟수가 적어 통계를 내기 어려웠다.
 
-figure D는 참가자의 선택 행동이 MB, MF 중 어느쪽에 의해 더 잘 설명되는지 비교한 결과이다. 저자는 MB model과 MF model을 독자적으로 학습시키고 이를 이용해 모델이 어느 것을 잘 설명하는지 분석하였다. log likelihood ratio는 **LLR =  log(data|MB) - log(data|MF)**로 계산되었고, 값이 양수면 MB, 음수이면 MF model이 더 설명력이 높다는 결론을 얻을 수 있다. arbitrator의 PMB값과 LLR을 연관지어 볼 때 arbitrator의 P는 LLR을 잘 반영하는 것으로 보인다.
+figure D는 참가자의 선택 행동이 MB, MF 중 어느쪽에 의해 더 잘 설명되는지 비교한 결과이다. 저자는 MB model과 MF model을 독자적으로 학습시키고 이를 이용해 모델이 어느 것을 잘 설명하는지 분석하였다. log likelihood ratio는 **LLR =  log(data/MB) - log(data/MF)**로 계산되었고, 값이 양수면 MB, 음수이면 MF model이 더 설명력이 높다는 결론을 얻을 수 있다. arbitrator의 PMB값과 LLR을 연관지어 볼 때 arbitrator의 P는 LLR을 잘 반영하는 것으로 보인다.
 
 <br>
 
