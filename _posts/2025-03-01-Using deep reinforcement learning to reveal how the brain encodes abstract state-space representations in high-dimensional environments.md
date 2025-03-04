@@ -6,7 +6,7 @@ tags: [Reinforcement Learning, fMRI, Task Representation]
 categories: Paper Review
 color: rgb(25, 25, 112)
 feature-img:
-thumbnail: "images/2025-03-01-Using deep reinforcement learning to reveal how the brain encodes abstract state-space representations in high-dimensional environments/title.PNG"
+thumbnail: "images/2025-03-01-Using deep reinforcement learning to reveal how the brain encodes abstract state-space representations in high-dimensional environments/figure1.jpg"
 ---
 
 - 논문의 이해를 위해 SARSA, Q-learning, DQN 등의 기본적인 강화학습 알고리즘, 그리고 뇌에서 일어나는 시각 처리 과정(Visual pathway)에 대한 이해를 권장합니다.
