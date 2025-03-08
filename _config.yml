@@ -63,7 +63,7 @@ author:
   bio    : "Interested in Brain & Cognitive Science and Aritificial Inteligence."
   links:
     - label: "Linkedin"
-      icon: "fas fa-fw fa-linkedin"
+      icon: "fab fa-fw fa-linkedin"
       url: "https://linkedin.com/in/jeongmin-seo-bcsai/"
     - label: "GitHub"
       icon: "fab fa-fw fa-github"
