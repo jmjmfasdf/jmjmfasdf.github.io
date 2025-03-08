@@ -1,0 +1,8 @@
+.align-center {
+    text-align: center; /* 이미지와 캡션을 가운데 정렬 */
+}
+
+.align-center figcaption {
+    text-align: center; /* figcaption도 가운데 정렬 */
+    font-style: italic; /* 선택 사항: 기울임 효과 추가 */
+}
