@@ -8,6 +8,8 @@ tags:
 categories: 
     - Paper Review
 toc: true
+toc_sticky: false
+
 ---
 
 - 논문의 이해를 위해 SARSA, Q-learning, DQN 등의 기본적인 강화학습 알고리즘, 그리고 뇌에서 일어나는 시각 처리 과정(Visual pathway)에 대한 이해를 권장합니다.
