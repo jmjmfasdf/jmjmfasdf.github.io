@@ -1,12 +1,12 @@
 ---
-layout: post
 title: "States versus Rewards: Dissociable Neural Prediction Error Signals Underlying Model-Based and Model-Free Reinforcement Learning"
-author: jeongmin seo
-tags: [Reinforcement Learning, fMRI]
-categories: Paper Review
-color: rgb(25, 25, 112)
-feature-img:
-thumbnail: "images/2025-03-07-States versus Rewards; Dissociable Neural Prediction Error Signals Underlying Model-Based and Model-Free Reinforcement Learning/figure1.jpg"
+date: 2025-03-07
+tags:
+    - Reinforcement Learning
+    - fMRI
+    - Task Representation
+categories: 
+    - Paper Review
 ---
 
 강화 학습(Reinforcement Learning, RL)에서는 환경에서 직면하는 상황(상태, state)과 그에 따른 결과를 순차적으로 경험하면서, 특정 행동이 얼마나 좋은 결과를 가져오는지를 학습하는데, 이 과정에서 두 가지 주요 학습 방식이 존재한다. 첫 번째는 모델 자유 학습(Model-Free RL) 이다. 이 방식에서는 특정 행동이 예상보다 더 나은 보상을 받았는지, 혹은 더 나쁜 보상을 받았는지를 비교하는 **보상 예측 오류(Reward Prediction Error, RPE)**가 중심적인 역할을 한다. 모델 자유 학습에서는 환경의 구조를 명시적으로 이해하려 하지 않고, 단순히 경험적으로 보상 패턴을 기반으로 행동을 조정한다.

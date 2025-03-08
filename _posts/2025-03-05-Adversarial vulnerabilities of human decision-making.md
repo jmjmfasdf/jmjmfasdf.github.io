@@ -1,12 +1,12 @@
 ---
-layout: post
 title: "Adversarial vulnerabilities of human decision-making"
-author: jeongmin seo
-tags: [Reinforcement Learning, Machine Learning, Adversary, Decision Making]
-categories: Paper Review
-color: rgb(25, 25, 112)
-feature-img:
-thumbnail: "images/2025-03-05-Adversarial vulnerabilities of human decision-making/figure1.jpg"
+date: 2025-03-05
+tags:
+    - Reinforcement Learning
+    - fMRI
+    - Task Representation
+categories: 
+    - Paper Review
 ---
 
 이 연구는 인간 의사결정이 적대적 공격(adversarial attacks)에 대해 취약할 수 있음을 실험적으로 입증하고, 이를 설명하는 이론적 모델을 제시하고 있다. 기존의 연구들은 주로 딥러닝 모델이 적대적 공격에 취약하다는 점을 강조했으나, 이 논문은 인간의 의사결정 과정도 특정한 방식으로 조작될 수 있음을 보이고 있다. 이 논문에서는 실험을 통해 인간이 최적의 선택을 할 수 없는 상황을 인위적으로 설계할 수 있음을 입증하고 있으며 이는 특정한 환경에서 인간이 예측 가능한 방식으로 실수를 유도할 수 있다는 것을 의미한다. 또한, 일반적으로 인공지능 시스템의 취약점 분석에 사용되던 적대적 공격 개념을 인간의 의사결정 과정에도 적용할 수 있음을 제안한다. 마지막으로, 인간의 의사결정 취약성을 설명하기 위해 강화학습 모델을 활용하며, 이러한 취약성이 신경과학적·행동과학적 기초를 가질 수 있음을 시사한다. 이 연구는 단순한 행동 경제학적 실험을 넘어, 인공지능과 인간 의사결정의 공통된 취약점을 밝혀내고 이를 정량적으로 분석하는 데 기여한다는 점에서 중요한 의미를 가지고 있다.
