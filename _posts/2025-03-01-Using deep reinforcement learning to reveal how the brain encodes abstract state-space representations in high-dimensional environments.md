@@ -33,7 +33,7 @@ categories:
 ## Figure 2. Basic concepts
 
 <figure class='align-center'>
-    <img src = "images/2025-03-01-Using deep reinforcement learning to reveal how the brain encodes abstract state-space representations in high-dimensional environments/figure2.jpg" alt="">
+    <img src = "/images/2025-03-01-Using deep reinforcement learning to reveal how the brain encodes abstract state-space representations in high-dimensional environments/figure2.jpg" alt="">
     <figcaption>figure 2. basic concepts</figcaption>
 </figure>
 
@@ -52,7 +52,7 @@ DQN 모델은 6명의 사용자와 관련없이 독립적으로 학습되었고,
 이제 DQN이 사람의 행동을 근사할 수 있다는 것 까지는 알았다. 그렇다면 '어떻게' 가 밝혀져야 한다. figure 3은 DQN의 hidden layer가 사람의 뇌의 state-space representation이 어떻게 나타나는지 알아보기 위한 그림이다. 
 
 <figure class='align-center'>
-    <img src = "images/2025-03-01-Using deep reinforcement learning to reveal how the brain encodes abstract state-space representations in high-dimensional environments/figure3.jpg" alt="">
+    <img src = "/images/2025-03-01-Using deep reinforcement learning to reveal how the brain encodes abstract state-space representations in high-dimensional environments/figure3.jpg" alt="">
     <figcaption>figure 3. encoding models</figcaption>
 </figure>
 
@@ -65,7 +65,7 @@ DQN 모델은 6명의 사용자와 관련없이 독립적으로 학습되었고,
 ## Figure 4. Control model
 
 <figure class='align-center'>
-    <img src = "images/2025-03-01-Using deep reinforcement learning to reveal how the brain encodes abstract state-space representations in high-dimensional environments/figure4.jpg" alt="">
+    <img src = "/images/2025-03-01-Using deep reinforcement learning to reveal how the brain encodes abstract state-space representations in high-dimensional environments/figure4.jpg" alt="">
     <figcaption>figure 4. control model</figcaption>
 </figure>
 
@@ -80,7 +80,7 @@ DQN 모델은 6명의 사용자와 관련없이 독립적으로 학습되었고,
 ## Figure 5. Representational similiarity analysis
 
 <figure class='align-center'>
-    <img src = "images/2025-03-01-Using deep reinforcement learning to reveal how the brain encodes abstract state-space representations in high-dimensional environments/figure5.jpg" alt="">
+    <img src = "/images/2025-03-01-Using deep reinforcement learning to reveal how the brain encodes abstract state-space representations in high-dimensional environments/figure5.jpg" alt="">
     <figcaption>figure 5. representational similarity analysis</figcaption>
 </figure>
 
@@ -97,7 +97,7 @@ DQN이 어느 정도 예측력이 있다는 것을 알아보고 난 다음 저�
 ## Figure 6. Action value results
 
 <figure class='align-center'>
-    <img src = "images/2025-03-01-Using deep reinforcement learning to reveal how the brain encodes abstract state-space representations in high-dimensional environments/figure6.jpg" alt="">
+    <img src = "/images/2025-03-01-Using deep reinforcement learning to reveal how the brain encodes abstract state-space representations in high-dimensional environments/figure6.jpg" alt="">
     <figcaption>figure 6. action value results</figcaption>
 </figure>
 
@@ -114,7 +114,7 @@ DQN의 hidden layer는 state-space를 이용, Q value를 최종 output으로 하
 DQN의 Conv filter는 모델이 input으로부터 탐지하고자 하는 바를 내포하고 있으며, 이러한 feature는 backpropagation/deconvolution을 통해 시각화할 수 있다. 이를 이용하여, 각 filter가 얼마나 voxel response를 예측할 수 있는지 알아볼 것이다. 사용자의 게임 플레이 데이터를 DQN에 입력한 후 DQN의 마지막 Conv layer (64 filters)에서 activation 값을 추출, 이를 독립적으로 사용하여 fMRI voxel 예측을 시도하였고 neural predictivity score(pearson correlation with ground truth & ridge regression result)를 통해 평가하였다.
 
 <figure class='align-center'>
-    <img src = "images/2025-03-01-Using deep reinforcement learning to reveal how the brain encodes abstract state-space representations in high-dimensional environments/figure7.jpg" alt="">
+    <img src = "/images/2025-03-01-Using deep reinforcement learning to reveal how the brain encodes abstract state-space representations in high-dimensional environments/figure7.jpg" alt="">
     <figcaption>figure 7. filter based neural predictivity in the brain</figcaption>
 </figure>
 
@@ -129,7 +129,7 @@ figure 7의 첫 번째 그림은 pong의 hand drawn feature과 상관 관계를 
 그렇다면 DQN에서 학습한 표현은 시각적으로 무관한 변화(nuisance variable)로부터 얼마나 자유로울까? 예를 들어 위의 enduro의 예시에서, 자동차의 위치와 양 도로의 끝은 중요한 시각적 정보이나 스코어 보드는 상대적으로 중요도가 떨어진다. 이를 어떻게 반영할까? 아래의 첫 번째 그림에서 enduro 게임을 진행하며 배경이 지속적으로 변하지만 이는 게임 내 행동 선택과는 무관하다. 따라서 게임의 프레임에서 이러한 정보들을 배제한 상태에서 nonlinear transformation을 통해 **같은 행동을 필요로 하는 장면만 같은 상태로 묶어야** 한다.
 
 <figure class='align-center'>
-    <img src = "images/2025-03-01-Using deep reinforcement learning to reveal how the brain encodes abstract state-space representations in high-dimensional environments/figure8.jpg" alt="">
+    <img src = "/images/2025-03-01-Using deep reinforcement learning to reveal how the brain encodes abstract state-space representations in high-dimensional environments/figure8.jpg" alt="">
     <figcaption>figure 8. representations become more insensitive to nuisances in posterior parietal cortex</figcaption>
 </figure>
 
