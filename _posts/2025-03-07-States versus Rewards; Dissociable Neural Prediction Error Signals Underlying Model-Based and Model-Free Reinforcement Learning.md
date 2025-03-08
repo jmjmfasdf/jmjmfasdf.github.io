@@ -20,7 +20,7 @@ toc_sticky: false
 이 연구에서는 피험자들에게 확률적 마르코프 결정 과제를 수행하도록 하였다. 이 과제는 이전의 상태와 행동에 따라 확률적으로 다른 상태로 전이되며, 최종적으로 금전적 보상(0¢, 10¢, 25¢)이 주어지는 구조를 가진다. 실험은 두 개의 세션으로 나누어졌다:
 
 <figure class='align-center'>
-    <img src ="images/2025-03-07-States versus Rewards; Dissociable Neural Prediction Error Signals Underlying Model-Based and Model-Free Reinforcement Learning/figure1.jpg" alt="">
+    <img src ="/images/2025-03-07-States versus Rewards; Dissociable Neural Prediction Error Signals Underlying Model-Based and Model-Free Reinforcement Learning/figure1.jpg" alt="">
     <figcaption>figure 1. task design and experimental procedurek</figcaption>
 </figure>
 
@@ -119,7 +119,7 @@ $$
 이를 위해 Negative Log-Likelihood(NLL)를 최소화하는 방식으로 모델의 자유 매개변수(free parameters)를 최적화하였다.
 
 <figure class='align-center'>
-    <img src ="images/2025-03-07-States versus Rewards; Dissociable Neural Prediction Error Signals Underlying Model-Based and Model-Free Reinforcement Learning/figures2.jpg" alt="">
+    <img src ="/images/2025-03-07-States versus Rewards; Dissociable Neural Prediction Error Signals Underlying Model-Based and Model-Free Reinforcement Learning/figures2.jpg" alt="">
     <figcaption>figure s2. Visualization of the evolution of the transition probabilities and action values, and action probabilities for the optimal choice trajectory during the course of the experiment, averaged across the simulation of each subject</figcaption>
 </figure>
 
@@ -136,7 +136,7 @@ Figure S2(C)에서는 행동 가치의 변화를 나타낸다. 최적 행동과 
 이 연구의 핵심 목표 중 하나는 SARSA와 FORWARD 모델에서 계산된 예측 오류(prediction errors)가 뇌의 특정 영역에서 어떻게 반영되는지를 분석하는 것이다. 이를 위해 연구진은 보상 예측 오류(Reward Prediction Error, RPE)와 상태 예측 오류(State Prediction Error, SPE)를 각각 신경 활동과 비교하였다. 연구진은 각 참가자의 신경 활동을 예측 오류 값과 비교하기 위해 단일 피험자(single-subject) 분석을 수행하였다. RPE & SPE를 각각 두 번째 결정 상태(state 2)와 최종 보상 결과 상태(outcome state)에서 파라메트릭 조절자(parametric modulators)로 포함시키고 각 뇌 영역이 해당 예측 오류 값과 얼마나 강하게 공변하는지를 베타 계수(beta estimate)로 측정하였다. 이 베타 이미지를 그룹 수준에서 repeated-measures ANOVA을 수행하여, 전체 참가자에서 RPE와 SPE가 신경 활동과 얼마나 일관되게 관련이 있는지 분석하였다.
 
 <figure class='align-center'>
-    <img src ="images/2025-03-07-States versus Rewards; Dissociable Neural Prediction Error Signals Underlying Model-Based and Model-Free Reinforcement Learning/figure3.jpg" alt="">
+    <img src ="/images/2025-03-07-States versus Rewards; Dissociable Neural Prediction Error Signals Underlying Model-Based and Model-Free Reinforcement Learning/figure3.jpg" alt="">
     <figcaption>figure 3. Neural Representations of State Prediction Errors and Reward Prediction Errors</figcaption>
 </figure>
 
@@ -153,7 +153,7 @@ Figure 3A와 3B에서는 SPE와 강한 상관관계를 보이는 신경 영역�
 반면, SPE와 관련된 pIPS 및 latPFC에서는 RPE와 유의미한 신경 반응이 관찰되지 않았으며, vStr에서는 SPE와의 유의한 신경 반응이 확인되지 않았다. 이는 SPE와 RPE가 서로 독립적인 신경 네트워크에서 반영됨을 의미한다.
 
 <figure class='align-center'>
-    <img src ="images/2025-03-07-States versus Rewards; Dissociable Neural Prediction Error Signals Underlying Model-Based and Model-Free Reinforcement Learning/figure4.jpg" alt="">
+    <img src ="/images/2025-03-07-States versus Rewards; Dissociable Neural Prediction Error Signals Underlying Model-Based and Model-Free Reinforcement Learning/figure4.jpg" alt="">
     <figcaption>figure 4. Neural Representations of the State Prediction Error in pIPS and latPFC Separately for Both Sessions</figcaption>
 </figure>
 
@@ -178,7 +178,7 @@ Session 1에서 SPE가 강하게 반영된 영역을 대상으로 신경 활동�
 Session 2에서 참가자가 최적의 행동을 선택한 비율(percent correct choices)과 비교해서 최적의 행동은 기대 보상 크기(reward magnitude) × 실제 상태 전이 확률(true transition probability)이라 정의하였다. 이는 연구에 사용된 계산 모델과 독립적인 행동 지표이며, 강화 학습 모델과 무관하게 순수한 행동적 정확도를 측정하는 지표이다.
 
 <figure class='align-center'>
-    <img src ="images/2025-03-07-States versus Rewards; Dissociable Neural Prediction Error Signals Underlying Model-Based and Model-Free Reinforcement Learning/figure5.jpg" alt="">
+    <img src ="/images/2025-03-07-States versus Rewards; Dissociable Neural Prediction Error Signals Underlying Model-Based and Model-Free Reinforcement Learning/figure5.jpg" alt="">
     <figcaption>figure 5. Relationship between Neural Representation of an SPE and Choice Behavior</figcaption>
 </figure>
 
@@ -193,7 +193,7 @@ Session 2에서 참가자가 최적의 행동을 선택한 비율(percent correc
 이에 대한 연구진의 가설 (Alternative Hypothesis)은 SPE 신호는 단순한 놀람 효과(surprise signal)나 살리언스 효과(salience effect)가 아니라, 모델 기반 학습과 직접적으로 관련된 신경 신호여야 한다는 것이다. 만약 SPE 신호가 단순한 놀람 신호라면, 보상 예측 오류(RPE)와도 동일한 방식으로 작동해야 한다. SPE 신호와 절대값 RPE(abs(RPE)) 신호가 동일한 뇌 영역에서 나타나지 않는다면, 이는 SPE가 단순한 놀람 효과가 아님을 도출할 수 있다.
 
 <figure class='align-center'>
-    <img src ="images/2025-03-07-States versus Rewards; Dissociable Neural Prediction Error Signals Underlying Model-Based and Model-Free Reinforcement Learning/figures4.jpg" alt="">
+    <img src ="/images/2025-03-07-States versus Rewards; Dissociable Neural Prediction Error Signals Underlying Model-Based and Model-Free Reinforcement Learning/figures4.jpg" alt="">
     <figcaption>figure s4. Differential contrast comparing the average SPE (from both sessions) and the absolute value of the RPE (abs(RPE))</figcaption>
 </figure>
 

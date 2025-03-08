@@ -44,7 +44,7 @@ toc_sticky: false
 일반적인 nonadversarial 환경에서는, 이러한 보상과 상태 변화가 **MDP 또는 POMDP**을 따르며, 특정한 확률에 기반해 보상이 주어진다. 즉, 실험 참여자는 기존의 강화학습 환경처럼 일정한 확률적 규칙에 따라 보상을 받고 선택을 학습하는 것이다. 그러나 본 연구에서는 **적대적 모델(adversary model)**이 개입하여, 피험자가 받는 보상과 다음 상태를 조작할 수 있도록 설계되었다. 즉, 피험자의 행동을 특정한 방향으로 유도하기 위한 조작이 가능하도록 설계된 환경이다.
 
 <figure class='align-center'>
-    <img src ="images/2025-03-05-Adversarial vulnerabilities of human decision-making/figure1.jpg" alt="">
+    <img src ="/images/2025-03-05-Adversarial vulnerabilities of human decision-making/figure1.jpg" alt="">
     <figcaption>figure 1. the framework</figcaption>
 </figure>
 
@@ -146,11 +146,9 @@ Fig. 1D는 훈련된 적대적 모델과 학습자 모델이 실제 인간 실�
 피험자가 적대적 모델과 대결할 때 **타겟 행동을 선택한 평균 비율(bias)은 70%**였다. 이는 완전히 무작위 선택(50%)과 비교했을 때 유의미하게 높은 수준이며, 적대적 모델이 인간 피험자를 타겟 행동으로 유도하는 데 성공하였음을 의미한다. 적대적 모델이 사람의 데이터로 학습된 학습자 모델과 대결했을 때, **타겟 행동 선택 비율이 76.4%**로 나타났으며, 인간 피험자와의 실험(70%)보다 더 높은 수치를 기록하였다. 이는 적대적 모델이 인간보다 학습자 모델을 더 쉽게 조작할 수 있음을 의미한다.
 
 <figure class='align-center'>
-    <img src = "images/2025-03-05-Adversarial vulnerabilities of human decision-making/figure2.jpg" alt="">
+    <img src = "/images/2025-03-05-Adversarial vulnerabilities of human decision-making/figure2.jpg" alt="">
     <figcaption>figure 2. the performance of the adversary in bandit experiment</figcaption>
 </figure>
-
-{% include aligner.html images="images/2025-03-05-Adversarial vulnerabilities of human decision-making/figure2.jpg" caption="figure 2. the performance of the adversary in bandit experiment" %}
 
 #### Strategy analysis of adversary against learner model (figure 3A 참고)
 
@@ -166,7 +164,7 @@ Fig. 1D는 훈련된 적대적 모델과 학습자 모델이 실제 인간 실�
 적대적 모델은 이러한 보상 분배 전략을 활용하여, 학습자 모델이 전체 시행(trials)의 약 73%에서 타겟 행동을 선택하도록 유도하는 데 성공하였다. 적대적 모델은 단순히 많은 보상을 제공하는 것이 아니라, 전략적으로 보상을 분배하여 학습자 모델의 행동을 조작하였다. 특히, 초반에는 소량의 타겟 보상을 제공하면서 비타겟 보상을 억제하는 방식을 사용하였으며, 후반부에는 비타겟 보상을 소진하면서 동시에 타겟 보상을 증폭시키는 전략을 사용하여 최종적으로 타겟 행동을 선택하는 비율을 높였다. 이러한 결과는 인간의 의사결정도 특정한 보상 분배 전략에 의해 쉽게 조작될 수 있음을 시사한다.
 
 <figure class='align-center'>
-    <img src ="images/2025-03-05-Adversarial vulnerabilities of human decision-making/figure3.jpg" alt="">
+    <img src ="/images/2025-03-05-Adversarial vulnerabilities of human decision-making/figure3.jpg" alt="">
     <figcaption>figure 3. simulations of the adversarial interactions over 100 trials in the bandit task</figcaption>
 </figure>
 
@@ -208,7 +206,7 @@ Go/No-Go Task는 실험 참가자가 일반적인 자극(Go stimulus)에는 반�
 비적대적(nonadversarial) 환경에서, No-Go 자극은 **균등하게 분포(랜덤 배치)**되며, 참가자의 반응 패턴을 조작하지 않는다. 반대로 적대적(adversarial) 환경에서는 적대적 모델이 No-Go 자극의 배치를 전략적으로 조정하여 참가자가 더 많은 실수를 하도록 유도하나 No-Go 자극의 총 개수(10%)는 고정된 상태로 유지해야 한다.
 
 <figure class='align-center'>
-    <img src ="images/2025-03-05-Adversarial vulnerabilities of human decision-making/figure4.jpg" alt="">
+    <img src ="/images/2025-03-05-Adversarial vulnerabilities of human decision-making/figure4.jpg" alt="">
     <figcaption>figure 4. adversarial strategy in the go/no go task</figcaption>
 </figure>
 
@@ -235,7 +233,7 @@ Investor는 매 라운드마다 20개의 화폐 단위(monetary units)를 지급
 적대적 모델(Trustee)은 투자자가 특정한 방식으로 행동하도록 유도하는 전략을 학습하며, 두 가지 목표(objectives)로 학습된 두 개의 적대적 모델이 존재한다. 각각 MAX (최대 이익 목표), FAIR (공정성 목표)이다. MAX는 Trustee(적대적 모델)가 10라운드 동안 가장 많은 이익을 얻도록 유도하며 초반에는 높은 Repayment를 제공하여 투자자의 신뢰를 얻고, 후반부에는 Repayment를 줄여 투자금을 회수하는 전략을 사용한다. FAIR는 Trustee와 Investor가 최종적으로 동일한 수익을 얻도록 유도한다. 투자자가 지속적으로 신뢰를 유지하도록 하며, 적절한 수준의 Repayment를 제공하여 협력을 유지하는 전략을 사용한다.
 
 <figure class='align-center'>
-    <img src ="images/2025-03-05-Adversarial vulnerabilities of human decision-making/figure5.jpg" alt="">
+    <img src ="/images/2025-03-05-Adversarial vulnerabilities of human decision-making/figure5.jpg" alt="">
     <figcaption>figure 5. result of multiround trust task</figcaption>
 </figure>
 

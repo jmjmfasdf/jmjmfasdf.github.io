@@ -36,7 +36,7 @@ toc_sticky: false
 다른 디자인인 유연한 목표 조건에서는 어떤 색상 토큰이라도 금전적 보상을 취할 수 있으며, 참가자에게 MF system으로의 의존을 유도한다. 특정 목표가 변하지 않기 때문에 **경험에 의존하는 습관적 행동**을 유도하는 것이 핵심이다.
 
 <figure class='align-center'>
-    <img src = "images/2025-03-04-Neural computations underlying arbitration between model-based and model-free learning/figure1.jpg" alt="">
+    <img src = "/images/2025-03-04-Neural computations underlying arbitration between model-based and model-free learning/figure1.jpg" alt="">
     <figcaption>figure 1. task design</figcaption>
 </figure>
 
@@ -49,7 +49,7 @@ toc_sticky: false
 #### 행동학적 결과들
 
 <figure class='align-center'>
-    <img src = "images/2025-03-04-Neural computations underlying arbitration between model-based and model-free learning/figure3.jpg" alt="">
+    <img src = "/images/2025-03-04-Neural computations underlying arbitration between model-based and model-free learning/figure3.jpg" alt="">
     <figcaption>figure 3. behavioral results</figcaption>
 </figure>
 
@@ -88,7 +88,7 @@ MB/MF stage 간의 제어에 neural computation을 규명하기 위해서 저자
 배내측 전전두엽(dorsomedial prefrontal cortex, dmPFC), 보조 운동 영역(SMA, supplementary motor area), 하두정소엽(inferior parietal lobule, IPL), 시상(thalamus)은 위 값과 음의 상관관계를 보였다. 또한 MF system의 absolute RPE는 미상핵(caudate nucleus)에서 활성화되었다.
 
 <figure class='align-center'>
-    <img src = "images/2025-03-04-Neural computations underlying arbitration between model-based and model-free learning/figure4.jpg" alt="">
+    <img src = "/images/2025-03-04-Neural computations underlying arbitration between model-based and model-free learning/figure4.jpg" alt="">
     <figcaption>figure 4. neural correlates of reliability based arbitration</figcaption>
 </figure>
 
@@ -103,7 +103,7 @@ A의 아래 그림은 전방 대상회 피질 (rACC)이 신뢰도 차이와 확�
 저자들은 MB system과 MF system의 가치 신호를 계산하는 뇌 영역에 대해 분석하였다. 밑의 그림은 MB, MF의 Q값이 반영된 구역을 나타낸 것이다.
 
 <figure class='align-center'>
-    <img src = "images/2025-03-04-Neural computations underlying arbitration between model-based and model-free learning/figure6.jpg" alt="">
+    <img src = "/images/2025-03-04-Neural computations underlying arbitration between model-based and model-free learning/figure6.jpg" alt="">
     <figcaption>figure 6. neural correlates of MB and MF value signals</figcaption>
 </figure>
 
@@ -120,7 +120,7 @@ A의 아래 그림은 전방 대상회 피질 (rACC)이 신뢰도 차이와 확�
 이 연구에서 가장 중요한 새로운 발견은 배외측 하전두엽피질(inferior lateral prefrontal cortex, ilPFC)과 우측 전극 전두엽(frontopolar cortex, FPC)이 모델 기반(model-based)과 모델 없는(model-free) 제어 간의 중재(arbitration) 과정에서 신뢰도(reliability) 신호를 포함한다는 것이다. 그러나 중재 과정이 실제로 어떻게 작동하는지 이해하려면, 신뢰도를 인코딩하는 뇌 영역과 모델 기반/모델 없는 시스템에서 가치를 계산하는 뇌 영역 간의 상호작용(interactions)을 분석할 필요가 있다. 이를 위해 연구진은 PPI(Psychophysiological Interaction) 분석을 수행했다. PPI는 특정 뇌 영역 간의 기능적 연결(functional connectivity)이 특정 실험 조건(심리적 변수, psychological variable)에 따라 어떻게 변화하는지를 측정하는 방법이다.
 
 <figure class='align-center'>
-    <img src = "images/2025-03-04-Neural computations underlying arbitration between model-based and model-free learning/figure7.jpg" alt="">
+    <img src = "/images/2025-03-04-Neural computations underlying arbitration between model-based and model-free learning/figure7.jpg" alt="">
     <figcaption>figure 7. neural correlates of value integration</figcaption>
 </figure>
 
