@@ -18,7 +18,7 @@ toc_sticky: false
 
 <br>
 
-## Figure 1. explanation
+# Figure 1. explanation
 
 저자는 실험 디자인에 아타리 게임 중 Pong, Enduro, Space invaders를 사용하였다. Pong은 양 쪽에서 판들이 왔다갔다 하며 움직이는 공을 넘기는 게임, Enduro는 3인칭 시점에서 차를 좌우로 운전하며 차를 피하는 게임, 그리고 Space Invaders는 비행기를 조종하며 적을 맞추는 슈팅 게임이다. 게임의 플레이 화면은 아래의 그림에 나타나 있다.
 
@@ -33,7 +33,7 @@ toc_sticky: false
 
 <br>
 
-## Figure 2. Basic concepts
+# Figure 2. Basic concepts
 
 <figure class='align-center'>
     <img src = "/images/2025-03-01-Using deep reinforcement learning to reveal how the brain encodes abstract state-space representations in high-dimensional environments/figure2.jpg" alt="">
@@ -50,7 +50,7 @@ DQN 모델은 6명의 사용자와 관련없이 독립적으로 학습되었고,
 
 <br>
 
-## Figure 3. Encoding model
+# Figure 3. Encoding model
 
 이제 DQN이 사람의 행동을 근사할 수 있다는 것 까지는 알았다. 그렇다면 '어떻게' 가 밝혀져야 한다. figure 3은 DQN의 hidden layer가 사람의 뇌의 state-space representation이 어떻게 나타나는지 알아보기 위한 그림이다. 
 
@@ -65,7 +65,7 @@ DQN 모델은 6명의 사용자와 관련없이 독립적으로 학습되었고,
 
 <br>
 
-## Figure 4. Control model
+# Figure 4. Control model
 
 <figure class='align-center'>
     <img src = "/images/2025-03-01-Using deep reinforcement learning to reveal how the brain encodes abstract state-space representations in high-dimensional environments/figure4.jpg" alt="">
@@ -80,7 +80,7 @@ DQN 모델은 6명의 사용자와 관련없이 독립적으로 학습되었고,
 
 <br>
 
-## Figure 5. Representational similiarity analysis
+# Figure 5. Representational similiarity analysis
 
 <figure class='align-center'>
     <img src = "/images/2025-03-01-Using deep reinforcement learning to reveal how the brain encodes abstract state-space representations in high-dimensional environments/figure5.jpg" alt="">
@@ -97,7 +97,7 @@ DQN이 어느 정도 예측력이 있다는 것을 알아보고 난 다음 저�
 
 <br>
 
-## Figure 6. Action value results
+# Figure 6. Action value results
 
 <figure class='align-center'>
     <img src = "/images/2025-03-01-Using deep reinforcement learning to reveal how the brain encodes abstract state-space representations in high-dimensional environments/figure6.jpg" alt="">
@@ -110,7 +110,7 @@ DQN의 hidden layer는 state-space를 이용, Q value를 최종 output으로 하
 
 <br>
 
-## Figure 7. Filter-based Neural Predictivity in the Brain
+# Figure 7. Filter-based Neural Predictivity in the Brain
 
 이전까지에서의 분석 결과로 DQN의 layer 3, 4가 뇌의 활동을 더 많이 반영하며, 게임을 플레이하는 데 있어서 몇 번의 cortical representation로부터 유용한 정보를 얻기 위해 몇 번의 nonlinear transformation이 필요하다는 것을 알게 되었다. 그런데 뇌의 서로 다른 영역은 이 layer의 다른 representation을 필요로 하지 않을까? 이런 질문은 뇌의 internal representation이 어떻게 다른 지역으로 전파되는가? 라는 질문으로도 이어질 수 있다.
 
@@ -127,7 +127,7 @@ figure 7의 첫 번째 그림은 pong의 hand drawn feature과 상관 관계를 
 
 <br>
 
-## Figure 8. Representations become more insensitive to nuisances in posterior parietal cortex
+# Figure 8. Representations become more insensitive to nuisances in posterior parietal cortex
 
 그렇다면 DQN에서 학습한 표현은 시각적으로 무관한 변화(nuisance variable)로부터 얼마나 자유로울까? 예를 들어 위의 enduro의 예시에서, 자동차의 위치와 양 도로의 끝은 중요한 시각적 정보이나 스코어 보드는 상대적으로 중요도가 떨어진다. 이를 어떻게 반영할까? 아래의 첫 번째 그림에서 enduro 게임을 진행하며 배경이 지속적으로 변하지만 이는 게임 내 행동 선택과는 무관하다. 따라서 게임의 프레임에서 이러한 정보들을 배제한 상태에서 nonlinear transformation을 통해 **같은 행동을 필요로 하는 장면만 같은 상태로 묶어야** 한다.
 
@@ -140,7 +140,7 @@ figure B에서 enduro를 분석할 때 날씨 변화를 nuisance 변수로 설�
 
 <br>
 
-## Conclusion/Contribution
+# Conclusion/Contribution
 
 이 논문은 심층 강화학습(Deep Reinforcement Learning, DRL) 모델인 DQN이 인간의 뇌에서 상태-공간(state-space) 정보를 어떻게 표현하는지를 탐구하였다. 기존 연구들은 강화학습의 행동 정책(policy)이 인간의 의사결정 과정과 어떻게 유사한지를 다뤄왔지만, 본 연구는 한 단계 더 나아가 강화학습이 학습하는 내부 상태 표현이 뇌의 신경 활동과 **구조적으로 얼마나 일치하는지**를 실험적으로 분석했다. 이를 위해, 연구자들은 Atari 게임을 플레이하는 인간 피험자의 fMRI 데이터를 수집하고, DQN이 동일한 환경에서 학습한 상태 표현이 신경 활동을 얼마나 잘 설명할 수 있는지를 비교하는 접근 방식을 채택했다.
 

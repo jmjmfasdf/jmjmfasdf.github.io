@@ -13,23 +13,23 @@ toc_sticky: false
 
 우리의 뇌에는 행동 선택을 조절하는 두 가지 시스템, model-based와 model-free 시스템이 존재한다는 신경학적인 증거가 존재한다. 하지만 특정한 순간에, 어떤 시스템이 행동을 주도하는지에 대한 메커니즘은 정확하게 밝혀진 바가 없다. 본 논문에서는 두 모델 사이의 중재(arbitration) 메커니즘이 존재하며, 각 시스템의 신뢰도(reliability)에 따라 행동 제어 **비율**을 할당한다는 증거를 제시하고 있다. 이러한 arbitration system은 model-based system의 제어 정도에 따라 model-free system과의 connectivity를 negative direction으로 조절하는 것으로 밝혀졌는데, 즉 arbitrator가 model-based system을 신뢰할 경우 model-free system의 영향력을 감소시키는 방향으로 행동을 조절할 수 있다는 것이다.
 
-## Introduction
+# Introduction
 
 개체의 행동을 조절하는 두 가지 경쟁적 시스템이 존재하는 것은 오래 전부터 알려진 사실이지만 **두 시스템 간 제어가 어떻게 전환되는지에 대한 연구는 부족하다.** 두 시스템은 goal-directed, habitual으로, 각각 prefrontal cortex, anterior striatum/posterior lateral striatum과 연관되어 있다고 알려져 있다. 가령 약물 중독같은 경우 goal-directed system과 habitual system 같의 균형이 무너져 **약물과 관련된 stimulus-response habit이 억제되지 못해** 일어나는 현상일 수 있다는 것이다. 저자들은 RL framework를 활용해서 goal-directed system의 경우 model-based RL(환경에 대한 내부 모델을 활용해 행동의 가치를 실시간으로 계산), habitual system의 경우 model-free RL(시행착오를 통해 행동의 보상을 학습)을 활용하여 디자인하고, 인간의 뇌에서 arbitration process가 어떻게 작동하는지 기제를 규명하는 것을 목표로 한다.
 
 <br>
 
-## Computational model of arbitration
+# Computational model of arbitration
 
 본 논문에서 제안하는 arbitration 시스템은 세 가지 layer 1)model-based/model-free RL, 2)reliability estimation, 3)reliability competition 으로 구성된다. 첫 번째 단계에서는 MB, MF agent가 각각 state-prediction error(SPE), reward-prediction error(RPE)를 계산하여 학습한다. 이후 각 시스템이 환경을 얼마나 정확하게 예측하는지 계산한다. MB system의 SPE의 경우 값이 0에 가까울수록 정확하며, MF system의 RPE의 경우 값이 작을수록 보상 예측이 정확하다. MB system의 경우 bayesian framework를 이용하여 추론하나, MF system의 경우 RPE를 추정하기 위해 더 단순한 시스템을 사용할 수도 있다. 이후 두 신뢰도 지표가 경쟁하여 PMB(MB system이 선택될 확률)를 결정하며, PMB가 높으면 MB system이 행동을 주도하고 낮으면 그 반대가 되는 방식이다. 두 시스템 간 제어는 이분법적이 아닌 동적 가중치로 조절된다.
 
 <br>
 
-## Markov Decision Task
+# Markov Decision Task
 
 저자는 arbitration model의 행동 조절 메커니즘을 검증하기 위해서 decision task를 설계하였다. 이 실험은 MDP를 기반으로 하며 공통적인 컨셉은 **참가자는 binary choice를 통해 토큰을 선택하며, 이 토큰은 금전적 보상으로 교환이 가능**하다는 것이다.
 
-#### 실험 디자인 1. 조건
+## 실험 디자인 1. 조건
 
 이 실험은 두 가지의 조건으로 나뉜다. 즉 서로 다른 통제 조건의 실험 디자인이라고 할 수 있다. 하나는 특정 목표 조건, 다른 하나는 유연한 목표 조건이다. 특정 목표 조건에서는 한 가지 색상의 토큰만 보상이 주어지며, 다른 토큰은 금전적으로 무효한 것이 된다. 보상이 가능한 색상은 매 라운드마다 바뀌며, 특정 색상의 토큰만 유효하기 때문에 실험은 환경의 변화를 실시간으로 고려해야 하는 참가자를 MB system으로 행동하게끔 유도한다. 이 통제 조건에서는 MF system의 RPE가 높아지는 경향성을 보인다.
 
@@ -40,13 +40,13 @@ toc_sticky: false
     <figcaption>figure 1. task design</figcaption>
 </figure>
 
-#### 실험 디자인 2. 전이 확률
+## 실험 디자인 2. 전이 확률
 
 실험에서는 상태 전이 확률을 조작하여 시스템간의 전환을 유도한다. 예를 들어 전이 확률이 0.5라면 어떤 선택지를 선택해도 상태가 바뀔 확률은 반반이다. 즉 참가자로 하여금 예측이 어려운 상황을 유도하며, MF system이 유리하게 된다. 반대로 전이 확률이 0.1이라면 예측이 쉽기 때문에 MB system이 유리하다.
 
 실험 과정 동안 총 22명의 성인 참가자가 참여하였으며, 실험동안 fMRI로 뇌 활동을 측정하였다.
 
-#### 행동학적 결과들
+## 행동학적 결과들
 
 <figure class='align-center'>
     <img src = "/images/2025-03-04-Neural computations underlying arbitration between model-based and model-free learning/figure3.jpg" alt="">
@@ -57,7 +57,7 @@ toc_sticky: false
 
 <br>
 
-## Model comparison of arbitration process 
+# Model comparison of arbitration process 
 
 저자들은 6개의 arbitration model을 테스트하여 behavioral data를 가장 잘 설명할 수 있는 신뢰도 계산 방식을 찾고자 했다. 전반적으로 dynamical threshold를 포함한 모델이 더 우수한 성능을 보였으며, MB system 제어는 시간이 지날수록 MF 제어로 점직적으로 이동하는 경향을 보였다(아마 computational cost때문인 것으로 보인다). 이 점 때문에 임계점을 적용한 모델이 그렇지 않은 모델보다 나은 성능을 보였다. 결국 MF model의 신뢰도를 어떻게 계산하느냐가 성능에 중요한 영향을 미쳤는데, 이를 알아보기 위해 full baysian과 absolute RPE 근사 방식을 비교했으며 absolute RPE를 사용하는 모델이 더 적합한 것으로 드러났다(mixedArb-dynamic model).  
 
@@ -67,7 +67,7 @@ toc_sticky: false
 
 <br>
 
-## Relationship between Arbitration Model and Choice Behavior
+# Relationship between Arbitration Model and Choice Behavior
 
 저자들은 arbitration model이 참가자들의 행동 변화를 얼마나 잘 설명하는지 검증하기 위해 여러 분석을 수행했다. 첫 번째 그림은 참가자들이 왼쪽/오른쪽을 선택한 비율을 계산하고, 이를 arbitration model이 예측한 오른쪽 선택 확률과 비교하였다.(figure 3B 참고) 그림에서 볼 수 있듯이 모델은 참가자들의 실제 행동을 잘 예측해내었다.
 
@@ -77,7 +77,7 @@ figure D는 참가자의 선택 행동이 MB, MF 중 어느쪽에 의해 더 잘
 
 <br>
 
-## Neural Correlates of Arbitration
+# Neural Correlates of Arbitration
 
 MB/MF stage 간의 제어에 neural computation을 규명하기 위해서 저자들은 fMRI데이터를 이용해 접근하였다. 먼저 MB/MF system에서 중요한 값인 SPE/RPE의 차이를 확인해서 이전 연구와 일치하는지 검토하였다. 
 
@@ -98,7 +98,7 @@ A의 아래 그림은 전방 대상회 피질 (rACC)이 신뢰도 차이와 확�
 
 <br>
 
-## Neural Correlates of Model-based and Model-free Value Signals
+# Neural Correlates of Model-based and Model-free Value Signals
 
 저자들은 MB system과 MF system의 가치 신호를 계산하는 뇌 영역에 대해 분석하였다. 밑의 그림은 MB, MF의 Q값이 반영된 구역을 나타낸 것이다.
 
@@ -115,7 +115,7 @@ A의 아래 그림은 전방 대상회 피질 (rACC)이 신뢰도 차이와 확�
 
 <br>
 
-## Neural Correlates of Value Integration
+# Neural Correlates of Value Integration
 
 이 연구에서 가장 중요한 새로운 발견은 배외측 하전두엽피질(inferior lateral prefrontal cortex, ilPFC)과 우측 전극 전두엽(frontopolar cortex, FPC)이 모델 기반(model-based)과 모델 없는(model-free) 제어 간의 중재(arbitration) 과정에서 신뢰도(reliability) 신호를 포함한다는 것이다. 그러나 중재 과정이 실제로 어떻게 작동하는지 이해하려면, 신뢰도를 인코딩하는 뇌 영역과 모델 기반/모델 없는 시스템에서 가치를 계산하는 뇌 영역 간의 상호작용(interactions)을 분석할 필요가 있다. 이를 위해 연구진은 PPI(Psychophysiological Interaction) 분석을 수행했다. PPI는 특정 뇌 영역 간의 기능적 연결(functional connectivity)이 특정 실험 조건(심리적 변수, psychological variable)에 따라 어떻게 변화하는지를 측정하는 방법이다.
 
@@ -132,7 +132,7 @@ A의 아래 그림은 전방 대상회 피질 (rACC)이 신뢰도 차이와 확�
 
 <br>
 
-## Discussion
+# Discussion
 
 이 연구는 인간의 뇌가 모델 기반(model-based)과 모델 없는(model-free) 학습 시스템을 어떻게 조정하는지를 설명하는 중재 메커니즘(arbitration mechanism)이 존재한다는 증거를 제시했다.
 특히, 중재자는 두 학습 시스템의 신뢰도를 평가하고, 더 신뢰도가 높은 시스템이 행동을 조절하도록 결정한다. 연구 결과, 배외측 하전두엽(inferior lateral prefrontal cortex, ilPFC)과 전극 전두엽(frontopolar cortex, FPC)이 신뢰도와 관련된 신경 신호를 포함하고 있음을 확인했다.
@@ -143,7 +143,7 @@ A의 아래 그림은 전방 대상회 피질 (rACC)이 신뢰도 차이와 확�
 
 추가적으로, 연구진은 중재자가 행동을 조절하는 방식에 대해 두 가지 가능성을 고려했다. (1. 모델 기반 시스템을 직접 활성화하는 방식, 2. 모델 없는 시스템을 억제하는 방식) fMRI 분석 결과, 중재자는 모델 없는 학습 시스템을 억제하는 방식으로 작동함을 발견했다. 즉, ilPFC가 활성화될수록 후측 피각(posterior putamen)의 활동이 감소하는 패턴을 보였으며, 이는 습관적 행동이 자동적인(default) 방식이므로, 중재자는 특정 상황에서만 습관적 행동을 억제하고 모델 기반 학습을 강화하는 역할을 수행함을 의미한다.
 
-#### Valuation of Model-based and Model-free Learning System
+## Valuation of Model-based and Model-free Learning System
 
 연구진은 각각의 학습 시스템이 행동 가치를 평가할 때 활성화되는 뇌 영역을 분석하였다. 이를 통해 모델 기반과 모델 없는 시스템이 독립적으로 가치를 평가하는지 확인하고, 최종적으로 이들이 어떻게 통합되는지를 조사했다.
 
@@ -153,19 +153,19 @@ A의 아래 그림은 전방 대상회 피질 (rACC)이 신뢰도 차이와 확�
 
 추가적으로, 연구진은 vmPFC가 최종적으로 모델 기반과 모델 없는 시스템의 가치 신호를 통합하여 행동을 결정하는 역할을 수행한다고 주장했다. 특히, 중재자의 신호(PMB 값)가 증가할수록 후측 피각과 vmPFC 간의 연결성이 감소하는 것으로 나타났으며, 이는 습관적 행동의 가치 평가가 줄어들고 목표 지향적 행동의 가치 평가가 강화됨을 의미한다.
 
-#### Computations Involved in Arbitration between Two Learning Systems
+## Computations Involved in Arbitration between Two Learning Systems
 
 연구진은 중재자가 각 학습 시스템의 신뢰도를 어떻게 추정하는지를 분석했다. 분석 결과, 모델 기반 학습의 신뢰도는 Bayesian 방식으로 추정되었다. 상태 예측 오류(SPE, State Prediction Error)를 기반으로 신뢰도를 계산하며, 전두-두정 네트워크(Fronto-Parietal Network)의 Bayesian 추론 방식과 일치하는 결과를 보였다(Gläscher et al., 2010).
 
 반면, 모델 없는 학습의 신뢰도는 보다 단순한 방식으로 추정되었다. 보상 예측 오류(RPE, Reward Prediction Error)의 절대값을 평균하여 신뢰도를 계산하는 방식이었으며, 이는 기존의 학습 이론(Pearce and Hall, 1980)에서 제안된 unsigned prediction error 방식과 유사했다. 즉, 모델 기반 학습은 더 복잡한 계산을 사용하여 신뢰도를 추정하지만, 모델 없는 학습은 단순한 방식으로 신뢰도를 평가하는 차이가 있었다.
 
-#### Arbitration Process Reflected by Functional Connectivity
+## Arbitration Process Reflected by Functional Connectivity
 
 연구진은 중재 과정이 모델 없는 학습 시스템을 억제하는 방식으로 작동함을 PPI(Psychophysiological Interaction) 분석을 통해 입증했다. 분석 결과, ilPFC의 활동이 증가할수록 후측 피각(posterior putamen)의 활동이 감소하는 패턴을 보였으며, FPC도 유사하게 모델 없는 시스템의 활성도를 억제하는 역할을 수행하는 것으로 나타났다. 이는 중재자가 모델 기반 학습을 직접 활성화하는 것이 아니라, 모델 없는 학습 시스템을 억제하는 방식으로 행동을 조절함을 의미한다.
 
 이러한 결과는 모델 없는 학습이 기본적으로 더 효율적이고 자동적인(default) 방식이며, 특별한 이유가 없는 한 모델 없는 학습이 행동을 주도하는 것이 더 유리할 수 있음을 시사한다. 따라서, 중재자는 특정 상황에서 습관적 행동을 억제하고 목표 지향적 행동을 촉진하는 역할을 한다고 볼 수 있다.
 
-#### Control Between Multiple Learning Systems in Lateral Prefrontal and Frontopolar Cortex
+## Control Between Multiple Learning Systems in Lateral Prefrontal and Frontopolar Cortex
 
 연구진은 ilPFC와 FPC가 각기 다른 방식으로 중재 과정에 기여할 가능성이 있음을 제안했다. 분석 결과, ilPFC는 두 학습 시스템의 개별 신뢰도와 최대 신뢰도를 모두 반영하는 반면, FPC는 오직 최대 신뢰도만 반영하는 것으로 나타났다. 이는 FPC가 ilPFC보다 상위의 제어 수준에서 동작할 가능성을 시사하며, FPC가 ilPFC의 활동을 조절하여 최종적인 행동 선택을 결정하는 역할을 할 수 있음을 의미한다.
 
