@@ -4,7 +4,8 @@ date: 2025-03-05
 tags:
     - Reinforcement Learning
     - fMRI
-    - Task Representation
+    - Adversary
+    - Task Control
 categories: 
     - Paper Review
 toc: true

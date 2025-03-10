@@ -4,7 +4,7 @@ date: 2025-03-01
 tags:
     - Reinforcement Learning
     - fMRI
-    - Task Representation
+    - Spatial Representation
 categories: 
     - Paper Review
 toc: true

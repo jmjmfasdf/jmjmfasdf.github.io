@@ -4,7 +4,8 @@ date: 2025-03-04
 tags:
     - Reinforcement Learning
     - fMRI
-    - Task Representation
+    - Arbitration
+    - Reward Competition
 categories: 
     - Paper Review
 toc: true
