@@ -1,0 +1,124 @@
+---
+title: "Controlling human causal inference through in silico task design"
+date: 2025-03-10
+tags:
+    - Task Control
+    - Reinforcement Learning
+categories: 
+    - Paper Review
+toc: true
+toc_sticky: false
+---
+
+인과 관계를 학습하는 능력은 생존에 필수적이다. 인간의 두뇌는 높은 기능적 유연성을 지니고 있어 효과적인 인과 추론(causal inference)이 가능하며, 이는 다양한 학습 과정의 근간을 이룬다. 기존 연구들은 환경적 요인이 인과 추론에 미치는 영향에 초점을 맞추어왔지만, 본 연구에서는 근본적인 질문을 제기한다: **이러한 환경적 요인을 전략적으로 조작하여 인과 추론을 통제할 수 있을까?**
+
+이 논문은 "과제 제어(task control) 프레임워크" 를 제안하여 인간의 인과 학습을 조율하는 방법을 연구한다. 연구진은 2인 게임(two-player game) 구조 를 활용하여, 신경망(neural network)이 인간 인과 추론 모델과 상호작용하면서 실험 과제의 변수를 조작하는 방식을 학습하도록 설계하였다. 구체적으로, 태스크 컨트롤러(task controller) 가 실험 디자인을 최적화하면서 인과 구조의 복잡성을 반영할 수 있는지를 검증하였다. 126명의 인간 참가자를 대상으로 한 실험 결과, 태스크 컨트롤을 통해 인과 추론의 성과 및 학습 효율을 조정할 수 있음이 확인되었다. 특히, 태스크 컨트롤 정책은 인간의 인과 추론 과정에서 나타나는 "원샷 학습(one-shot learning)" 의 특성을 반영하는 것으로 나타났다. 이러한 연구 프레임워크는 인간 행동을 특정 방향으로 유도할 수 있는 응용 가능성을 제시 하며, 향후 교육, 치료, 그리고 인공지능을 활용한 학습 최적화 등의 분야에서 중요한 역할을 할 것으로 기대된다.
+
+<br>
+
+# Introduction
+
+**인과 추론(causal inference)**은 관찰을 통해 원인과 결과의 관계를 학습하는 능력을 의미하며, 이는 강화 학습(reinforcement learning, RL)과 의사결정 과정에서 핵심적인 역할을 한다. 기존 연구에서는 동물 실험을 통해 최소한 두 가지 다른 방식의 인과 학습 패턴이 존재한다는 사실이 밝혀졌다. 첫 번째는 **점진적 학습(incremental inference)**으로, 충분한 경험을 쌓은 후 점진적으로 결과를 예측하는 방식이다. 반면, 두 번째는 **원샷 학습(one-shot inference)**으로, 단 한 번의 경험을 통해 강력한 신념을 형성하는 방식이다. 이러한 행동 패턴은 동물뿐만 아니라 인간에게도 동일하게 나타나며, 최신 연구에서는 인간의 뇌가 두 가지 학습 방식을 유연하게 조절할 수 있다는 신경학적 근거가 발견되었다. 이는 인간이 환경 속에서 복잡한 원인-결과 관계를 동적으로 해결하며 새로운 과제를 학습할 수 있음을 의미한다.
+
+이전 연구들은 인간의 인과 추론이 환경적 요인에 의해 영향을 받는다는 점을 분석하는 데 집중해왔다. 예를 들어, 사람들이 새로운 과제를 학습할 때, 환경이 불확실성이 높은 경우에는 신뢰할 수 있는 성과를 보장하기 위해 점진적 학습을 선호하는 경향이 있다. 반면, 불확실성이 적은 환경에서는 보다 신속하고 효율적인 원샷 학습을 활용하는 것이 최적의 전략이 될 수 있다. 이러한 연구들은 인간의 인과 추론이 단일한 방식이 아니라 환경적 맥락에 따라 유연하게 조정된다는 사실을 보여준다.
+
+이러한 맥락에서 연구진은 인간의 **인과 추론 과정이 환경적 요인에 의해 자연스럽게 조정**되는 것이 아니라, **전략적으로 조작**될 수 있는지에 대한 근본적인 질문을 던진다. 즉, 인간의 인지 과정을 특정 방향으로 유도할 수 있는지가 핵심적인 연구 질문이다. 이를 탐구하기 위해 연구진은 **"태스크 컨트롤(task control)"**이라는 개념을 제안하였다. 태스크 컨트롤은 인간의 인과 학습 과제를 설계하고 조율하는 프레임워크로, 딥러닝 기반의 태스크 컨트롤러(deep-RL-based task controller)를 활용하여 인간의 인과 추론 모델과 상호작용하면서 학습 변수를 조작하는 방식으로 설계되었다. 이 태스크 컨트롤러는 인간의 인과 추론 모델이 학습하는 과정을 탐색하고, 실험 변수를 조작하여 인간의 학습 성과와 효율성을 변화시키는 방식을 학습한다.
+
+연구진은 태스크 컨트롤이 인간의 인과 추론을 조절할 수 있는지를 검증하기 위해, 세 가지 태스크 컨트롤 조건을 설정하여 실험을 진행하였다. 첫 번째 조건인 Bayesian+는 **점진적 학습 방식을 촉진하여 충분한 학습 시간이 주어졌을 때 신뢰성 높은 성과를 보장**하는 것을 목표로 한다. 두 번째 조건인 Oneshot+는 **신속한 학습을 유도하여 짧은 시간 내에 높은 학습 효율을 달성**하는 것을 목적으로 한다. 마지막으로 Oneshot– 조건은 **학습을 어렵게 만들어 인과 추론을 방해**하며, 이를 통해 동기 부여, 트라우마 억제, 나쁜 습관 제거 및 심리적 회복력 증진과 같은 응용 가능성을 탐색하는 데 초점을 맞춘다.
+
+126명의 인간 참가자를 대상으로 한 실험 결과, 태스크 컨트롤을 통해 인과 추론의 성과 및 학습 효율을 조정할 수 있음이 실증적으로 확인되었다. 특히, 태스크 컨트롤의 효과는 개별 참가자의 학습 특성을 반영한 인지 모델을 사용할 때 더욱 극대화되는 것으로 나타났다. 이는 태스크 컨트롤이 단순히 실험 디자인을 최적화하는 것이 아니라, 인간 인과 추론의 본질적인 특성을 반영하는 방식으로 작동한다는 점을 시사한다.
+
+<br>
+
+# Results
+
+## 1. 참가자 모집
+
+연구진은 인간의 인과 추론 학습 과정에서 태스크 컨트롤이 어떻게 작용하는지를 분석하기 위해, 126명의 성인 참가자를 모집하여 실험을 수행했다. 총 126명(남녀 포함, 연령 18~56세) 참가
+참가자들은 사전에 정신적·신경학적 장애가 없는지 확인, 모든 참가자는 실험 전에 서면 동의(Informed Consent)를 받았으며 세 가지 태스크 컨트롤 조건(Bayesian+, Oneshot+, Oneshot–) 중 하나에 무작위로 배정되었다.
+
+## 2. 태스크 컨트롤러 
+
+일반적인 학습 모델에서는 인간이 환경과 상호작용하여 점진적으로 지식을 습득하지만, 본 연구에서는 환경(태스크 컨트롤러)이 인간 학습자를 조작하는 방식 으로 구조를 전환하였다. 이를 위해 연구진은 비대칭적 2인 게임(asymmetrical two-player game) 구조 를 적용하였다. 학습 에이전트(Agent)는 인간 학습자, 태스크 컨트롤러(Task Controller)는 인간 학습자의 인지 모델을 조작하는 역할이었다.
+
+
+
+
+## Task control: In silico task design for guiding human causal inference
+
+이 연구에서 제안하는 태스크 컨트롤(Task Control) 프레임워크 는 인간의 인과 추론 과정을 조정하기 위한 컴퓨터 기반 실험 설계(in silico task design) 방식이다. 기존의 과제 학습(task learning)에서는 학습자가 환경과 상호작용하며 인과 관계를 학습하지만, 본 연구에서는 이를 역으로 조작하여 과제가 인간의 인지 모델을 조정하도록 설계 한다. 즉, 태스크 컨트롤러(task controller) 가 인간의 인과 추론 모델과 상호작용하며 실험 변수를 조정함으로써 특정한 학습 경로를 유도하는 방식이다.
+
+1. 마르코프 결정 과정(MDP) 정의
+태스크 컨트롤러 문제는 5-튜플 $$ (U, A, T, R, \gamma) $$ 로 구성된 MDP로 모델링된다.
+
+$$ U $$: 상태 공간 (State space)
+$$ A $$: 행동 공간 (Action space)
+$$ T $$: 전이 함수 (Transition function)
+$$ R $$: 보상 함수 (Reward function)
+$$ \gamma $$: 할인 계수 (Discount factor)
+
+2. MDP 구성 요소 설명
+
+태스크 컨트롤러의 상태 $$ u_i $$ 는 특정 시점 $$ i $$ 에서 각 S-O 페어(Stimulus-Outcome Pair)의 인과적 불확실성(causal uncertainty) 을 포함하는 벡터로 정의된다.
+$$
+u_i = \{ u_1, u_2, ..., u_N \} \in U
+$$
+
+$$ u_k $$ 는 특정 S-O 페어 $$ p_k $$ 의 인과적 불확실성이며, 인과적 불확실성 $$ u_k $$ 는 학습자가 해당 S-O 관계를 얼마나 신뢰하는지에 대한 불확실성 을 나타낸다. 연구에서는 베이지안 인과 추론 모델(Bayesian Inference Model) 또는 원샷 학습 모델(One-shot Learning Model) 을 사용하여 이를 정량화했하였다. 목표 상태(goal state) $$ u_{\text{goal}} $$ 은 모든 S-O 관계의 인과적 불확실성이 특정 임계값 이하로 낮아진 상태이다.
+
+$$
+u_{\text{goal}} = \{ u_1, u_2, ..., u_N \}, \quad \text{where } u_k \leq u_{\text{TH}}, \forall k
+$$
+
+즉, 태스크 컨트롤러는 인간 학습자가 가능한 한 빨리 인과적 불확실성을 줄일 수 있도록 실험 조건을 조정하는 역할을 한다.
+
+태스크 컨트롤러가 특정 상태 $$ u_i $$ 에서 행동 $$ a_i $$ 를 선택하면, 인간 인지 모델이 다음 상태 $$ u_{i+1} $$ 로 전이되며, 전이 확률 $$ P(u_i, a_i, u_{i+1}) $$ 는 인지 모델 M에 의해 결정되는 함수 로 표현된다.
+
+$$
+T: U \times A \times U \rightarrow [0, 1]
+P(u_i, a_i, u_{i+1}) = M(u_i, a_i, u_{i+1})
+$$
+
+여기서 $$ M $$ 은 인간의 인과 학습 과정을 설명하는 인지 모델이며 어떤 자극-결과 페어를 보여주었을 때, 인간 학습자가 해당 관계를 학습하는 정도를 반영한다. 또한 태스크 컨트롤러는 인간 인지 모델이 목표 상태(goal state)에 도달하도록 유도 해야하기 때문에 이를 위해 보상 함수 $$ R $$ 을 다음과 같이 정의한다. 목표 상태 $$ u_{\text{goal}} $$ 에 도달하면 +1의 보상 을 부여하고, 그렇지 않으면 -1의 보상 을 부여한다.
+
+$$
+R: U \times A \times R \rightarrow R
+R(U) =
+\begin{cases}
+1, & \text{if } u_U \leq u_{\text{TH}} \\
+-1, & \text{otherwise}
+\end{cases}
+$$
+
+
+
+
+
+
+
+
+
+<figure class='align-center'>
+    <img src = "/images/2025-03-10-Controlling human causal inference through in silico task design/figure1.jpg" alt="">
+    <figcaption>figure 1. In silico task design for controlling human inference processes</figcaption>
+</figure>
+
+<figure class='align-center'>
+    <img src = "/images/2025-03-10-Controlling human causal inference through in silico task design/figure2.jpg" alt="">
+    <figcaption>figure 2. Behavioral analyses of the trained task controller</figcaption>
+</figure>
+
+<figure class='align-center'>
+    <img src = "/images/2025-03-10-Controlling human causal inference through in silico task design/figure3.jpg" alt="">
+    <figcaption>figure 3. Experimental design – causal learning tasks</figcaption>
+</figure>
+
+<figure class='align-center'>
+    <img src = "/images/2025-03-10-Controlling human causal inference through in silico task design/figure4.jpg" alt="">
+    <figcaption>figure 4. Effect of task control on subjects’ behavior and performance</figcaption>
+</figure>
+
+<figure class='align-center'>
+    <img src = "/images/2025-03-10-Controlling human causal inference through in silico task design/figure5.jpg" alt="">
+    <figcaption>figure 5. Comparison of task control effect between the subject-cognitive model compatible and incompatible case (post hoc analysis)</figcaption>
+</figure>
