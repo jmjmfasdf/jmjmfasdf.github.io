@@ -227,9 +227,7 @@ $$
 여기서, $$ V^{p, i}(u) $$ 는 특정 상태 $$ u $$ 에서 플레이어 $$ i $$ 가 정책 $$ p $$ 를 따를 때 기대되는 누적 보상 값이다. $$ \gamma $$ 는 할인 계수로, 미래 보상의 중요도를 조절하는 값이다.
 각 플레이어는 자신의 보상을 최대화하는 정책을 찾는 과정에서 최적 전략을 학습 하게 된다. 이 과정에서 최적 응답(Best Response, BR) 정책을 찾는 것이 핵심 목표가 된다.
 
-$$
-p^*_i \in BR(p^{-i}) = \arg\max_{p_i} V^{p, i}(u) \quad \text{(given that other players' policies are fixed)}
-$$
+$$p^*_i \in BR(p^{-i}) = \arg\max_{p_i} V^{p, i}(u) \quad \text{(given that other players' policies are fixed)}$$
 
 즉, 각 플레이어는 상대방의 전략이 고정된 상태에서 자신이 최대한 높은 보상을 얻을 수 있는 최적 정책을 찾는다.
 
