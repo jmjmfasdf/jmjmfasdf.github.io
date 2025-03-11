@@ -7,7 +7,7 @@ tags:
 categories: 
     - Paper Review
 toc: true
-toc_sticky: false
+toc_sticky: true
 ---
 
 이전 포스트에서 하지 못했던 논문의 결과 부분을 알아보겠다.
