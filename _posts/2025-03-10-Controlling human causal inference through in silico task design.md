@@ -1,5 +1,5 @@
 ---
-title: "Controlling human causal inference through in silico task design"
+title: "Controlling human causal inference through in silico task design - methods"
 date: 2025-03-10
 tags:
     - Task Control
@@ -468,6 +468,8 @@ Uniform 시퀀스는 무작위로 생성된 시퀀스를 의미하며, Control �
 흥미로운 점은 Oneshot- 조건에서 관찰된 결과였다. Oneshot-의 목표는 참가자의 학습 수행을 방해하는 것이었으며, 이를 위해 특정 S-O 관계에서 학습률(Learning Rate)을 거꾸로 설정하는 방식이 사용되었다. 즉, 이미 학습이 잘 된 관계의 학습률을 더 높이고, 반대로 학습되지 않은 관계는 적게 노출되도록 설계되었다. 이로 인해 참가자는 특정 관계에 대한 신뢰도를 과도하게 높이거나 특정 관계를 무시하는 경향을 보였다. 분석 결과, Easy & Difficult 난이도에서는 일반적인 S-O 관계에 대한 신뢰도가 높아졌으며, Medium 난이도에서는 새로운 S-O 관계에 대한 신뢰도가 낮아지는 패턴이 관찰되었다.
 
 이러한 결과는 참가자의 신뢰도 평가 점수만으로도 태스크 컨트롤 조건을 예측할 수 있으며, Oneshot+ 학습자는 새로운 S-O 관계에서 높은 신뢰도를 보이고, Bayesian+ 학습자는 기존 관계에서 높은 신뢰도를 보인다는 점을 확인시켜 준다. 또한 Oneshot- 조건에서는 참가자의 신뢰도 패턴이 왜곡되어 학습 수행이 방해된다는 점을 보여준다.
+
+방법론 설명이 길어져 결과 해석은 다음 포스트에서 진행하겠다.
 
 
 <figure class='align-center'>
