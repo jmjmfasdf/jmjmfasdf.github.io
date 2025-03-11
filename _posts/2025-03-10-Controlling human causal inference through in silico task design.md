@@ -346,10 +346,12 @@ $$
 $$
 
 $$
-\text{degree}(n) = \text{Number of outgoing edges from node } n  
-n_r = \text{Root node (Outcome node)}  
-n_j^{c_i} = \text{j-th child node at layer } i  
-d = 0.5 \quad \text{(Discount factor)}
+\begin{aligned}
+    \text{degree}(n) = \text{Number of outgoing edges from node } n \\
+    n_r = \text{Root node (Outcome node)} \\
+    n_j^{c_i} = \text{j-th child node at layer } i \\
+    d = 0.5 \quad \text{(Discount factor)}
+\end{aligned}
 $$
 
 이렇게 연결성 정도는 특정 결과(Outcome) 노드에서 출발하여 자식 노드들의 모든 연결을 고려하는 방식으로 계산 되었다.
@@ -371,8 +373,10 @@ $$
 테스트 점수는 인과 평가 점수(Causal Rating)를 정규화(normalized)하여 비교 가능하도록 변환한 값 이다. 즉, 참가자가 특정 S-O 관계에 대해 부여한 점수가 다른 관계들과 비교했을 때 상대적으로 얼마나 높은지를 정량화 하는 지표이다.
 
 $$
-t_i = \frac{c_i}{c_0}  
-c_0 = \sum_{j=1}^{N} c_j  
+\begin{aligned}
+    t_i = \frac{c_i}{c_0} \\
+    c_0 = \sum_{j=1}^{N} c_j
+\end{aligned}
 $$
 
 여기서 $$t_i$$는 $$i$$번째 S-O 관계의 테스트 점수, $$c_i$$는 해당 S-O 관계에 대한 참가자의 인과 평가 점수, $$c_0$$는 전체 S-O 관계의 총 인과 평가 점수이다.
@@ -400,10 +404,12 @@ $$
 실험에서 사용된 주요 변수와 설정값은 다음과 같다.
 
 $$
-\gamma = 0.99 \quad \text{(Discount factor)}  
-\alpha = 0.0001 \quad \text{(Learning rate)}  
-\tau = 0.001 \quad \text{(Target network update frequency)}  
-\text{batch size} = 32  
+\begin{aligned}
+    \gamma = 0.99 \quad \text{(Discount factor)} \\
+    \alpha = 0.0001 \quad \text{(Learning rate)} \\
+    \tau = 0.001 \quad \text{(Target network update frequency)} \\
+    \text{batch size} = 32
+\end{aligned}  
 $$
 
 
