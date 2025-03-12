@@ -109,42 +109,6 @@ toc_sticky: true
 
 <br>
 
-# An illustrative example: the multi-armed bandit task
-
-논문에서 제시하는 10가지 모델링 규칙은 매우 일반적이지만, 이를 보다 구체적으로 설명하기 위해 강화학습(reinforcement learning) 모델을 활용한 선택 과제(choice task) 를 예시로 들고 있다. 이 논문에서 다루는 예제들은 사람들이 어떻게 보상을 극대화하는지를 학습하는 과정을 분석하는 것이 목표이다. 특히, 최적의 선택이 처음에는 알려져 있지 않은 상황에서 학습이 어떻게 진행되는지를 연구한다.
-
-## 멀티 암드 밴딧(Multi-Armed Bandit) 과제란?
-
-이 실험은 여러 개의 슬롯머신(slot machine, 또는 "one-armed bandit") 중 하나를 선택하는 방식으로 진행된다. 실험 참가자는 T번의 선택(trials) 을 수행하며, K개의 슬롯머신 중 하나를 선택해야 한다. 각 슬롯머신 $$k$$ 는 선택(trial $$t$$)될 때, 특정한 확률 $$θ_k$$ 로 보상(reward, $$r_t$$)을 지급한다.
-
-즉, 슬롯머신 $$k$$ 를 선택했을 때, 보상 $$r_t$$ 을 받을 확률은 $$θ_k$$ 이며, $$θ_k$$ 는 슬롯머신마다 다르며, 실험 참가자는 이를 사전에 알지 못한다(unknown to the subject). 가장 단순한 실험에서는 보상 확률 $$θ_k$$ 가 시간에 따라 변하지 않고 고정(fixed)되어 있다.
-
-## 멀티 암드 밴딧 과제의 실험 변수
-
-이 실험에서는 다음과 같은 3가지 주요 변수를 설정할 수 있다.
-
-- 시행 횟수 ($$T$$): 참가자가 선택을 몇 번 반복하는가?  
-- 슬롯머신 개수 ($$K$$): 몇 개의 슬롯머신이 있는가?  
-- 보상 확률 ($$θ_k$$): 각 슬롯머신이 보상을 줄 확률이 얼마인가?
-
-이러한 변수 설정이 실험의 결과에 중요한 영향을 미치며, 논문에서 사용한 기본 실험 설정은 다음과 같다.
-
-- 시행 횟수: $$T = 1000$$
-- 슬롯머신 개수: $$K = 2$$
-- 슬롯머신의 보상 확률:
-- 슬롯머신 1: $$θ_1 = 0.2$$ (20% 확률로 보상)
-- 슬롯머신 2: $$θ_2 = 0.8$$ (80% 확률로 보상)
-
-즉, 한 참가자는 두 개의 슬롯머신 중 하나를 선택해야 하며, 각각의 슬롯머신이 보상을 줄 확률은 미리 정해져 있지만 참가자는 이를 모른다. 실험 참가자는 반복적인 선택을 통해 어느 슬롯머신이 더 높은 보상을 주는지 학습해야 한다.
-
-## 이 과제가 왜 중요한가?
-
-멀티 암드 밴딧 과제는 탐색-활용(exploration-exploitation) 문제를 연구하는 데 매우 유용하다. 탐색(Exploration)은 더 나은 선택을 하기 위해 미지의 선택지를 시도하는 것이며, 활용(Exploitation)은 현재까지 학습한 정보를 바탕으로 가장 보상이 높을 것으로 예상되는 선택지를 선택하는 것이라 할 수 있다.
-
-예를 들어, 초반에는 두 슬롯머신의 보상 확률을 모른 상태이므로 여러 번 선택을 시도하며 탐색(exploration) 을 수행해야 한다. 실험이 진행됨에 따라 더 높은 확률로 보상을 주는 슬롯머신(슬롯머신 2, $$θ_2$$ = 0.8)을 인식하고 이를 점점 더 많이 선택하는 전략(활용, exploitation) 을 사용할 것이다. 이 과제는 강화학습 모델을 테스트하는 데 매우 적합하며, 다양한 학습 알고리즘을 비교하는 데 사용할 수 있다.
-
-<br>
-
 # Design good models
 
 ## 1. 모델링의 목적을 명확히 하라
@@ -219,95 +183,48 @@ Rescorla-Wagner 모델(Rescorla & Wagner, 1972)에서 사용되었다.
 
 <br>
 
-# Example: Modeling behavior in the multi-armed  bandit task.
+# Simulate, simulate, simulate!
 
-이 논문에서는 Multi-Armed Bandit Task에서 사람들이 어떻게 행동하는지를 설명하는 다섯 가지 모델을 제시하고 있다. 각 모델의 핵심 개념과 수식을 설명하면 다음과 같다.
+이 부분에서는 모델링을 이용한 행동 실험 분석에서 시뮬레이션(Simulation)의 중요성을 강조하고 있다. 실험 설계와 계산 모델이 정해진 후, 가장 중요한 단계 중 하나는 가짜 데이터(surrogate data)를 생성하는 것이다. 이를 통해 모델이 실험 데이터를 얼마나 잘 설명하는지 검증하고, 모델과 실험 설계를 조정할 수 있다. 이를 위해 다음과 같은 구체적인 단계를 거친다.
 
-## Model 1: Random Responding (랜덤 응답 모델)
+## 1. 모델 독립적인 측정값을 정의하기 (Define Model-Independent Measures)
 
-이 모델은 참가자가 과제에 전혀 몰입하지 않고 단순히 무작위로 버튼을 누르는 경우를 가정한다. 그러나 참가자가 특정 선택지에 대한 선호도(bias)를 가질 수도 있다고 본다. 이 선호도는 파라미터 $$ b $$ 로 표현되며, 다음과 같이 선택 확률을 결정한다.
+모델을 검증하기 위해서는 특정 모델에 의존하지 않는 **행동 측정값(model-independent measures)**을 정의해야 한다. 이는 왜 중요한가? 실험에서 질적(qualitative) 특징을 찾고, 이러한 측정값을 통해 시뮬레이션 데이터와 실제 데이터를 비교할 수 있기 때문이다. 예를 들어 강화 학습 모델을 테스트할 경우, 피드백에 대한 반응률, 선택 반복성, 학습 속도 등이 모델 독립적인 측정값이 될 수 있다. 이를 통해 시뮬레이션 데이터에서 어떤 행동 패턴이 나오는지 먼저 확인한 후, 실제 실험 데이터에서도 동일한 패턴을 찾을 수 있는지 분석한다.
 
-$$
-p_1 = b, \quad p_2 = 1 - b
-$$
+## 2. 모델을 다양한 파라미터 값에 대해 시뮬레이션하기 (Simulate the Model Across the Range of Parameter Values)
 
-즉, $$ b $$ 값이 0.5이면 두 선택지를 균등한 확률로 선택하고, $$ b $$ 값이 1에 가까울수록 특정 선택지를 선호하게 된다. 이 모델은 단 하나의 자유 파라미터 $$ b $$ 만을 가진다
+모델의 대부분은 **자유 파라미터(free parameters)**를 가지고 있으며, 이 값이 변하면 행동도 달라진다. 따라서, 모델의 모든 자유 파라미터에 대해 광범위한 값을 설정하고, 이를 통해 시뮬레이션을 수행한다. 이후 각 파라미터 값에 따라 행동이 어떻게 변화하는지 시각적으로 확인한다. 이 과정에서 파라미터가 어떤 방식으로 행동을 조절하는지 직관적으로 이해하고, 개별 참가자 간의 차이를 설명하기 위한 파라미터 해석이 가능하다.
 
-## Model 2: Noisy Win-Stay-Lose-Shift (노이즈가 추가된 승리-유지, 패배-전환 모델)
-
-이 모델은 보상을 받으면 같은 선택을 반복하고, 보상을 받지 못하면 선택을 바꾸는 단순한 전략을 따른다. 그러나 이 전략을 항상 적용하는 것이 아니라 확률적으로 적용하는데, 확률 $$ 1 - \epsilon $$ 로 win-stay-lose-shift 규칙을 따르고, 확률 $$ \epsilon $$ 로 랜덤 선택을 한다. 이 모델에서 선택 확률은 다음과 같다.
-
-$$
-p_k^t =
-\begin{cases}
-1 - \frac{\epsilon}{2}, & \text{if } (c_{t-1} = k \text{ and } r_{t-1} = 1) \text{ OR } (c_{t-1} \neq k \text{ and } r_{t-1} = 0) \\
-\frac{\epsilon}{2}, & \text{if } (c_{t-1} \neq k \text{ and } r_{t-1} = 1) \text{ OR } (c_{t-1} = k \text{ and } r_{t-1} = 0)
-\end{cases}
-$$
-
-이 모델은 전체적인 랜덤성 수준을 조절하는 단 하나의 자유 파라미터 $$ \epsilon $$ 을 가진다.
-
-## Model 3: Rescorla-Wagner (레스콜라-와그너 학습 모델)
-
-이 모델은 참가자가 이전 결과를 바탕으로 각 슬롯 머신(옵션)의 기대 가치를 학습한다고 가정한다. 학습 규칙은 Rescorla-Wagner 학습 규칙을 따른다.
-
-$$
-Q_k(t+1) = Q_k(t) + \alpha (r_t - Q_k(t))
-$$
-
-여기서,
-
-$$ Q_k(t) $$ 는 시간 $$ t $$ 에서의 선택지 $$ k $$ 의 기대 가치,  
-$$ r_t $$ 는 시간 $$ t $$ 에서 받은 보상,  
-$$ \alpha $$ 는 학습률로, 0과 1 사이의 값을 가지며, 보상이 가치 업데이트에 미치는 영향을 조절한다.  
-
-의사결정 과정은 Softmax 선택 규칙을 따른다.
-
-$$
-p_k^t = \frac{\exp(\beta Q_k^t)}{\sum_{i=1}^{K} \exp(\beta Q_i^t)}
-$$
-
-여기서, $$ \beta $$ 는 ‘inverse temperature’로, 값이 크면 높은 가치를 가진 옵션을 더 확실하게 선택하고, 값이 작으면 랜덤한 선택을 많이 하게 된다. 이 모델은 두 개의 자유 파라미터 $$ (\alpha, \beta) $$ 를 가진다.
-
-## Model 4: Choice Kernel (선택 경향성 모델)
-
-이 모델은 사람들이 단순히 기대 가치를 기반으로 선택하는 것이 아니라, 과거에 선택했던 행동을 반복하는 경향이 있음을 반영한다. 이를 위해 Choice Kernel이라는 개념을 도입한다. Choice Kernel은 최근 선택했던 행동의 빈도를 추적하며, 다음과 같은 업데이트 방식을 따른다.
-
-$$
-CK_k(t+1) = CK_k(t) + \alpha_c (a_k(t) - CK_k(t))
-$$
-
-여기서, $$ a_k(t) = 1 $$ 이면 선택한 옵션이고, 그렇지 않으면 0이다. $$ \alpha_c $$ 는 선택 경향성을 업데이트하는 학습률이다. 이후 선택 확률은 Softmax 형태로 결정된다.
-
-$$
-p_k = \frac{\exp(\beta_c CK_k)}{\sum_{i=1}^{K} \exp(\beta_c CK_i)}
-$$
-
-이 모델은 두 개의 자유 파라미터 $$ (\alpha_c, \beta_c) $$ 를 가진다.
-
-## Model 5: Rescorla-Wagner + Choice Kernel (강화 학습 + 선택 경향성)
-
-이 모델은 강화 학습 모델과 선택 경향성 모델을 결합한 가장 복잡한 모델이다. 이 모델에서는 기대 가치를 업데이트하는 Rescorla-Wagner 모델과 과거 선택 경향성을 반영하는 Choice Kernel 모델이 함께 사용된다.
-
-최종적으로 선택 확률은 다음과 같이 계산된다.
-
-$$
-p_k = \frac{\exp(\beta Q_k + \beta_c CK_k)}{\sum_{i=1}^{K} \exp(\beta Q_i + \beta_c CK_i)}
-$$
-
-즉, 선택 확률이 기대 가치 $$ Q_k $$ 와 선택 경향성 $$ CK_k $$ 의 합에 기반하여 결정된다. 이 모델은 총 네 개의 자유 파라미터 $$ (\alpha, \beta, \alpha_c, \beta_c) $$ 를 가진다.
-
-이 다섯 개 모델은 참가자가 Multi-Armed Bandit Task에서 어떻게 선택을 하는지를 수학적으로 설명하기 위한 것이다. 모델의 복잡도는 점점 증가하며, 가장 간단한 모델은 Random Responding이고, 가장 복잡한 모델은 Rescorla-Wagner + Choice Kernel 모델이다.
-
-- Random Responding: 무작위 선택 (자유 파라미터: $$ b $$)
-- Noisy Win-Stay-Lose-Shift: 보상에 따라 반복 또는 변경 (자유 파라미터: $$ \epsilon $$)
-- Rescorla-Wagner: 강화 학습 (자유 파라미터: $$ \alpha, \beta $$)
-- Choice Kernel: 과거 선택 반복 경향 반영 (자유 파라미터: $$ \alpha_c, \beta_c $$)
-- Rescorla-Wagner + Choice Kernel: 강화 학습 + 선택 경향 (자유 파라미터: $$ \alpha, \beta, \alpha_c, \beta_c $$)
-
-각 모델은 인간의 학습 및 의사결정 과정을 수량화할 수 있도록 하며, 연구자들은 실험 데이터를 이 모델에 적합시켜 인간 행동의 기저 메커니즘을 분석할 수 있다.
+예를 들어, 확률적 강화 학습(probabilistic reinforcement learning)에서 Rescorla-Wagner 모델(Model 3, Equation 3)을 적용할 경우
+$$ \alpha $$ (학습률, learning rate)는 학습 속도 및 안정적인 행동 여부에 영향을 주며, $$ \beta $$ (inverse temperature)는 선택이 얼마나 결정적(deterministic)인지 또는 랜덤(random)한지를 조절한다.
 
 <figure class='align-center'>
-    <img src = "image path" alt="">
-    <figcaption>figure 1. caption</figcaption>
+    <img src = "/images/2025-03-12-Ten simple rules for the computational modeling of behavioral data/figure1.jpg" alt="">
+    <figcaption>figure 1. Simulating behavior in the two-armed bandit task.</figcaption>
+</figure>
+
+강화 학습 모델에서 파라미터 분석을 하는 사례에서 $$ \alpha $$ 가 높으면 새로운 정보에 빠르게 반응하고, 낮으면 점진적인 학습을 보인다. $$ \beta $$ 가 낮으면 행동이 무작위에 가깝고, 높으면 보상 기대값이 높은 선택지를 확실하게 고른다. 이를 그래프로 표현하면, 파라미터 값 변화에 따른 행동의 차이를 직관적으로 확인할 수 있다(Box 2—figure 1B 참조).
+
+## 3. 서로 다른 모델의 시뮬레이션된 행동을 시각화하기 (Visualize the Simulated Behavior of Different Models)
+
+서로 다른 모델이 질적으로 다르게 행동을 예측하는지 확인하는 것이 중요한데, 그 이유는 서로 다른 모델이 비슷한 예측을 한다면, 실험에서 모델을 구분하기 어렵기 때문이다. 실험은 모델을 명확하게 구별할 수 있도록 설계되었는지 검증하는 과정이 되어야 한다. 예를 들어, 강화 학습 모델과 선택 경향성(Choice Kernel) 모델이 동일한 데이터를 설명할 수 있다면, 추가적인 실험 조건이 필요할 수 있다.
+
+Box 2—figure 1A에서 다양한 모델이 실험 조건에서 어떻게 다른 행동을 예측하는지를 확인할 수 있다. 만약 여러 모델이 동일한 패턴을 예측한다면, 더 나은 실험 설계를 찾아야 한다.
+
+## 4. 시뮬레이션의 일반적 목표 (General Goal of Simulation)
+
+전체적으로 시뮬레이션의 목표는 모델과 실험 설계가 연구 목표를 충족하는지 검증하는 것이다. 이 때 다음과 같은 질문을 생각해 볼 수 있다. **실험이 기대하는 행동을 충분히 유발할 수 있는가? / 모델의 파라미터가 행동을 해석할 수 있도록 설계되었는가? / 서로 다른 모델이 구별 가능한 예측을 제공하는가?** 이 질문들에 대한 답이 "Yes" 라면, 다음 단계(모델 피팅)로 진행할 수 있다. 그렇지 않다면, 실험 설계 및 모델을 다시 조정하는 과정(Iteration)이 필요하다.
+
+<br>
+
+
+
+
+
+
+
+
+<figure class='align-center'>
+    <img src = "/images/2025-03-12-Ten simple rules for the computational modeling of behavioral data/figure1.jpg" alt="">
+    <figcaption>figure 1. Simulating behavior in the two-armed bandit task.</figcaption>
 </figure>
