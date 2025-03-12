@@ -109,7 +109,7 @@ toc_sticky: true
 
 <br>
 
-# 5. An illustrative example: the multi-armed bandit task
+# An illustrative example: the multi-armed bandit task
 
 논문에서 제시하는 10가지 모델링 규칙은 매우 일반적이지만, 이를 보다 구체적으로 설명하기 위해 강화학습(reinforcement learning) 모델을 활용한 선택 과제(choice task) 를 예시로 들고 있다. 이 논문에서 다루는 예제들은 사람들이 어떻게 보상을 극대화하는지를 학습하는 과정을 분석하는 것이 목표이다. 특히, 최적의 선택이 처음에는 알려져 있지 않은 상황에서 학습이 어떻게 진행되는지를 연구한다.
 
@@ -143,24 +143,169 @@ toc_sticky: true
 
 예를 들어, 초반에는 두 슬롯머신의 보상 확률을 모른 상태이므로 여러 번 선택을 시도하며 탐색(exploration) 을 수행해야 한다. 실험이 진행됨에 따라 더 높은 확률로 보상을 주는 슬롯머신(슬롯머신 2, $$θ_2$$ = 0.8)을 인식하고 이를 점점 더 많이 선택하는 전략(활용, exploitation) 을 사용할 것이다. 이 과제는 강화학습 모델을 테스트하는 데 매우 적합하며, 다양한 학습 알고리즘을 비교하는 데 사용할 수 있다.
 
+<br>
 
+# Design good models
 
+## 1. 모델링의 목적을 명확히 하라
 
+모델을 설계할 때 가장 중요한 것은 모델을 사용하는 이유를 명확히 하는 것이다.
 
+1. 설명적 모델(Descriptive model)
 
+행동 데이터를 요약하는 것이 목적
+예: 반응시간 분포를 단순한 수학적 공식으로 요약하는 모델
 
+2. 기계론적 모델(Mechanistic model)
 
+행동과 뇌의 메커니즘을 연결하는 것이 목표
+예: 신경과학에서 보상 학습과 도파민 신호를 연결하는 강화학습 모델
 
+3. 개념적 모델(Conceptual model)
 
+특정 이론적 개념을 수학적으로 표현하는 것이 목적
+예: 강화학습 이론에서 탐색(exploration)과 활용(exploitation) 간 균형을 설명하는 모델
 
+Kording et al. (2018)에 따르면, 컴퓨테이셔널 모델링 연구자들은 매우 다양한 목표를 가지고 있으며, 자신이 어떤 목표를 가지고 모델링을 수행하는지 명확히 아는 것이 가장 중요하다.
 
+## 2. 모델을 설계하는 다양한 접근법
 
+컴퓨테이셔널 모델을 설계하는 방법은 여러 가지가 있으며, 연구 목적에 따라 적절한 방법을 선택할 수 있다.
 
+1) 휴리스틱 기반 접근법 (Heuristic Approach)
 
+단순한 규칙을 사용하여 특정 행동을 설명하는 모델을 설계하는 방법이며, 경험을 통해 행동이 어떻게 변화하는지 간단한 방식으로 설명한다.
 
+예시: 델타 학습 규칙(Delta rule)
 
+$$
+ΔV = α (R - V)
+$$
 
+Rescorla-Wagner 모델(Rescorla & Wagner, 1972)에서 사용되었다.
 
+2) 인공지능 및 수학적 알고리즘을 참고하는 접근법
+
+인공지능(AI), 컴퓨터 과학, 응용 수학 분야에서 사용되는 알고리즘을 참고하여 인간의 행동을 설명하는 모델을 구축하며, 인간과 동물의 행동 및 신경 기제를 설명하는 데 사용되었다.
+
+예시: 강화학습 모델(Reinforcement Learning) - Q-learning (Watkins & Dayan, 1992), Temporal Difference Learning (Sutton & Barto, 2018)
+
+3) 베이즈 최적 모델 (Bayes-optimal Models)
+
+환경과 과제에 대한 최적의 해결책을 찾는 모델을 설계하며, 인지 과정이 최적의 방식으로 작동하는지를 테스트하는 데 유용하다. 보다 현실적인 모델을 만들기 위해, 제약 조건(bounded rationality constraints) 을 추가할 수도 있다.
+
+예시: 이상적 관찰자 모델(Ideal Observer Model)
+시각 인지 연구에서 자극을 최적적으로 처리하는 방법을 설명하는 모델 (Geisler, 2011)
+계산 자원의 한계를 고려하는 모델 (Lieder et al., 2018)
+
+## 3. 좋은 모델을 만들기 위해 지켜야 할 원칙
+
+모델을 설계할 때 다음 세 가지 원칙을 따라야 한다.
+
+1. 모델은 최대한 단순해야 하지만, 너무 단순해서는 안 된다.
+
+아인슈타인의 명언:  
+**"Everything should be made as simple as possible, but not simpler."**
+
+단순한 모델은 적합(fitting)이 쉽고 해석이 용이하다. 과도하게 복잡한 모델은 데이터를 잘 설명하는 것처럼 보일 수 있지만, 실제로는 과적합(overfitting) 문제를 초래할 가능성이 크다. 모델 비교 기법(model comparison techniques) 은 과적합을 방지하기 위해 과도하게 복잡한 모델에 패널티를 부여한다(자세한 내용은 Appendix 2 참고).
+
+2. 모델은 해석 가능해야 한다.
+
+모델이 행동 데이터를 잘 설명한다고 하더라도, 해석할 수 없는 모델은 유용하지 않다. 예를 들어서, 강화학습 모델에서 음의 학습률(negative learning rate) 은 논리적으로 해석하기 어렵다. 의미 없는 매개변수가 모델에 포함될 경우, 이는 단순히 모델이 중요한 요소를 놓치고 있음을 나타낼 수도 있다. 따라서 모델의 각 요소가 의미 있는 방식으로 행동 데이터를 설명할 수 있어야 한다.
+
+3. 모델은 연구자가 테스트하고자 하는 모든 가설을 포착할 수 있어야 한다.
+
+특정한 가설만 고려하는 모델을 만들면, 모델 비교(model comparison)를 수행할 때 제한적일 수 있다. 덧붙여서, 가설을 검증하는 데 사용되는 모델만이 아니라, 경쟁 가설(competing hypotheses)을 반영할 수 있는 모델도 포함해야 한다. 예를 들어서 기본 모델이 랜덤한 행동을 하는 모델이고, 가설 모델 (Hypothesis Model)이 연구자가 검증하려는 학습 모델이라면 학습이 아닌 다른 메커니즘으로 행동을 설명하는 대조 모델 (Competing Model)이 있으면 좋다는 것이다. 연구자가 선호하는 특정 모델에 너무 의존하지 않고, 데이터가 가장 적절한 모델을 선택하도록 해야 한다.
+
+<br>
+
+# Example: Modeling behavior in the multi-armed  bandit task.
+
+이 논문에서는 Multi-Armed Bandit Task에서 사람들이 어떻게 행동하는지를 설명하는 다섯 가지 모델을 제시하고 있다. 각 모델의 핵심 개념과 수식을 설명하면 다음과 같다.
+
+## Model 1: Random Responding (랜덤 응답 모델)
+
+이 모델은 참가자가 과제에 전혀 몰입하지 않고 단순히 무작위로 버튼을 누르는 경우를 가정한다. 그러나 참가자가 특정 선택지에 대한 선호도(bias)를 가질 수도 있다고 본다. 이 선호도는 파라미터 $$ b $$ 로 표현되며, 다음과 같이 선택 확률을 결정한다.
+
+$$
+p_1 = b, \quad p_2 = 1 - b
+$$
+
+즉, $$ b $$ 값이 0.5이면 두 선택지를 균등한 확률로 선택하고, $$ b $$ 값이 1에 가까울수록 특정 선택지를 선호하게 된다. 이 모델은 단 하나의 자유 파라미터 $$ b $$ 만을 가진다
+
+## Model 2: Noisy Win-Stay-Lose-Shift (노이즈가 추가된 승리-유지, 패배-전환 모델)
+
+이 모델은 보상을 받으면 같은 선택을 반복하고, 보상을 받지 못하면 선택을 바꾸는 단순한 전략을 따른다. 그러나 이 전략을 항상 적용하는 것이 아니라 확률적으로 적용하는데, 확률 $$ 1 - \epsilon $$ 로 win-stay-lose-shift 규칙을 따르고, 확률 $$ \epsilon $$ 로 랜덤 선택을 한다. 이 모델에서 선택 확률은 다음과 같다.
+
+$$
+p_k^t =
+\begin{cases}
+1 - \frac{\epsilon}{2}, & \text{if } (c_{t-1} = k \text{ and } r_{t-1} = 1) \text{ OR } (c_{t-1} \neq k \text{ and } r_{t-1} = 0) \\
+\frac{\epsilon}{2}, & \text{if } (c_{t-1} \neq k \text{ and } r_{t-1} = 1) \text{ OR } (c_{t-1} = k \text{ and } r_{t-1} = 0)
+\end{cases}
+$$
+
+이 모델은 전체적인 랜덤성 수준을 조절하는 단 하나의 자유 파라미터 $$ \epsilon $$ 을 가진다.
+
+## Model 3: Rescorla-Wagner (레스콜라-와그너 학습 모델)
+
+이 모델은 참가자가 이전 결과를 바탕으로 각 슬롯 머신(옵션)의 기대 가치를 학습한다고 가정한다. 학습 규칙은 Rescorla-Wagner 학습 규칙을 따른다.
+
+$$
+Q_k(t+1) = Q_k(t) + \alpha (r_t - Q_k(t))
+$$
+
+여기서,
+
+$$ Q_k(t) $$ 는 시간 $$ t $$ 에서의 선택지 $$ k $$ 의 기대 가치,  
+$$ r_t $$ 는 시간 $$ t $$ 에서 받은 보상,  
+$$ \alpha $$ 는 학습률로, 0과 1 사이의 값을 가지며, 보상이 가치 업데이트에 미치는 영향을 조절한다.  
+
+의사결정 과정은 Softmax 선택 규칙을 따른다.
+
+$$
+p_k^t = \frac{\exp(\beta Q_k^t)}{\sum_{i=1}^{K} \exp(\beta Q_i^t)}
+$$
+
+여기서, $$ \beta $$ 는 ‘inverse temperature’로, 값이 크면 높은 가치를 가진 옵션을 더 확실하게 선택하고, 값이 작으면 랜덤한 선택을 많이 하게 된다. 이 모델은 두 개의 자유 파라미터 $$ (\alpha, \beta) $$ 를 가진다.
+
+## Model 4: Choice Kernel (선택 경향성 모델)
+
+이 모델은 사람들이 단순히 기대 가치를 기반으로 선택하는 것이 아니라, 과거에 선택했던 행동을 반복하는 경향이 있음을 반영한다. 이를 위해 Choice Kernel이라는 개념을 도입한다. Choice Kernel은 최근 선택했던 행동의 빈도를 추적하며, 다음과 같은 업데이트 방식을 따른다.
+
+$$
+CK_k(t+1) = CK_k(t) + \alpha_c (a_k(t) - CK_k(t))
+$$
+
+여기서, $$ a_k(t) = 1 $$ 이면 선택한 옵션이고, 그렇지 않으면 0이다. $$ \alpha_c $$ 는 선택 경향성을 업데이트하는 학습률이다. 이후 선택 확률은 Softmax 형태로 결정된다.
+
+$$
+p_k = \frac{\exp(\beta_c CK_k)}{\sum_{i=1}^{K} \exp(\beta_c CK_i)}
+$$
+
+이 모델은 두 개의 자유 파라미터 $$ (\alpha_c, \beta_c) $$ 를 가진다.
+
+## Model 5: Rescorla-Wagner + Choice Kernel (강화 학습 + 선택 경향성)
+
+이 모델은 강화 학습 모델과 선택 경향성 모델을 결합한 가장 복잡한 모델이다. 이 모델에서는 기대 가치를 업데이트하는 Rescorla-Wagner 모델과 과거 선택 경향성을 반영하는 Choice Kernel 모델이 함께 사용된다.
+
+최종적으로 선택 확률은 다음과 같이 계산된다.
+
+$$
+p_k = \frac{\exp(\beta Q_k + \beta_c CK_k)}{\sum_{i=1}^{K} \exp(\beta Q_i + \beta_c CK_i)}
+$$
+
+즉, 선택 확률이 기대 가치 $$ Q_k $$ 와 선택 경향성 $$ CK_k $$ 의 합에 기반하여 결정된다. 이 모델은 총 네 개의 자유 파라미터 $$ (\alpha, \beta, \alpha_c, \beta_c) $$ 를 가진다.
+
+이 다섯 개 모델은 참가자가 Multi-Armed Bandit Task에서 어떻게 선택을 하는지를 수학적으로 설명하기 위한 것이다. 모델의 복잡도는 점점 증가하며, 가장 간단한 모델은 Random Responding이고, 가장 복잡한 모델은 Rescorla-Wagner + Choice Kernel 모델이다.
+
+- Random Responding: 무작위 선택 (자유 파라미터: $$ b $$)
+- Noisy Win-Stay-Lose-Shift: 보상에 따라 반복 또는 변경 (자유 파라미터: $$ \epsilon $$)
+- Rescorla-Wagner: 강화 학습 (자유 파라미터: $$ \alpha, \beta $$)
+- Choice Kernel: 과거 선택 반복 경향 반영 (자유 파라미터: $$ \alpha_c, \beta_c $$)
+- Rescorla-Wagner + Choice Kernel: 강화 학습 + 선택 경향 (자유 파라미터: $$ \alpha, \beta, \alpha_c, \beta_c $$)
+
+각 모델은 인간의 학습 및 의사결정 과정을 수량화할 수 있도록 하며, 연구자들은 실험 데이터를 이 모델에 적합시켜 인간 행동의 기저 메커니즘을 분석할 수 있다.
 
 <figure class='align-center'>
     <img src = "image path" alt="">
