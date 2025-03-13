@@ -1,5 +1,5 @@
 ---
-title: "Ten simple rules for the computational modeling of behavioral data"
+title: "Ten simple rules for the computational modeling of behavioral data - Example bandit task"
 date: 2025-03-12
 tags:
     - Modeling
@@ -258,14 +258,106 @@ figure 3에서는 시뮬레이션한 파라미터 값과 복원된 파라미터 
 
 이러한 회색 점을 분석해보면, $$ \beta $$ 값이 특정 범위(1~10)를 벗어날 때 $$ \alpha $$ 의 복원 성능이 나빠지는 경향이 관찰되었다. 즉, $$ \beta $$ 값이 너무 크거나 너무 작을 경우, 학습률 $$ \alpha $$ 를 신뢰할 수 있는 방식으로 추정하는 것이 어려울 수 있다.
 
+<br>
+
+# Box 5. Example: confusion matrices in the bandit task.
+
+## 1. 모델 복원 실험 개요
+
+두 개의 슬롯 머신(Bandit)의 평균 보상값과 수행 시간 설정은 이전 예제와 동일하다.
+
+- Bandit 1: $$ p = 0.2 $$  
+- Bandit 2: $$ p = 0.8 $$  
+- $$ T = 1000 $$ 번
+
+각 모델의 파라미터 값은 특정 분포에서 샘플링하여 설정되었다.
+
+- Model 1: $$ b \sim U(0,1) $$  
+- Model 2: $$ \epsilon \sim U(0,1) $$  
+- Model 3: $$ \alpha \sim U(0,1), \quad \beta \sim Exp(1) $$  
+- Model 4: $$ \alpha_c \sim U(0,1), \quad \beta_c \sim Exp(1) $$  
+- Model 5: $$ \alpha \sim U(0,1), \quad \beta \sim Exp(1), \quad \alpha_c \sim U(0,1), \quad \beta_c \sim Exp(1) $$ 
+
+## 2. 혼동 행렬(Confusion Matrix) 분석
+
+figure 4의 (A)와 (B)는 모델 복원 실험을 수행한 후 얻어진 혼동 행렬(confusion matrix) 을 보여준다. 혼동 행렬의 각 셀은 $$ p(\text{fit model} | \text{simulated model}) $$, 즉 특정 모델이 생성한 데이터를 다른 모델들이 얼마나 잘 설명하는지 확률적으로 나타낸 것이다. 읽는 방법은 simulated model (여기서 만들어진 데이터가) -> fitted model (어디서 가장 설명이 잘 되는지) 방향으로 읽으면 된다.(즉 row의 합이 1이다.) 완벽한 경우(이상적인 모델 복원)라면, 혼동 행렬은 단위 행렬(identity matrix) 이어야 한다.
+
+이 실험에서는 소프트맥스 파라미터 $$ b $$ 및 $$ \beta_c $$ 가 작은 값도 포함되었다. $$ b $$ 값이 작으면, 모델의 행동이 랜덤하게 변하면서 모델 간 차이가 흐려지므로 구별이 어려워진다. 결과적으로, Model 3~5가 서로 구별되지 않으며, 혼동 행렬이 뚜렷한 대각선 형태를 띠지 않게 된다.
+
+이 결과를 보고 $$ b $$ 및 $$ \beta_c $$ 값의 최소값을 1 이상으로 설정하면, 모델의 선택 행동이 더 결정적으로 변하는 것을 볼 수 있다. 결과적으로, 모델 간 차이가 더 명확해지며, 혼동 행렬의 대각선 성분이 더욱 뚜렷해진 것을 볼 수 있다. 이 결과를 보고 노이즈가 많으면(낮은 $$ b $$ 값 포함) 모델이 서로 구별되지 않지만 노이즈를 줄이면(높은 $$ b $$ 값 유지) 모델끼리 명확하게 구분됨을 알 수 있다. 즉, 혼동 행렬의 품질은 모델이 생성한 데이터의 파라미터 범위에 따라 달라질 수 있으므로, 실제 실험 데이터에서 얻어진 파라미터 범위와 일치시키는 것이 중요하다.
+
+<figure class='align-center'>
+    <img src = "/images/2025-03-12-Ten simple rules for the computational modeling of behavioral data/figure4.jpg" alt="">
+    <figcaption>figure 4. Confusion matrices in the bandit task showing the effect of prior parameter distributions on model recovery. Numbers denote the probability that data generated with model X are best fit by model Y, thus the confusion matrix represents $$ p(\text{fit model} | \text{simulated model}) $$.</figcaption>
+</figure>
+
+## 3. 역행렬(Inversion Matrix) 분석
+
+figure 4의 (C)와 (D) 는 역행렬(Inversion Matrix) 을 보여준다. 역행렬은 $$ p(\text{simulated model} | \text{fit model}) $$ 을 나타내는데, **주어진 데이터에서 특정 모델이 가장 잘 맞는다고 판단되었을 때, 실제로 어떤 모델에서 데이터가 생성되었을 가능성이 높은지**를 나타낸다. 읽는 방법은 fitted model (여기와 가장 잘 맞는 데이터가) -> simulated model (어디서 만들어진 데이터 같은지) 방향으로 읽으면 된다. (즉 column의 합이 1이다.)
+
+혼동 행렬은 모델 복원 성능을 평가하는 데 유용하지만, 실제 실험 데이터를 분석할 때, 특정 모델이 가장 잘 맞았다고 해서 반드시 그 모델이 진짜 생성 모델이라는 보장은 없다. 이 문제를 해결하기 위해, 베이즈 정리(Bayes’ Rule)를 이용해 역행렬을 계산할 수 있다. figure 4의 혼동 행렬에서, Model 1의 혼동 행렬의 대각선 값이 1.00으로, 모델 1에서 생성된 데이터는 다시 모델 1에서 가장 잘 피팅된다. 그러나, figure 4의  역행렬에서 Model 1이 데이터 생성 모델일 확률은 54%로 낮은데, 이는 Model 1이 가장 잘 맞는다고 해도, 실제 데이터가 Model 1에서 생성되었을 확률이 높지 않다는 것을 의미한다.
+
+반면, Model 5는 혼동 행렬에서 30%만 복원되었지만, 역행렬에서는 97% 확률로 데이터가 Model 5에서 생성되었을 가능성이 높다고 분석되었으며, (D) 노이즈 감소 후에도 비슷한 패턴을 보인다. 
+
+<br>
+
+# Box 6. Example: improving parameter recovery by  modeling unimportant parameters.
+
+이 부분에서는 "중요하지 않은(unimportant) 파라미터" 를 모델에 포함시키는 것이 중요한 파라미터(예: 학습률 $$ \alpha $$ 및 소프트맥스 파라미터 $$ \beta $$)의 복원 성능을 어떻게 향상시키는지를 설명한다. 즉, 연구자가 직접적으로 관심을 두고 있는 변수(예: 학습률)를 더 정확하게 추정하기 위해, 본래 연구 질문과 관련이 없는 기저 편향(bias)과 같은 요소를 모델에 포함시킬 필요가 있을 수 있다.
+
+## 1. 연구 배경 및 실험 설정
+
+연구진은 Rescorla-Wagner 학습 모델(Model 3)에 "선택 편향(side bias)"을 추가했을 때, 파라미터 복원 성능이 향상되는지 평가하는 실험을 수행하였다. 일반적으로 Rescorla-Wagner 모델에서 선택 확률은 다음과 같이 정의된다.
+
+$$
+p_{\text{left}, t} = \frac{1}{1 + \exp(\beta(Q_{\text{right}, t} - Q_{\text{left}, t}))}
+$$
+
+$$ Q_{\text{left}, t} $$ 와 $$ Q_{\text{right}, t} $$ 는 각각 왼쪽과 오른쪽 선택지의 기대값(Q-values), $$ \beta $$ 는 소프트맥스 선택성(결정성) 파라미터로, 왼쪽과 오른쪽 선택지의 기대값 차이에 따라 선택 확률이 결정되는 방식이다. 그러나, 실험 참가자는 왼쪽이나 오른쪽 선택지를 선호하는 편향(side bias) 을 가질 수 있다. 이를 반영하여, 왼쪽 선택지의 기대값을 $$ B $$ 만큼 변화시키는 모델을 추가적으로 고려함.
+
+$$
+p_{\text{left}, t} = \frac{1}{1 + \exp(\beta(Q_{\text{right}, t} - Q_{\text{left}, t} - B))}
+$$
+
+여기서 $$ B $$ 는 왼쪽 선택지에 대한 편향값(side bias)을 나타내며, $$ B > 0 $$ 이면, 오른쪽 선택지가 더 매력적으로 보이고, $$ B < 0 $$ 이면, 왼쪽 선택지가 더 매력적으로 보이게 된다. 즉, 이 모델에서는 행동이 단순히 보상 학습(Q-learning)만으로 결정되는 것이 아니라, 선택 편향도 영향을 미친다고 가정한다.
+
+## 2. 실험 방법
+
+연구진은 위의 두 모델(기본 모델 vs. 편향 포함 모델)을 비교하기 위해 다음과 같은 실험을 수행했다. 각 참가자는 50번의 시행(trial)으로 구성된 총 10개의 독립적인 이중 선택 과제(two-armed bandit tasks)를 수행하였다. 
+
+보상 확률은 이전과 같다.
+
+$$ (p_{\text{left}}, p_{\text{right}}) = (0.2, 0.8) $$  
+$$ (p_{\text{left}}, p_{\text{right}}) = (0.8, 0.2) $$  
+
+
+초기 $$ Q $$ 값은 $$ Q_{\text{left}, 1} = Q_{\text{right}, 1} = 0.5 $$ 로 설정되었고, 두 가지 모델을 사용하여 데이터를 피팅(fitting)하고, 학습률 $$ \alpha $$ 및 소프트맥스 $$ \beta $$ 를 복원(recovery)하였다. 두 모델을 비교하여, 원래 사용된 $$ \alpha $$ 및 $$ \beta $$ 값이 얼마나 정확하게 복원되는지 figure 5에서 결과를 시각화하였다.
+
+3. 실험 결과: 편향을 포함하면 파라미터 복원 성능 향상
+
+<figure class='align-center'>
+    <img src = "/images/2025-03-12-Ten simple rules for the computational modeling of behavioral data/figure5.jpg" alt="">
+    <figcaption>figure 5. Modeling unimportant parameters provides better estimation of important parameters.</figcaption>
+</figure>
+
+figure 5에서 보듯이, 편향 $$ B $$ 를 포함한 모델을 사용할 때 학습률 $$ \alpha $$ 와 소프트맥스 $$ \beta $$ 의 복원 성능이 향상되었다.
+
+상단(기본 모델)은 편향을 고려하지 않은 상태에서 $$ \alpha $$ 와 $$ \beta $$ 를 복원하려고 하니, 데이터의 변동성이 커지는 것을 확인하였다. 결과적으로, 학습률 $$ \alpha $$ 와 소프트맥스 $$ \beta $$ 가 원래 설정된 값과 크게 다르게 복원되는 경우가 많았다. 반면 편향 $$ B $$ 를 모델에 추가한 후에는, $$ \alpha $$ 와 $$ \beta $$ 가 원래 설정된 값과 훨씬 더 잘 일치하는 결과가 나왔다. 이는 편향이 노이즈로 처리되지 않고 모델 내부에서 조정되므로, 학습률과 소프트맥스 값이 더 정확하게 추정되는 것으로 생각된다. 
+
+그렇다면 왜 이런 차이가 발생할까? 기본 모델에서는 편향 $$ B $$ 가 고려되지 않으므로, 데이터에서 편향에 의해 발생한 선택 패턴을 학습률 $$ \alpha $$ 또는 소프트맥스 $$ \beta $$ 의 변동으로 잘못 해석할 수 있다. 다시 말해 편향을 무시하면, 모델이 이를 "노이즈"로 간주하여 중요한 파라미터($$ \alpha $$, $$ \beta $$)가 왜곡될 수 있는데, 편향을 포함하면, 노이즈가 줄어들어 중요한 학습 파라미터를 더 정확하게 추정할 수 있다는 것이다.
+
+<br>
+
+
+
 
 
 
 
 
 <figure class='align-center'>
-    <img src = "/images/2025-03-12-Ten simple rules for the computational modeling of behavioral data/figure3.jpg" alt="">
-    <figcaption>figure 3. Parameter recovery for the Rescorla Wagner model (model 3) in the bandit task with 1000 trials.</figcaption>
+    <img src = "/images/2025-03-12-Ten simple rules for the computational modeling of behavioral data/figure4.jpg" alt="">
+    <figcaption>figure 4. Confusion matrices in the bandit task showing the effect of prior parameter distributions on model recovery. Numbers denote the probability that data generated with model X are best fit by model Y, thus the confusion matrix represents $$ p(\text{fit model} | \text{simulated model}) $$.</figcaption>
 </figure>
 
 
