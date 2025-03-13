@@ -348,27 +348,66 @@ figure 5에서 보듯이, 편향 $$ B $$ 를 포함한 모델을 사용할 때 �
 
 <br>
 
+# Box 7. Example: model validation where the fit model performs too well.
 
+이 부분에서는 모델 검증(model validation)에서 발생할 수 있는 또 다른 오류 사례를 설명한다. 이전 포스트에서 소개한 Palminteri et al. (2017) 사례에서는 모델이 너무 못해서 실패한 경우였지만, 이번 예제(Box 7)에서는 모델이 너무 잘해서 실패하는 경우를 보여준다. 여기서의 요점은 모델이 데이터를 지나치게 잘 예측하는 경우에도, 검증 과정에서 신중하게 해석해야 한다는 점을 강조한다.
 
+## 1. 실험 개요
 
+연구진은 강화 학습을 수행하는 두 개의 에이전트(agent) 를 비교했다. 에이전트들은 자극(stimulus)에 따라 특정 행동을 선택하면 보상을 받는 과제를 수행한다. 실험 과제는 결정적 자극-행동 학습(Deterministic Stimulus-Action Learning Task)으로, 피험자는 세 가지 자극(s1, s2, s3) 을 보고, 각 자극에 대해 보상을 받을 수 있는 세 가지 행동(a1, a2, a3) 중 하나를 선택해야 한다.
 
+조건은 다음과 같다. 
+- $$ s_1 $$ → $$ a_1 $$ 선택 시 보상  
+- $$ s_2 $$ → $$ a_1 $$ 선택 시 보상  
+- $$ s_3 $$ → $$ a_3 $$ 선택 시 보상  
+- $$ a_2 $$ 는 어떤 자극에서도 보상을 받을 수 없음.  
 
+즉, 참가자는 주어진 자극(s)에 따라 보상을 받기 위해 적절한 행동(a)을 학습해야 한다.
 
+## 2. 비교한 두 가지 강화 학습 모델
+
+### 1. 블라인드 에이전트(Blind Agent)
+
+자극(s)을 고려하지 않고 행동(a)에 대한 가치 $$ Q(a) $$ 만 학습하는 모델로, 특정 자극에서 어떤 행동이 가장 좋은지를 학습하는 것이 아니라, 전반적으로 어떤 행동이 좋은지를 학습한다. 이를 수식적으로 표현하면:
+
+$$
+Q(a_i) = Q(a_i) + \alpha \cdot (r - Q(a_i))
+$$
+
+- $$ Q(a_i) $$ : 행동 $$ a_i $$ 의 기대 보상 값  
+- $$ \alpha $$ : 학습률(learning rate)  
+- $$ r $$ : 받은 보상  
+
+이 모델은 단순한 행동-가치 기반 학습(Value-based learning) 모델로 자극(s)의 영향을 고려하지 않고, 행동 자체의 보상만을 학습한다.
+
+### 2. 상태 기반 에이전트(State-Based Agent)
+
+자극(s)과 행동(a)의 조합 $$ Q(a, s) $$ 을 학습하는 모델로, 각 자극마다 행동에 대한 별도의 보상 기대치를 학습한다. 이를 수식적으로 표현하면:
+
+$$
+Q(a_i, s_j) = Q(a_i, s_j) + \alpha \cdot (r - Q(a_i, s_j))
+$$
+
+- $$ Q(a_i, s_j) $$ : 자극 $$ s_j $$ 에서 행동 $$ a_i $$ 의 기대 보상 값  
+- $$ \alpha $$ : 학습률(learning rate)  
+- $$ r $$ : 받은 보상  
+
+이 모델은 각 자극마다 보상을 다르게 학습할 수 있고, 자극이 다를 경우 같은 행동을 선택하더라도 다른 결과를 학습할 수 있다.
+
+## 3. 실험 결과
+
+연구진은 두 모델을 이용해 데이터를 생성한 후, 두 모델을 각각 피팅하여 비교했다.
+
+블라인드 에이전트와 상태 기반 에이전트의 학습 곡선을 비교했을 때, 모델 파라미터를 적절히 조정하면, 두 모델의 학습 곡선이 매우 유사해질 수 있었다. 즉 눈으로 보았을 때 두 모델은 비슷한 방식으로 학습하는 것처럼 보였다.
+
+연구진은 상태 기반 모델(state-based model)이 두 에이전트(블라인드 vs. 상태 기반)의 행동을 얼마나 잘 예측하는지 평가했다.(figure 6B) 놀랍게도, 상태 기반 모델이 블라인드 에이전트의 행동을 더 높은 확률로 예측하는 결과가 나타났다. 블라인드 에이전트의 행동을 예측하는 정확도가 원래 상태 기반 모델의 행동을 예측하는 정확도보다 더 높았는데 이는 직관적으로 이해하기 어려운 결과이다.
 
 <figure class='align-center'>
-    <img src = "/images/2025-03-12-Ten simple rules for the computational modeling of behavioral data/figure4.jpg" alt="">
-    <figcaption>figure 4. Confusion matrices in the bandit task showing the effect of prior parameter distributions on model recovery. Numbers denote the probability that data generated with model X are best fit by model Y, thus the confusion matrix represents $$ p(\text{fit model} | \text{simulated model}) $$.</figcaption>
+    <img src = "/images/2025-03-12-Ten simple rules for the computational modeling of behavioral data/figure6.jpg" alt="">
+    <figcaption>figure 6. An example of successful and unsuccessful model validation. (A) Behavior is simulated by one of two reinforcement learning models (a blind agent and a state-based agent) performing the same learning task. Generative parameters of the two models were set so that the learning curves of the models were approximately equal. </figcaption>
 </figure>
 
 
+연구진은 이 결과가 노이즈(softmax 파라미터)의 차이 때문이라는 것을 발견했다. 블라인드 에이전트는 결정적(deterministic) 행동을 보이며, 노이즈가 낮은 반면 상태 기반 에이전트는 더 높은 노이즈를 가지며, 선택 행동이 불확실하다. 따라서, 상태 기반 모델은 블라인드 에이전트의 행동을 상대적으로 쉽게 예측할 수 있었던 반면, 상태 기반 에이전트 자신의 행동은 더 어렵게 예측되었다.
 
-
-<figure class='align-center'>
-    <img src = "/images/2025-03-12-Ten simple rules for the computational modeling of behavioral data/figure2.jpg" alt="">
-    <figcaption>figure 2. An example with multiple local minima.</figcaption>
-</figure>
-
-
-
-
-
+연구진은 상태 기반 모델을 피팅한 후, 피팅된 파라미터를 이용해 새로운 학습 곡선을 생성했다.(figure 6C) 상태 기반 모델을 원래 상태 기반 에이전트에 피팅하면, 유사한 학습 곡선이 생성지만 블라인드 에이전트에 피팅한 후 생성된 학습 곡선은 너무 잘 학습하는 경향을 보였다. 즉, 모델 검증을 수행해보니 상태 기반 모델은 블라인드 에이전트의 행동을 지나치게 잘 예측하고 있었음이 드러났다.
