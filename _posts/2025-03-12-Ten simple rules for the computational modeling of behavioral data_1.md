@@ -1,5 +1,5 @@
 ---
-title: "Ten simple rules for the computational modeling of behavioral data"
+title: "Ten simple rules for the computational modeling of behavioral data - Main article"
 date: 2025-03-12
 tags:
     - Modeling
