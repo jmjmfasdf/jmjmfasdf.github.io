@@ -93,25 +93,102 @@ SR 가설에서는 각 뉴런이 환경 내에서 미래 상태(successor state)
 
 <figure class='align-center'>
     <img src = "/images/2025-03-14-The hippocampus as a predictive map/figure3.jpg" alt="">
-    <figcaption>Figure 3 Behaviorally dependent changes in place fields.</figcaption>
+    <figcaption>Figure 3. Behaviorally dependent changes in place fields.</figcaption>
 </figure>
 
+## Hippocampus에서 SR 모델의 예측과 실험적 검증
+
+### 1. 장애물이 존재할 때 장소 필드의 변화 (Figure 3c–h)
+
+장소 세포의 발화 패턴이 단순한 공간적 위치에 따라 고정되지 않고, 행동 정책(transition policy)에 의해 영향을 받는다는 점이 중요하다. 기존 연구에 따르면 장소 필드는 장애물 근처에서 더 크게 변형(local remapping)되며, 장애물에서 멀어질수록 변화가 적다 (Alvernhe et al., 2018). 이러한 실험 결과를 SR 모델을 통해 시뮬레이션하여 비교하였다.
+
+SR 모델은 동물이 환경을 탐색하면서 학습한 이동 정책에 따라 장소 필드가 조정될 수 있음을 가정한다. 따라서 장애물이 추가되면 동물은 새로운 최적 경로를 따르게 되며, 이에 따라 장소 필드도 영향을 받는다. 특히, 장애물 가까이에 위치한 장소 필드는 변경된 이동 경로로 인해 발화율이 크게 변하는 반면, 장애물에서 멀리 떨어진 장소 필드는 상대적으로 적은 변화를 보인다.
+
+Figure 3d에서는 Tolman detour maze(Figure 3c)에서 장애물이 추가되었을 때(Barrier Insertion), 장애물 근처에서 장소 필드(상단)가 급격히 변화하는 양상을 보여준다. 통계적으로도 유의미한 차이가 나타났으며(P < 0.001), 이는 장소 필드가 환경 내 장애물 배치에 따라 동적으로 조정될 수 있음을 시사한다.
+
+Figure 3f–h에서는 SR 모델을 이용한 시뮬레이션 결과를 제시한다. Figure 3f는 사용한 미로의 모양을 제시하며, Figure 3g는 SR 모델로 시뮬레이션한 결과를 보여준다. SR 모델에서는 장애물 근처의 장소 필드(상단)가 크게 변형되었으며, 먼 지역(하단)에서는 상대적으로 변동이 적었다. 특히, 초기 장애물 삽입 위치에 따라 장소 필드의 변화 양상이 다르게 나타났으며, 이는 이동 정책이 반영된 결과임을 보여준다.
+
+이러한 결과를 종합하면, SR 모델은 장애물이 환경에 삽입되었을 때 동물의 행동 정책 변화에 따라 장소 필드가 어떻게 조정되는지를 설명할 수 있는 강력한 모델임을 확인할 수 있다. 이는 기존 Gaussian 모델이 장애물을 고려하지 않는 한계를 극복하는 중요한 특징이다.
+
+### 2. 보상의 영향을 받은 장소 필드의 변화 (Figure 3i–l)
+
+장소 필드의 발화 패턴은 단순한 환경적 요소뿐만 아니라, 보상(reward)과 같은 행동적으로 중요한 요인에 의해서도 조정될 수 있다. Hollup et al.(2001)의 연구에서는 동물이 은폐된 보상(hidden reward)이 있는 위치에서 더 많은 시간을 머물렀으며, 이에 따라 보상 위치 주변에서 장소 필드가 더 밀집하는 경향이 관찰되었다. 
+
+SR 모델이 이러한 보상의 영향을 어떻게 설명할 수 있는지 시뮬레이션을 통해 분석하였다. 이 실험은 **Hollup et al.(2001)**의 환형 수중 미로(Annular Water Maze) 실험을 기반으로 한다. 동물(주로 쥐 또는 랫)이 **수영해야만 이동할 수 있는 원형의 미로(링 모양의 수조)**에서 특정한 위치에 숨겨진 보상(플랫폼)이 있을 때, 장소 필드(place fields)가 어떻게 변하는지를 연구하였다. Figure 3ㅑ, j에서 SR 모델을 사용하여 보상 위치에서의 발화 패턴을 재현한 결과, **보상 근처에서 장소 필드가 더욱 밀집되는 경향이 나타났으며, 보상 직전 상태에서도 발화율이 증가하는 양상**이 확인되었다. 이는 SR 모델이 강화학습(reinforcement learning)의 특성을 반영하여, 보상이 있는 위치뿐만 아니라 그 직전 상태에서도 발화 패턴이 조정될 수 있음을 시사한다.
+
+Figure 3k에서는 보상의 위치가 불확실할 때, SR 모델에서도 장소 필드가 부드럽게 변화(smoothing)하고, 발화 중심이 뒤쪽으로 이동하는 현상이 나타났다. 이는 실험에서 관찰된 asymmetric firing field를 잘 설명할 수 있는 중요한 특징이다. 그러나 SR 모델이 모든 실험 결과를 완벽하게 설명하는 것은 아니다. 예를 들어, 실험에서는 보상 위치에서 장소 필드의 크기가 일정하게 유지되었지만, SR 모델은 보상 근처에서 장소 필드의 크기가 커질 것이라고 예측하였다.(Figure 3l) 이는 SR 모델이 아직 보상에 대한 장소 필드의 변화를 완벽하게 반영하지 못하는 한계를 나타낸다.
+
+### 3. 비공간적 환경에서의 SR 모델 적용 (Figure 4a–g)
+
+SR 모델이 단순히 공간적(spatial) 환경에서만 유용한 것이 아니라, 비공간적(non-spatial) 태스크에서도 적용 가능할 수 있음을 검증하였다.
+
+Schapiro et al.(2013)의 연구에서는 인간 피험자들에게 특정한 그래프(graph) 구조를 기반으로 한 프랙탈 자극(fractal stimuli)을 학습시키고, 실험 중 피험자들에게 랜덤 워크(random walk)를 통해 특정한 순서로 자극을 제시하고, 학습이 진행됨에 따라 hippocampus에서의 신경 신호 변화를 관찰하였다. Figure 4b의 결과에서, 특정 영역에서 같은 커뮤니티 내의 상태들이 강하게 연관된 신호 패턴을 보였다.
+
+Figure 4a–d에서는 실제 실험에서 관찰된 hippocampal 신호의 패턴 유사성 결과를 보여준다. 
+
+<figure class='align-center'>
+    <img src = "/images/2025-03-14-The hippocampus as a predictive map/figure4.jpg" alt="">
+    <figcaption>Figure 4. Hippocampal representations in nonspatial task.</figcaption>
+</figure>
+
+Figure 4e–g에서는 SR 모델을 적용하여 실험 결과를 재현한 결과, SR 행렬(SR matrix)에서도 동일한 커뮤니티 구조가 나타났으며, SR 기반의 다차원 스케일링(MDS, Multidimensional Scaling)을 통해 실험 결과와 유사한 구조가 형성됨이 확인되었다. 이러한 결과는 SR 모델이 공간적 정보뿐만 아니라, 일반적인 상태(state) 간의 관계를 반영하는 보편적인 기제로 작용할 수 있음을 시사한다.
+
+### 4. 시공간적(spatiotemporal) 태스크에서의 SR 적용 (Figure 5a–f)
+
+Hippocampus가 단순한 공간적 정보 저장소가 아니라, 공간적 정보와 시간적 정보를 통합적으로 반영하는 역할을 수행할 수 있는가? 이에 대한 검증을 위해 Deuker et al.(2016)의 연구를 기반으로 SR 모델을 적용하였다.
+
+Figure 5a–c에서는 피험자들은 가상의 도시(virtual city)에서 특정한 물체를 탐색하는 태스크를 수행하였다. 실험 환경에서는 일반적인 이동 경로(winding path)뿐만 아니라 특정 장소 간 순간이동(teleportation)도 가능하도록 설정, 즉 공간적으로 먼 두 지점이라도 텔레포트 기능이 있으면 짧은 시간 내에 이동할 수 있는 환경이 조성되었다. 이는 공간적 근접성(spatial proximity)과 시간적 근접성(temporal proximity)을 분리할 수 있는 실험 조건을 제공한다. Figure 5b에서는 hippocampal representational similarity(해마의 신경 표현 유사성)를 분석하였다. 실험 결과, 단순히 공간적으로 가까운 장소들뿐만 아니라, 시간적으로 가까운 장소들도 hippocampus 내에서 유사한 방식으로 인코딩됨이 확인되었다.
+이는 hippocampus가 순수한 공간적 정보만을 저장하는 것이 아니라, 이동 경로와 시간적 관계를 함께 반영하고 있음을 시사한다.
+
+다만 공간적 근접성과 시간적 근접성이 서로 상관관계를 가질 수 있기 때문에, 연구자들은 공간적 요인을 통제한 상태에서 시간적 관계의 효과를 분석하였다(Figure 5c). 통계적으로 P<0.05 수준에서 유의미한 차이가 확인되었으며, 공간적 근접성과 독립적으로 시간적 근접성 또한 hippocampal 신경 표현을 결정하는 요인임을 보였다.
+
+<figure class='align-center'>
+    <img src = "/images/2025-03-14-The hippocampus as a predictive map/figure5.jpg" alt="">
+    <figcaption>Figure 5. Hippocampal representations in spatiotemporal task.</figcaption>
+</figure>
+
+이후 SR 모델을 이용하여 동일한 실험 태스크를 시뮬레이션하고, 모델이 학습한 상태 표현(state representation)이 hippocampus의 신경 표현과 유사한 패턴을 나타내는지 검증하였다. Figure 5d–f에서는 SR 모델이 학습한 상태 표현을 분석하였으며, 실험 데이터에서 관찰된 공간적-시간적 관계가 SR에서도 반영됨을 확인하였다. SR 모델은 현재 상태에서 미래 상태를 예측하는 방식으로 학습되므로, 이동 경로와 소요 시간을 반영한 상태 표현을 학습하는 것이 가능하다. 이를 통해 hippocampus에서 관찰된 신경 패턴과 SR 모델의 예측이 일치한다는 점을 검증하였다.
+
+## Entorhinal Grid Cells의 역할: Predictive Map의 차원 축소 (Dimensionality Reduction of the Predictive Map by Entorhinal Grid Cells)
+
+Hippocampus의 공간적 표현이 SR(Successor Representation)이라는 예측 기반 지도(predictive map) 형식으로 구성된다고 가정할 때, entorhinal grid cells는 이 지도에서 차원 축소(dimensionality reduction) 역할을 수행할 수 있는가? 이 질문에 대한 답을 찾기 위해, 연구진은 grid cells가 SR의 저차원 고유벡터(eigendecomposition)를 반영한다는 가설을 제시하였다.
+
+### 1. 기존 Grid Cell 이론과 SR 가설의 통합
+
+Entorhinal grid cells는 격자 형태(hexagonal pattern)의 공간적 발화(spatial firing)를 가지며, 위치 추적(dead reckoning)에 기여한다는 가설이 제안된 바 있다(Hafting et al., 2005). 그러나, 다른 연구들은 grid cells의 발화 패턴이 해마(hippocampus)의 공간 지도(cognitive map)를 저차원으로 압축한 결과일 수 있다고 주장했다.
+
+이에 따라, 본 연구에서는 grid cells가 SR의 고유벡터(eigenvectors)로 표현될 수 있으며, 이를 통해 환경의 전이(transitional dynamics) 정보를 내재적으로 반영할 수 있다는 가설을 제시하였다. 즉, grid fields는 SR의 저차원 구조를 나타내는 뉴런의 집합으로 볼 수 있으며, 이 가설의 주요 예측 중 하나는 환경의 경계(boundary conditions)에 따라 grid cell의 발화 패턴이 달라진다는 점이다.
+
+### 2. Grid Cell의 Boundary Sensitivity 실험 (Krupic et al., 2015)
+
+이 가설을 검증하기 위해, **Krupic et al. (2015)**는 환경의 기하학적 경계를 조작하여 grid cell의 반응이 어떻게 변화하는지 연구하였다. 연구진은 사각형(Square)과 원형(Circular) 환경을 비교하였으며, 각각의 환경에서 grid cell의 정렬(grid alignment) 패턴을 분석하였다. 그 결과, 사각형 환경에서는 grid field가 일정한 방향으로 정렬되었다.(Figure 6b) 이는  grid field의 **육각 대칭(hexagonal symmetry, 60° 간격 정렬)**으로 인해 발생할 가능성이 높다. 원형 환경에서는 Grid cells의 정렬이 불규칙적이고 가변적(variable alignment)이며, 특정 경계에 고정되지 않았다.(Figure 6c) 이는 원형 환경이 회전 대칭(rotational symmetry)을 가지며, grid cells가 특정 경계를 기준으로 정렬할 필요가 없기 때문으로 해석된다.
+
+이러한 결과는 grid cells가 단순히 유클리드 거리(Euclidean distance)를 기반으로 하는 것이 아니라, 환경의 구조적 요소를 반영하여 작동할 가능성을 시사한다.
+
+### 3. 사각형과 사다리꼴 환경 비교: Split-Halves 분석 (Figure 6d, 6e 참고)
+
+<figure class='align-center'>
+    <img src = "/images/2025-03-14-The hippocampus as a predictive map/figure6.jpg" alt="">
+    <figcaption>Figure 6 Grid fields in geometric environments.</figcaption>
+</figure>
+
+Krupic et al. (2015)는 grid cell이 환경의 비대칭적 구조(asymmetrical boundaries)에 따라 다르게 반응하는지 확인하기 위해, 사각형(sq)과 사다리꼴(tr) 환경을 비교하였다. 사각형 환경에서는 grid field가 환경의 양쪽에서 유사한 패턴을 보였고, grid cell의 발화 패턴은 환경 좌우(side-to-side)에서 큰 차이가 없었다.(Figure 6d) 사다리꼴 환경에서는 grid field의 구조가 양쪽에서 다르게 나타났는데, 환경이 **비대칭적(asymmetrical)**으로 변경될 경우, grid cell의 정렬이 깨지고, 양쪽에서 서로 다른 발화 패턴을 형성하는 것이 관찰되었다. 특히, 자동 상관분석(autocorrelation analysis) 결과, trapezoidal 환경에서는 grid pattern의 반복 주기가 양쪽에서 달라지는 것으로 확인되었다(Figure 6e).
+
+이러한 결과는 grid cell이 단순한 공간적 거리 측정 도구가 아니라, 환경의 전이 확률(transition probability)과 경계 구조를 반영하는 예측 기반 표현(predictive representation)을 구성할 가능성이 높다는 점을 시사한다.
+
+### 4. SR Eigenvector 모델을 통한 Grid Field 시뮬레이션 (Figure 6f–h 참고)
+
+연구진은 SR 모델을 기반으로 한 시뮬레이션을 수행하여, **grid field가 환경의 기하학적 구조에 따라 어떻게 변화하는지** 분석하였다. SR 모델에서 추출한 고유벡터(eigenvectors)를 이용하여 grid field를 시뮬레이션한 결과, 실험 결과와 유사한 패턴이 관찰되었다. (Figure 6f–h). 또한 원형 환경에서 eigenvector의 방향성이 불규칙적으로 변하는 반면, 사각형 환경에서는 경계를 따라 정렬되는 경향을 보였다. (Figure 6g, j). 사각형 환경에서 사다리꼴 환경으로 이동하면, SR의 고유벡터도 비대칭적으로 변화하며, grid field의 구조가 달라졌다. 이러한 결과는 grid cell이 SR의 저차원 고유벡터를 반영하며, 환경의 구조에 따라 그 표현이 변화한다는 가설을 뒷받침한다.
+
+### 5. 
 
 
-
-
-
+## Subgoal discovery using grid fields
 
 
 
 
 <figure class='align-center'>
-    <img src = "/images/2025-03-14-The hippocampus as a predictive map/figure1.jpg" alt="">
-    <figcaption>figure 1. caption</figcaption>
-</figure>
-
-
-<figure class='align-center'>
-    <img src = "/images/2025-03-14-The hippocampus as a predictive map/figure3.jpg" alt="">
-    <figcaption>Figure 3 Behaviorally dependent changes in place fields.</figcaption>
+    <img src = "/images/2025-03-14-The hippocampus as a predictive map/figure6.jpg" alt="">
+    <figcaption>Figure 6 Grid fields in geometric environments.</figcaption>
 </figure>
