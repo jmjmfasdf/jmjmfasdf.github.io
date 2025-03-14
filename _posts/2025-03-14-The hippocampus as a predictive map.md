@@ -182,18 +182,98 @@ Krupic et al. (2015)는 grid cell이 환경의 비대칭적 구조(asymmetrical 
 
 ### 5. Grid Cells의 Boundary Sensitivity와 환경 구조에 따른 변화 (Figure 7, 8 분석)
 
+Grid cells의 발화 패턴은 단순히 공간의 유클리드적 구조를 반영하는 것이 아니라, 환경의 경계(boundary)와 공간적 전이 구조(transition structure)에 의해 결정된다. Krupic et al. (2015)의 연구는 grid cell이 환경 회전에 어떻게 반응하는지, 그리고 비정형적인 환경(예: hairpin maze)에서 어떻게 발화 패턴이 변화하는지를 분석하였다.
 
+Krupic et al. (2015)의 주요 발견 중 하나는 사각형 환경을 회전시켜도 grid cell의 정렬(alignment)은 원거리 단서(distal cues)가 아니라 환경의 경계(boundaries)에 고정된다는 점이다. SR 모델에서는 grid cell의 발화 패턴이 환경의 전이 구조(transition structure)에 의해 결정되므로, 환경이 회전되더라도 grid field가 경계를 기준으로 유지되는 특성이 자동적으로 나타난다. (Figure 7a)
 
-
-
-
-
-## Subgoal discovery using grid fields
-
-
-
+SR 모델에서 grid field는 환경의 전이 확률을 반영하므로, 경계가 변화하지 않는 한 grid alignment가 그대로 유지됨을 관찰하였다. (Figure 7b–c)
 
 <figure class='align-center'>
-    <img src = "/images/2025-03-14-The hippocampus as a predictive map/figure6.jpg" alt="">
-    <figcaption>Figure 6 Grid fields in geometric environments.</figcaption>
+    <img src = "/images/2025-03-14-The hippocampus as a predictive map/figure7.jpg" alt="">
+    <figcaption>Figure 7. Grid fragmentation in compartmentalized maze.</figcaption>
 </figure>
+
+### Grid Cell의 환경 적응 및 공간 표현 변화
+
+**다중 구획 환경에서의 Grid Field 변화**
+
+격자 세포(Grid cells)는 초기에는 각 구획(compartment)별로 독립적인 격자 구조(grid fields)를 형성하지만, 시간이 지나면서 더 넓은 범위를 포괄하는 전역적(global) 격자 패턴으로 변화하는 특징을 보인다. 이를 통해 격자 세포가 단순한 유클리드적 공간 측정 장치가 아니라, 환경의 구조적 특성을 반영하는 예측 지도(predictive map) 역할을 할 가능성이 제기된다.
+
+Carpenter et al.(2015) 연구에서는 **다중 구획 환경(multi-compartment environment)**에서 격자 세포의 활동이 시간이 지나면서 어떻게 변화하는지를 분석한 결과, 초기에는 개별 구획(compartment)에서 동일한 격자 패턴(repeated grids)이 나타났다. 하지만 여러 날 동안 탐색한 후에는 격자 패턴이 점점 더 넓은 영역을 포함하는 전역적(global) 패턴으로 변형되었으며, 동시에 격자 패턴의 규칙성이 감소하였다(Figure 8d,f). 또한, 두 개의 서로 다른 방(room)에서 기록된 격자 패턴 간의 유사성이 감소하는 현상(Figure 8c)이 관찰되었다. 즉, 시간이 지나면서 개별 compartment별로 독립적으로 유지되던 격자 구조가 전체 공간을 반영하는 하나의 격자로 통합되는 과정이 나타났다.
+
+연구진은 SR(Successor Representation) 모델을 활용하여 초기에는 동물이 각 compartment가 어떻게 연결되어 있는지 모른다고 가정하고, 각 구획에서 독립적인 격자 패턴을 형성하도록 설정하였다. 이후, SR의 고유벡터(eigenvectors)를 학습하면서 격자 패턴이 점점 더 전역적인 구조를 반영하도록 변화하는 과정을 구현하였다. 이 과정에서 초기에는 두 개의 방(room)에 동일한 격자 패턴을 유지하던 것이, 학습이 진행됨에 따라 서로 다른 구조로 변화하였다. 결과적으로, 시간이 지남에 따라 개별 compartment에 대한 격자 표현이 점점 더 전역적인 구조를 반영하는 패턴으로 변화하였으며, 두 개의 방에서의 격자 표현 유사성이 점점 감소하였다. (Figure 8i) 이러한 결과는 격자 세포가 단순히 공간을 유클리드적으로 측정하는 장치가 아니라, 환경의 구조적 특성을 반영하여 예측 지도를 형성할 가능성이 있음을 시사한다.
+
+<figure class='align-center'>
+    <img src = "/images/2025-03-14-The hippocampus as a predictive map/figure8.jpg" alt="">
+    <figcaption>Figure 8. Grid fields in a multicompartment environment.</figcaption>
+</figure>
+
+**Discount Factor(γ)와 Grid Field 변화의 관계**
+
+R 행렬은 여러 개의 전이 확률 행렬(transition probability matrix)의 가중합(weighted sum)으로 표현될 수 있으며, discount factor(γ)의 크기에 따라 학습되는 고유벡터의 특성이 달라진다. γ가 클수록(longer timescales 반영) 더 넓은 공간을 반영하는 대규모 격자 패턴이 강화되며, γ가 작을수록(shorter timescales 반영) 보다 지역적인 공간 패턴이 강화된다. 이러한 결과는 hippocampus가 다양한 시간적 스케일에서 환경을 인코딩할 수 있는 메커니즘을 가질 수 있음을 시사한다. 즉, discount factor(γ)를 조절하는 방식으로 hippocampus 내에서 계층적인 공간 표현이 가능할 수 있음을 보여준다.
+
+**Grid Fields의 불규칙성 감소와 Regularization 효과**
+
+격자 세포의 신호는 환경 적응 과정에서 시간이 지나면서 불규칙해지는 경향이 있다. Carpenter et al.(2015) 연구에서는 학습이 진행됨에 따라 격자 패턴의 규칙성이 감소하는 현상이 관찰되었다. 연구진은 SR 모델을 기반으로 이러한 현상이 발생하는 원인을 규명하였다.
+
+격자 세포는 SR 행렬의 저차원 표현(low-dimensional representation)을 기반으로 학습하는데, SR 행렬의 고유벡터를 활용한 투영 과정에서 noise가 제거되며, 학습 초기에 비해 점차 예측 지도(predictive map)의 형태를 반영하는 구조로 변화한다. 이러한 과정은 스펙트럼 정규화(spectral regularization)와 유사한 방식으로 작동하여 학습이 진행될수록 고유벡터의 구조가 변형된다. (Supplementary Figure 12) 결과적으로, SR 모델의 고유벡터를 활용한 투영 과정은 학습 초기에 존재하는 noise를 제거하면서 점진적으로 최적화된 격자 구조를 형성하게 된다.
+
+**Grid Fields와 Hierarchical Planning의 연결 가능성**
+
+이 연구는 격자 세포가 단순한 공간 좌표(coordinate system)로서 작동하는 것이 아니라, 환경의 구조를 반영하는 예측 지도(predictive map)를 형성하며, 계층적 계획(hierarchical planning)과 연계될 가능성이 있음을 시사한다. 격자 세포는 단순한 유클리드 공간 좌표 체계가 아니라, 예측 지도(predictive map)와 계층적 계획(hierarchical planning)에 기여할 가능성이 크다.
+
+결론적으로, 격자 세포는 시간이 지남에 따라 compartment별 독립적인 격자 패턴에서 전역적(global) 패턴으로 변화하며, discount factor(γ)에 따라 공간 표현이 달라질 수 있으며, 학습 과정에서 noise를 제거하는 regularization 효과가 나타난다. 이러한 과정은 hippocampus와 entorhinal cortex에서 관찰되는 격자 세포의 공간 표현 변화와 일치할 가능성이 있으며, hippocampus가 환경의 구조를 학습하고 예측하는 기능을 수행할 수 있음을 강력히 시사한다.
+
+## Grid Fields와 Subgoal Discovery
+
+구조화된 환경(structured environment)에서 효율적인 계획(planning)을 수행하기 위해서는 작업을 여러 개의 하위 목표(subgoals)로 나누는 것이 효과적이다. 하지만, 적절한 subgoal을 자동으로 발견하는 것은 어려운 문제이다. 이 연구에서는 SR(Successor Representation) 모델의 고유벡터(eigenvectors)를 활용하여 중요한 ‘bottleneck states’를 찾아 subgoal을 설정하는 방법을 제안한다.
+
+### SR 모델을 이용한 서브골 추론
+
+SR 모델에서는 가장 큰 공간적 규모(spatial scale)를 갖는 고유벡터(eigenvector)가 환경 내의 주요한 병목 상태를 중심으로 공간을 분할하는 역할을 한다. Supplementary Figure 13에서는 이원 결정 과제(two-step decision task) 및 **다중 구획 환경(multi-compartment environment)**에서 발견된 서브골의 위치를 시뮬레이션하였다. 결과적으로, 발견된 서브골이 문(doorway)이나 결정 지점(decision points) 근처에 위치하는 경향이 있는 것으로 나타났다. 이는 높은 수준의 계획(high-level planning)을 수행할 때 자연스러운 서브골이 형성됨을 시사한다.
+
+이러한 서브골 탐색은 SR 행렬의 **할인 계수(discount factor, γ)**에 따라 달라진다. 할인 계수가 큰 경우(γ ↑), SR은 더 광범위한 공간 구조를 반영하게 되며, 대규모 공간적 패턴과 연결된 격자 요소(grid components)에 투영된다(Supplementary Fig. 10). 반면, 할인 계수가 작은 경우(γ ↓)는 보다 세밀한 지역적 공간 표현이 강화된다. Supplementary Figure 6에서는 같은 공간 내의 상태들이 유사하게 인코딩되는 경향이 관찰되었으며, 이러한 클러스터 간의 연결을 정의하는 서브골이 각 고유값(eigenvalue) 임계값에 따라 달라질 수 있음을 보여준다.
+
+### 격자 세포와 위계적 계획(Hierarchical Planning)의 연결
+
+신경학적 연구에서는 **entorhinal cortex의 병변(lesions)**이 탐색 과제(navigation task) 수행에 부정적인 영향을 미치며, 해마에서의 **순차적 활성화(temporal ordering)**를 방해하는 반면, 단순한 위치 인식(location recognition) 능력에는 영향을 미치지 않는다는 결과가 보고되었다(참조: 29, 32번 논문). 이는 격자 세포(grid cells)가 단순한 공간 인코딩 역할을 넘어 공간적 계획(spatial planning) 및 위계적 계획(hierarchical planning) 과정에 필수적인 역할을 할 가능성을 시사한다.
+
+따라서, SR 모델을 기반으로 한 격자 세포의 고유벡터는 환경을 위계적으로 구조화하는 데 기여할 수 있으며, 탐색 전략에서 서브골을 정의하는 중요한 기제(mechanism)로 작용할 수 있다. 이러한 결과는 해마-격자 세포 시스템이 단순한 공간 내비게이션뿐만 아니라, 더 복잡한 계층적 계획(hierarchical planning)에도 중요한 역할을 할 가능성이 높음을 시사한다.
+
+<br>
+
+# Discussion
+
+해마(hippocampus)는 오랫동안 **인지 지도(cognitive map)**를 형성하는 역할을 수행한다고 여겨져 왔다. 전통적인 해마 지도 개념은 공간적(spatial) 정보를 기반으로 한다는 점에서 **공간 지도(spatial map)**와 동일시되어 왔으나, 이는 해마의 대표적인 신경 활성 패턴을 완전히 설명하지 못한다. 예를 들어, **장소 세포(place cells)**의 활성 패턴이 단순한 유클리드 공간 정보가 아니라 동물의 **행동 정책(behavioral policy)**이나 환경의 **위상적 구조(topology)**에 의해 변화하는 현상을 설명하기 어렵다. 이에 대해 본 연구에서는 해마가 단순히 공간을 인코딩하는 것이 아니라 예측적(predictive) 기능을 수행하며, 이를 강화학습(reinforcement learning, RL) 프레임워크 내에서 공식화할 수 있음을 제안하였다.
+
+### 해마의 예측적 기능과 강화학습
+
+해마의 예측적 기능과 관련된 연구는 기존에도 존재했다. 예를 들어, Gustafson & Daw는 해마에서 **위상적으로 민감한 공간 표현(topologically sensitive spatial representations)**이 강화학습 과정에서 중요한 역할을 한다고 제안했다. 특히, 위상적 구조를 인코딩하는 것이 복잡한 공간 환경에서의 강화학습을 용이하게 한다는 점을 보여주었다. 또한, **Foster et al. (2000)**의 연구에서는 장소 세포가 강화학습에서 중요한 특징(feature) 역할을 할 수 있음을 보여주었지만, 공간 표현이 위상적 구조를 명시적으로 인코딩하는 것은 아니었다.
+
+본 연구는 이러한 선행 연구들을 확장하여, **후행 표현(successor representation, SR)**이 해마에서 자연스럽게 위상적 구조를 인코딩하는 방식을 제안한다. SR은 단순한 공간적 지도보다 강화학습을 보다 효율적으로 수행할 수 있도록 한다. **Dordek et al. (2016)**은 가우시안 장소 세포(Gaussian place cells)의 주성분 분석(principal component analysis)을 수행한 결과, **격자 세포(grid cells)**와 유사한 활성 패턴을 보인다는 점을 발견했다. 이는 해마와 내후각 피질(entorhinal cortex)에서의 공간 표현이 단순한 유클리드적 공간 정보가 아니라, 예측적 구조를 반영할 가능성을 시사한다.
+
+### SR과 모델 기반 학습(Model-based Learning)의 관계
+
+SR은 **모델-프리 학습(model-free learning)**과 모델-기반 학습(model-based learning) 사이의 중간 단계에 해당하는 학습 방식으로 볼 수 있다. 모델-프리 학습에서는 강화학습 에이전트가 **보상 이력(reward history)**을 기반으로 캐시된 값(look-up table)을 저장하여 정책을 최적화한다. 반면, 모델-기반 학습은 보상 구조가 변화해도 유연하게 적응할 수 있지만, **트리 탐색(tree search)**과 같은 비효율적인 계산이 필요하다.
+
+SR은 이 두 가지 학습 방식의 장점을 결합한다. SR을 사용하면 **예측적 표현(predictive representation)**과 **보상 표현(reward representation)**을 분리하여 저장할 수 있으므로, 보상이 변화해도 환경의 상태 전이(state transition dynamics)를 재학습할 필요 없이 빠르게 가치(value) 재계산이 가능하다. 예를 들어, **문맥 사전 노출 촉진 효과(context pre-exposure facilitation effect)**는 동물이 환경을 사전 탐색할 기회를 가질 경우 이후 공포 조건화(fear conditioning)가 더 빠르게 학습된다는 연구 결과이다.(Rudy et al., 2004).
+
+기존 연구에서는 이러한 현상이 해마가 문맥적 표현(conjunctive representation)을 형성하기 때문이라고 해석해 왔다. 그러나 SR 모델을 적용하면, 해마가 사전 탐색 과정에서 해당 환경의 예측적 표현을 학습하고, 이후 공포 자극(shock)이 발생했을 때 이 정보를 기반으로 빠르게 학습을 진행할 수 있음을 설명할 수 있다(Supplementary Figure 14 참조).
+
+### SR과 해마 내 모델 기반 탐색(Model-based Search)의 결합
+
+해마에서 예측적 인코딩(predictive encoding)과 관련된 또 다른 연구는 **세타 위상(theta phase)와의 정렬(alignment)**을 기반으로 한 순차적 코딩(sequential coding)이다 **(Hasselmo, 2005).** 해마에서는 샤프 웨이브-리플(sharp wave-ripple) 이벤트 중에 특정 행동 경로를 재생(replay)하는 것이 모델 기반 탐색(model-based search)과 연결될 수 있음이 밝혀졌다**(Foster & Wilson, 2006)**.
+
+그러나 SR 모델은 이러한 모델 기반 탐색과 달리, **예측적 비율 코딩(predictive rate coding)**을 기반으로 동작한다. 예를 들어, **역방향 확장(backward expansion)**을 통해 장소 세포(place cells)가 특정 환경에서 뒤쪽 방향으로 확장되는 현상을 설명할 수 있다(Supplementary Note Section 1 참조).
+
+SR은 기존의 모델 기반 탐색을 완전히 대체할 수는 없지만, 탐색 범위를 확장하는 기능을 수행할 수 있다. 예를 들어, 해마에서 순차적 탐색(sweep)이 SR 공간에서 수행된다면(Supplementary Figure 15f, g 참조), 기존보다 더 먼 미래 상태를 예측하는 것이 가능해질 수 있다. 이는 부트스트랩된 탐색(bootstrapped search) 알고리즘과 유사한 개념이다 **(Sutton, 1990).**
+
+### SR 모델의 한계와 보완 기제
+
+SR 모델이 훈련되는 방식은 동물이 경험한 정책(policy)에 따라 학습된다는 점을 특징으로 한다. 보상이 변화하면, 기존의 SR을 활용하여 새로운 가치 함수(value function)를 계산하지만, 이는 이전 정책을 기반으로 하기 때문에 최적 정책과 일치하지 않을 가능성이 있다. 이 문제는 정책 일반화(policy generalization) 또는 **탐색 기반 업데이트(sweep-based update)**를 통해 해결할 수 있다.
+
+예를 들어, Dyna 모델(참조: 46번 논문)은 환경 모델을 기반으로 통계적 정보를 업데이트하는 방식을 제안하며, SR 역시 이러한 방식으로 업데이트될 수 있다. 인간 실험에서도 보상이 변경될 경우 정책-의존적(policy-dependent) 방식으로 가치 재평가(revaluation)가 이루어진다는 증거가 보고되었다**(Gläscher et al., 2010).**
+
+
+
+
