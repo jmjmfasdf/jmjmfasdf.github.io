@@ -34,7 +34,7 @@ MVPA(Multivoxel Pattern Analysis, 다중복셀 패턴 분석) 는 단변량 분�
 
 ## Decoding analyses
 
-디코딩 분석은 특정 신경 반응 패턴을 기반으로 어떤 조건(자극이나 인지 상태 등)이 이를 유발했는지를 예측하는 분석 기법이다. 이는 전통적인 단변량 분석과는 추론의 방향이 반대라는 점에서 차이가 있다. 전통적인 단변량 분석은 특정 조건에서 뇌의 특정 영역이 활성화되는지 여부를 평가하는 방식으로, **P(뇌 활성 | 조건)** 을 분석한다. 반면, 디코딩 분석은 주어진 신경 반응 패턴이 어떤 조건에서 유발되었는지를 추론하는 것으로, **P(조건 | 뇌 활성)** 을 분석하는 접근법이다.
+디코딩 분석은 특정 신경 반응 패턴을 기반으로 어떤 조건(자극이나 인지 상태 등)이 이를 유발했는지를 예측하는 분석 기법이다. 이는 전통적인 단변량 분석과는 추론의 방향이 반대라는 점에서 차이가 있다. 전통적인 단변량 분석은 특정 조건에서 뇌의 특정 영역이 활성화되는지 여부를 평가하는 방식으로, **P(뇌 활성 \mid 조건)** 을 분석한다. 반면, 디코딩 분석은 주어진 신경 반응 패턴이 어떤 조건에서 유발되었는지를 추론하는 것으로, **P(조건 \mid 뇌 활성)** 을 분석하는 접근법이다.
 
 디코딩 분석에는 크게 두 가지 주요 방법이 있다. 첫 번째는 **분류(Classification)** 로, 신경 반응 패턴을 바탕으로 자극이 특정 범주(category)에 속하는지를 예측하는 방법이다. 예를 들어, 특정 신경 반응이 분노한 얼굴(angry face) 과 놀란 얼굴(surprised face) 중 어느 자극에서 유발되었는지를 예측할 수 있다. 주로 서포트 벡터 머신(SVM), 로지스틱 회귀(Logistic Regression) 등의 기계 학습 알고리즘이 사용된다. 두 번째 방법은 **회귀(Regression)** 로, 신경 반응 패턴을 바탕으로 연속적인 값(continuous value)을 예측하는 방식이다. 예를 들어, 주어진 신경 반응이 유발된 얼굴이 얼마나 화가 난 얼굴인지(0~100의 연속 값으로 평가)를 예측할 수 있다. 선형 회귀(Linear Regression), 랜덤 포레스트 회귀(Random Forest Regression)와 같은 알고리즘이 주로 활용된다. 디코딩 분석의 과정은 데이터 분할-학습-평가-결과 해석의 절차를 따르며, 성능은 Accuracy, Specificity, Sensitivity 등의 지표를 사용할 수 있다.
 
@@ -51,8 +51,8 @@ MVPA(Multivoxel Pattern Analysis, 다중복셀 패턴 분석) 는 단변량 분�
 예를 들어 광고판에 있는 커다란 얼굴 사진과 종이에 그린 작은 웃는 얼굴을 비교해 보자. 두 이미지의 세부적인 얼굴 특징(눈, 코, 입의 모양 등)은 매우 다를 수 있다(즉, 일차적 동형성이 없음). 그러나 눈은 코보다 가깝고, 코는 입보다 위에 위치하는 등 **얼굴 구성 요소들 간의 관계는 두 이미지에서 동일하다.** 이것이 바로 이차적 동형성이다. 즉, 개별 요소들이 어떻게 배열되는지가 아니라 자극들 간의 상대적인 관계가 중요한 것이다.
 
 <figure class='align-center'>
-    <img src = "images/2025-03-16-Tools of the Trade Multivoxel pattern analysis in fMRI a practical  introduction for social and affective neuroscientists/figure2.jpg" alt="">
-    <figcaption>Fig. 2. First- and second-order isomorphisms.</figcaption>
+    <img src = "/images/2025-03-16-Tools of the Trade Multivoxel pattern analysis in fMRI a practical introduction for social and affective neuroscientists/figure2.jpg" alt="">
+    <figcaption>Fig 2. First- and second-order isomorphisms.</figcaption>
 </figure>
 
 같은 방식으로, 특정 뇌 영역이 어떤 속성을 인코딩한다면, 해당 속성과 신경 반응 크기 간의 직접적인 상관관계는 보이지 않을 수 있으나 자극들 간의 유사성(예: 두 사람의 얼굴은 서로 유사하지만, 기린의 얼굴과는 다름)과 신경 반응 패턴의 유사성이 일치한다면, 그 뇌 영역이 해당 속성을 처리하고 있을 가능성이 높다고 볼 수 있다. RSA는 이러한 원리를 활용하여, **신경 반응 패턴 간의 유사성**을 비교함으로써 자극 간의 상대적 관계를 분석한다. 즉, 두 개의 서로 다른 사람이 동일한 자극을 보았을 때, **개별 신경 반응 패턴 자체는 다를 수 있지만(Figure 2B), 그 신경 반응들 간의 관계는 일정하게 유지될 수 있다.(Figure 2D)** 이와 같이 RSA는 개인 간 비교, 다른 측정 방식 간 비교, 모델과 신경 반응 간 비교 등을 가능하게 한다.
@@ -90,7 +90,7 @@ RSA는 신경 반응 패턴 자체가 아니라, 신경 반응 간의 관계를 
 신경영상 연구에서 중요한 목표 중 하나는 어떤 신경 반응이 뇌의 어느 위치에서 발생하는지를 파악하는 것이다. 이는 크게 두 가지 방법을 통해 수행될 수 있다. **영역 기반 분석** (Region of Interest, ROI-based analysis, 연구자가 사전에 특정 뇌 영역을 정의한 후, 해당 영역에서 신경 활성 패턴을 분석하는 방법이다.), **점별 분석** (Point-by-point analysis, 연구자가 사전 정의한 특정 영역이 아니라, 뇌 전체에서 개별 복셀(voxel)을 기준으로 분석하는 방법이다. 단변량 분석에서는 복셀 단위(voxel-wise) 로 분석하며, MVPA에서는 서치라이트 분석(searchlight analysis) 을 사용한다.)이다. 
 
 <figure class='align-center'>
-    <img src = "images/2025-03-16-Tools of the Trade Multivoxel pattern analysis in fMRI a practical  introduction for social and affective neuroscientists/figure1.jpg" alt="">
+    <img src = "/images/2025-03-16-Tools of the Trade Multivoxel pattern analysis in fMRI a practical introduction for social and affective neuroscientists/figure1.jpg" alt="">
     <figcaption>Fig. 1. Comparing data in univariate analyses and MVPA.</figcaption>
 </figure>
 
@@ -156,7 +156,7 @@ MVPA에서 사용하는 디코딩 분석(decoding analysis) 은 일반적으로 
 
 
 <figure class='align-center'>
-    <img src = "images/2025-03-16-Tools of the Trade Multivoxel pattern analysis in fMRI a practical  introduction for social and affective neuroscientists/figure1.jpg" alt="">
+    <img src = "/images/2025-03-16-Tools of the Trade Multivoxel pattern analysis in fMRI a practical introduction for social and affective neuroscientists/figure1.jpg" alt="">
     <figcaption>figure 1. caption</figcaption>
 </figure>
 
