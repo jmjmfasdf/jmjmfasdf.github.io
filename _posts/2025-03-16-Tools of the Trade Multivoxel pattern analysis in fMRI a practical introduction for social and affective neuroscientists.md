@@ -200,71 +200,211 @@ MRI 실험에서 흔히 발생하는 잡음 중 하나는 스캐너 드리프트
 
 ### Analytical considerations specific to decoding analyses
 
+MVPA에서 디코딩 분석(Decoding Analysis) 은 기계 학습(machine learning) 알고리즘을 활용하여 신경 반응 패턴에서 특정 조건(자극, 인지 상태 등)을 예측하는 방법이다. 다양한 기계 학습 알고리즘이 디코딩 분석에 사용될 수 있으며, 각 알고리즘은 데이터에서 조건을 구별하는 방식이 다르기 때문에, 연구 결과에 큰 영향을 미칠 수 있다(Douglas et al., 2011). 
+
+디코딩 분석에서 사용되는 대부분의 기계 학습 알고리즘은 각 특성(feature), 즉 fMRI 데이터에서는 **개별 복셀(voxel) 에 가중치(weight)를 할당하여, 특정 조건을 예측할 수 있도록 학습한다.** 이러한 알고리즘은 훈련(training) 과정에서 최적의 가중치를 찾고, 이후 검증(testing) 단계에서 새로운 다중복셀 패턴(multivoxel pattern)을 입력받아 조건을 예측하는 방식으로 작동한다.
+
 #### Types of algorithms
+
+일반적으로, 선형 분류(linear classification) 알고리즘에서는 각 샘플(예: 하나의 다중복셀 패턴)을 decision boundary 상에서 투영하여 조건을 구별하는 방식을 사용한다. 회귀(regression) 알고리즘의 경우, 연속적인 값을 예측하기 위해 각 복셀의 신호를 가중치의 조합으로 변환하는 방식을 사용한다. fMRI 연구에서 가장 많이 사용되는 선형 분류(linear classification) 알고리즘은 Linear SVM, LDA이다.
+
+LDA는 범주 간 분산(between-category variance)을 최대화하면서, 범주 내 분산(within-category variance)을 최소화하는 방향으로 데이터 공간을 변환하는 알고리즘이다. 이 방식은 **모든 변수(복셀 신호)가 정규 분포를 따르며, 동일한 분산을 가진다는 가정**을 기반으로 하기 때문에 모든 샘플이 결정 경계를 정의하는 데 기여하며, 데이터의 전체적인 분포를 반영하여 분류를 수행한다. LDA의 장점은 계산 속도가 빠르고, 데이터의 전체적인 구조를 반영할 수 있다는 점이지만, 정규 분포 가정이 충족되지 않으면 성능이 저하될 수 있으며, 이상치(outlier)의 영향을 받을 가능성이 있다. 
+
+<figure class='align-center'>
+    <img src = "/images/2025-03-16-Tools of the Trade Multivoxel pattern analysis in fMRI a practical introduction for social and affective neuroscientists/table3.jpg" alt="">
+    <figcaption>Table 3. Overview of a few simple classification algorithms</figcaption>
+</figure>
+
+반면, SVM은 각 조건을 구별하는 최적의 초평면(hyperplane)을 찾는 방식으로 작동한다. SVM의 특징은 결정 경계와 가장 가까운 샘플들(서포트 벡터, support vectors)만을 고려하여 초평면을 결정한다는 점이다. 즉, **범주 간 거리를 최대화하는 방식으로 학습되며, 결정 경계에서 멀리 떨어진 샘플들은 모델 학습에 영향을 미치지 않는다.** SVM의 장점은 소규모 데이터셋에서도 비교적 강건한 성능을 발휘하며, 이상치의 영향을 덜 받는다는 점이지만, 다중 클래스 분류(multi-class classification)에서는 추가적인 조정이 필요하며, 선형적으로 구분되지 않는 경우에는 커널(kernel) 기법을 적용해야 한다. 그 외에도 최근접 이웃 분류(Nearest Neighbor Classification) 방식이 있으며, 이는 새로운 샘플이 훈련 데이터에서 가장 가까운 샘플과 동일한 범주에 속한다고 가정하는 방법이다.
+
+일반적으로, 모델이 학습한 가중치가 크다는 것은 해당 복셀이 조건을 구별하는 데 중요한 정보를 포함하고 있을 가능성이 크다는 것을 의미할 수 있다. 그러나, 복셀 간의 상관관계(correlation)와 데이터 정규화 방식에 따라 가중치의 해석이 왜곡될 수 있다(Pereira et al., 2009). fMRI 데이터에서 복셀들은 독립적이지 않으며, 공간적으로 인접한 복셀들끼리 높은 상관관계를 가진다. 따라서 특정 복셀이 가중치가 낮거나 0으로 설정되었다고 해서, 해당 복셀이 조건을 구별하는 데 중요하지 않다는 의미는 아니다. 또한, 분석 전에 데이터를 정규화(normalization)하면 복셀 값의 분포가 평균 0, 표준 편차 1로 조정된다. 정규화 여부에 따라 모델이 학습하는 가중치가 달라질 수 있으므로, 연구자는 정규화 여부를 신중하게 결정해야 한다.
 
 #### Overfitting
 
+Overfittingㅇ느 fMRI 데이터를 활용한 디코딩 분석에서 특히 중요한 문제로, fMRI 데이터는 일반적으로 복셀(특성, feature)의 수가 실험 반복 횟수(샘플, sample)보다 훨씬 많기 때문에 과적합이 발생하기 쉽다. 예를 들어, 특정 ROI 내에서 수백 개에서 수천 개의 복셀을 포함할 수 있지만, 한 참가자당 확보할 수 있는 실험 반복 횟수는 상대적으로 적은 경우가 많다. 이러한 데이터 특성으로 인해, 모델이 훈련 데이터에 과하게 맞춰진 최적의 가중치 조합을 찾을 가능성이 높아지며, 이로 인해 새로운 데이터에 일반화되지 않는 문제가 발생할 수 있다.
+
+복잡한 모델일수록 훈련 데이터에 과하게 맞출 가능성이 크므로, **fMRI 디코딩 분석에서는 비교적 단순한 모델(예: 비선형 모델보다는 선형 모델)을 선호하는 경우가 많다.** 따라서 모델 성능을 평가할 때는 항상 훈련되지 않은 검증 데이터(test data)에서 평가하는 것이 필수적이며, 이를 통해 과적합 여부를 확인하고 모델이 새로운 데이터에서도 신뢰할 수 있는 성능을 발휘하는지 검토해야 한다.
+
 #### Hyperparameter tuning
+
+하이퍼파라미터 튜닝(Hyperparameter Tuning)은 모델이 학습하는 과정에서 영향을 미치는 추가적인 설정값을 조정하는 과정이다. 일반적으로 모델이 학습하는 파라미터(parameter) 는 훈련 데이터에서 자동으로 최적화되는 반면, 하이퍼파라미터(hyperparameter) 는 학습이 시작되기 전에 설정해야 하는 값이며, 학습 방식 자체를 결정하는 중요한 요소다. 예를 들어 선형 SVM에서는 정규화 하이퍼파라미터 C가 중요한데, 이는 훈련 데이터에서의 예측 정확도와 초평면(hyperplane) 마진을 최대화하는 균형을 조절하는 역할을 한다.
+
+가장 단순한 하이퍼파라미터 튜닝 방법은 사용자가 설정한 여러 하이퍼파라미터 값들을 조합하여 반복적으로 모델을 훈련시키고 테스트하여 최적의 조합을 찾는 grid search이다.그러나 하이퍼파라미터 튜닝 과정이 검증 데이터(test data)에 영향을 미치지 않도록 하기 위해 nested cross validation을 사용하여 훈련 데이터를 다시 훈련용 데이터(sub-training set)와 검증 데이터(validation set)로 나누고, 다양한 하이퍼파라미터 값을 적용하여 최적의 조합을 찾은 후 최종 모델 학습에 활용한다. 
 
 ### Analytical considerations specific to RSA.
 
+표상 유사성 분석(Representational Similarity Analysis, RSA)에서 신경 RDM(Representational Dissimilarity Matrix)을 생성할 때, 서로 다른 신경 반응 패턴 간의 비유사도를 계산하는 방법이 필요하다. 일반적으로 가장 널리 사용되는 방법은 피어슨 상관계수(Pearson correlation coefficient, r)를 계산한 후, 이를 비유사도로 변환하는 방식이다.
+
+그러나 신경 반응 패턴 간 거리를 계산하는 방법에는 다양한 대안이 존재한다(Nili et al., 2014; Walther et al., 2016). 예를 들어, 유클리드 거리(Euclidean distance)는 각 복셀의 신호 차이를 제곱한 후 합산하여 제곱근을 취하는 방식으로 계산되며, 이는 신경 반응 패턴의 전체 크기 변화뿐만 아니라 공간적 패턴 차이에도 민감하다. 마할라노비스 거리(Mahalanobis distance)는 유클리드 거리와 유사하지만, 데이터의 공분산을 고려하여 정규화된 거리 측정값을 제공한다. 또한, 디코딩 분석에서 조건을 구별하는 분류 정확도(classification accuracy)를 거리 측정값으로 사용할 수도 있다. 
+
+각 거리 측정값은 데이터의 다른 측면에 민감하게 반응하며, 분석 목적에 따라 적절한 방법을 선택해야 한다. 예를 들어, **피어슨 상관계수 기반의 거리 측정값은 신경 반응 패턴의 공간적 배열 차이에는 민감**하지만, 전체적인 **신경 반응 강도의 변화에는 영향을 받지 않는다.** 반면, **유클리드 거리는 신경 반응 패턴뿐만 아니라 전체적인 신호 크기의 변화에도 영향을 받는다.** 또한, 거리 측정값의 신뢰도도 다를 수 있으며, 연속적인 측정값(예: 유클리드 거리, 피어슨 거리)이 이산적(discretized) 측정값(예: 분류 정확도)보다 더 신뢰도가 높을 수 있다(Walther et al., 2016).
+
 ### General analytical considerations: processing and selecting features
+
+fMRI 연구에서 디코딩 분석과 표상 유사성 분석(RSA)을 수행할 때, 데이터 전처리 및 복셀(feature) 선택 과정은 중요한 고려 사항이다. 여기서 'feature'는 일반적으로 기계 학습 알고리즘이 사용하는 예측 변수로, fMRI 연구에서는 보통 개별 복셀 또는 변환된 복셀 값이 이에 해당한다. 전처리가 완료된 후, 일반적으로 일반 선형 모델(GLM, General Linear Model) 을 사용하여 HRF를 기반으로 조건 또는 자극별 대비 맵(contrast map)을 생성한다. 이 대비 맵의 각 복셀 값은 특정 조건에서 해당 복셀에서 유발된 평균 신경 활동 수준을 나타낸다.
+
+GLM에서는 각 복셀에 대해 베타 값(beta)과 t-값(t-statistic)이 계산되며, 이 두 값 중 하나를 분석의 feature로 사용할 수 있다. 베타 값은 특정 조건에서 혈류역학적 반응과의 관계를 수량화한 원시 값이며, t-값은 베타 값을 실험 반복 간 표준 오차(standard error)로 나누어 정규화한 값이다. 따라서, 특정 복셀에서 실험 반복 간 신경 활동 변동성이 크다면 t-값이 낮아지고, 변동성이 적다면 t-값이 높아진다.
 
 ### How and when to smooth
 
+Smoothing은 **공간적 평균화를 통해 각 복셀의 신호를 인접한 복셀 값들의 가중합으로 재계산하는 과정**이다. 이때, 가중치 및 포함되는 복셀의 범위는 가우시안 커널(Gaussian kernel)에 의해 결정된다. 단변량 분석에서는 잡음을 줄이고 신호 검출력을 증가시키기 위해 전처리 과정에서 공간적 스무딩이 일반적으로 수행된다. 그러나, 스무딩은 신호 패턴의 세밀한 구조를 감소시키므로, 다중복셀 패턴 분석(MVPA)에서는 오히려 해로울 수 있다.
+
+따라서, 전처리 단계에서는 스무딩을 최소화하거나 적용하지 않는 것이 권장되며 첫 번째 수준 분석에서는 스무딩을 적용하지 않거나 최소한의 스무딩을 유지하고, 두 번째 수준 분석(집단 수준 분석)에서 스무딩을 적용하여 참가자 간 일관된 결과를 검출할 수 있도록 하는 것이 일반적이다.
+
 ### Feature selection
+
+일반적으로 fMRI 연구에서는 전뇌 대비 맵(whole-brain contrast images)을 마스킹(masking)하여 정보가 없는 복셀(예: 뇌실 내 복셀, 특정 ROI 외부의 복셀)을 제거하는 방식이 사용된다. 또한, 독립적인 데이터셋이나 메타분석을 활용하여 기능적 마스크(functional mask)를 생성할 수도 있다. 하지만 **feature selection 과정은 반드시 분석에 사용되는 데이터셋과 독립적인 데이터에서 수행되어야 한다.** 같은 데이터에서 ROI를 정의한 후, 동일한 데이터 내에서 MVPA를 수행하면 순환 분석(circular analysis) 문제가 발생할 수 있으며, 이는 연구자 자유도(researcher degrees of freedom)에 의해 잘못된 양성 결과(false positives)를 초래할 수 있다(Kriegeskorte et al., 2009).
+
+특성 선택의 기준은 연구 목적에 따라 다를 수 있다. 예를 들어, 특정 조건에서 가장 강한 반응을 보이는 복셀을 선택할 수도 있고, 조건 내에서 신경 반응 패턴이 안정적인 복셀(즉, 반복 실험 간 분산이 낮은 복셀)을 선택할 수도 있으며(Mitchell et al., 2008), 조건 간 신호 변동성이 큰 복셀을 선택하거나(Pereira et al., 2009), 조건을 가장 잘 구별하는 복셀을 선택할 수도 있다(De Martino et al., 2008).
+
+<figure class='align-center'>
+    <img src = "/images/2025-03-16-Tools of the Trade Multivoxel pattern analysis in fMRI a practical introduction for social and affective neuroscientists/figure5.jpg" alt="">
+    <figcaption>Fig. 5. Nested k-fold cross-validation with hyperparameter tuning</figcaption>
+</figure>
+
+만약 동일한 데이터에서 특성 선택과 디코딩 분석을 모두 수행해야 하는 경우, 특성 선택은 훈련 데이터 내에서 독립적으로 수행해야 한다. 즉, 각 데이터 폴드(fold) 내에서 훈련 데이터를 다시 학습용(training)과 검증용(validation) 데이터로 나누어 특성 선택을 수행하는 방식(중첩 교차 검증, nested cross-validation) 을 적용할 수 있다(Figure 5).
 
 ### Dimension reduction
 
+대표적인 차원 축소 기법으로는 주성분 분석(PCA, Principal Components Analysis) 이 있으며 PCA를 사용할 경우, 연구자는 모델 학습 전에 얼마나 많은 주성분을 유지할 것인지 또는 전체 데이터 변동성의 몇 퍼센트를 유지할 것인지 nested cross-validation와 유사한 방식으로 결정할 수 있다. 이러한 기법은 fMRI 연구에서 흔히 발생하는 특성(feature) 수가 샘플(sample) 수보다 훨씬 많은 데이터 구조를 해결하는 데 유용하다. 원래 데이터의 대부분의 정보를 유지하면서도, 모델의 특성 수를 크게 줄일 수 있기 때문에, 과적합(overfitting) 방지에 효과적이며, 분석 속도를 높이고 계산 부담을 줄일 수 있다.
+
+또한, PCA와 같은 기법은 상관관계가 높은 특성(예: 인접한 복셀 신호)을 변환하여 서로 독립적인 특성 집합을 생성하기 때문에, 개별 특성 간 독립성을 가정하는 알고리즘(예: 나이브 베이즈(Naïve Bayes), 일부 선형 회귀 알고리즘)에서 성능을 향상시키는 데 도움을 줄 수 있다. 
+
 ## Analytical steps
+
+MVPA를 연구에 적용하기 위해서는 일련의 분석 단계를 거쳐야 하며, 이를 지원하는 다양한 소프트웨어 패키지가 존재한다. 파이썬 기반의 대표적인 MVPA 도구로는 Nilearn(Scikit-learn을 활용한 신경영상 데이터 분석 지원), PyMVPA, BrainIAK 등이 있으며, MATLAB 기반으로는 CoSMoMVPA, RSA Toolbox 등이 있다. 모든 분석에서 데이터 전처리와 실험 조건 설정을 반드시 수행해야 하며 이후의 분석 절차는 연구자가 수행하는 분석 유형에 따라 달라진다.
 
 ### First steps
 
+MVPA 분석의 첫 번째 단계는 실험 조건을 정의하고, 분석할 뇌 영역을 선택하는 것이다. 먼저, 실험 조건을 정의(Define the Conditions) 해야 한다. 예를 들어, 사람과 개의 얼굴을 연령별로 구분하여 네 가지 조건(아기 인간, 성인 인간, 아기 개, 성인 개)을 설정할 수 있다. 각 조건의 자극은 여러 번 반복 제시되며, 전체적으로 10개의 실험 실행(run) 동안 여러 차례 나타난다고 가정할 수 있다. 이때, 분석 단위를 조건별 평균 신경 반응(40개의 샘플, 각 조건별 10개 실행) 으로 설정할 수도 있고, 각 개별 실험 반복(trial)마다 별도로 모델링 할 수도 있다.
+
+<figure class='align-center'>
+    <img src = "/images/2025-03-16-Tools of the Trade Multivoxel pattern analysis in fMRI a practical introduction for social and affective neuroscientists/figure1.jpg" alt="">
+    <figcaption>Fig. 1. Comparing data in univariate analyses and MVPA</figcaption>
+</figure>
+
+다음으로, 분석할 뇌 영역(Region of Interest, ROI)을 선택(Select the Region of Interest) 해야 한다. MVPA 분석은 선택한 뇌 영역에서 독립적으로 수행되며, 단일 ROI를 분석하는 경우에는 한 번만 실행되지만, 전뇌 검색(searchlight analysis) 을 수행하는 경우에는 뇌의 모든 복셀에서 반복적으로 분석이 수행된다. 이후 분석을 위해, 선택한 뇌 영역의 각 복셀 데이터를 정렬해야 한다. 각 조건에서 해당 영역의 복셀들을 벡터(vector) 형태로 변환하며, 이때 벡터의 첫 번째 복셀은 모든 조건에서 동일한 뇌 위치를 반영하도록 배치된다(Figure 1C, D).
+
 ### Classification analysis
+
+Classification에서는 데이터의 일부를 훈련(training) 데이터로 사용하여 학습한 후, 나머지 독립적인 데이터(subset)를 테스트(testing)하여 모델의 성능을 평가한다. 일반적으로 k-겹 교차 검증(k-fold cross-validation)이 사용되는데. 보통 훈련 세트에서 10~20% 정도를 테스트용으로 분할하는 것이 권장된다(Hastie et al., 2017). 예를 들어, 10개의 fMRI 실험 실행(run)을 포함하는 연구에서 5-겹 교차 검증을 수행할 경우, 10개의 실행을 5개의 부분(예: run 1-2, run 3-4, run 5-6, run 7-8, run 9-10)으로 나누고, 각 부분을 한 번씩 테스트 데이터로 사용하며 나머지 부분으로 모델을 학습하는 과정을 반복한다. **leave-one-sample-out** 교차 검증 은 k를 전체 샘플 수로 설정하는 방식이며, **leave-one-run-out** 교차 검증 은 fMRI 실험 실행 수를 k로 설정하여 각 실행(run)을 한 번씩 테스트 데이터로 사용하는 방식이다. 또한, 참가자 간 패턴 정보를 통합할 경우 **leave-one-participant-out** 교차 검증 을 사용할 수도 있다.
+
+알고리즘이 특정 범주(category)를 편향적으로 예측하지 않도록 하기 위해 **leave-one-run-out** 교차 검증을 수행하는 것이 한 가지 해결책이 될 수 있다. 예를 들어, 연구에서 네 가지 자극(아기 인간, 성인 인간, 아기 개, 성인 개)을 사용한다면, 각 실행(run)에서 이 네 가지 자극이 동일한 빈도로 포함되도록 구성한 후, 10-겹 교차 검증을 수행하면 된다. feature selection이나 hyperparameter 선택을 수행하는 경우에는 nested cross validation을 적용해 볼 수 있다.
+
+<figure class='align-center'>
+    <img src = "/images/2025-03-16-Tools of the Trade Multivoxel pattern analysis in fMRI a practical introduction for social and affective neuroscientists/figure3.jpg" alt="">
+    <figcaption>Fig. 3. Classification analysis</figcaption>
+</figure>
+
+이후 **모델 학습(Train Model)** 단계 에서, 훈련 데이터의 각 샘플에 올바른 범주(label)를 부여한 후 알고리즘이 학습하도록 한다. 모델은 각 다중복셀 패턴을 다차원 공간상의 한 점으로 간주하며, 각 복셀이 하나의 차원에 해당한다(Figure 3). 예를 들어, m개의 복셀을 포함하는 경우, 이 데이터는 m차원 공간에서 특정 좌표를 가진다.
+
+**모델 테스트(Test Model)** 단계 에서는, 학습된 모델을 검증 데이터(testing data)에 적용하여 범주를 예측하도록 한다. 테스트 데이터는 범주(label)가 없는 상태로 제공되며, 모델은 학습된 경계(boundary)를 기준으로 샘플을 분류하게 된다. 모델이 예측한 범주가 실제 범주와 얼마나 일치하는지를 계산하여 분류 정확도(classification accuracy) 를 평가한다.
+
+MVPA에서 가장 일반적으로 사용되는 성능 지표는 분류 정확도이지만, 데이터 내 특정 범주가 과대 대표(overrepresented)됨과 같은 일부 경우 ROC(Receiver Operating Characteristic) 곡선의 면적(AUC, Area Under the Curve) 과 같은 다른 성능 측정 지표가 더 적절할 수 있다(Ling et al., 2003). 마지막으로, 모델의 평균 분류 정확도를 무작위 수준에서 기대되는 확률과 비교하여 평가한다. 예를 들어 두 개의 동등한 샘플 크기를 가진 범주를 구별하는 경우, 무작위 예측 수준에서 기대되는 정확도는 50%이며 모델이 안정적으로 기회 수준을 초과하는 분류 정확도를 보인다면, 이는 해당 뇌 영역의 신경 반응 패턴이 해당 범주를 구별할 수 있음을 시사한다.
 
 ### Representational similarity analysis
 
+표상 유사성 분석(Representational Similarity Analysis, RSA)에서는 신경 반응 패턴 간의 상대적인 차이를 나타내는 표상 비유사도 행렬(RDM, Representational Dissimilarity Matrix) 을 생성하고, 이를 활용하여 신경 데이터의 구조를 분석한다. 먼저, 신경 RDM(Neural RDM) 을 생성하기 위해, 각 자극(또는 조건)과 다른 모든 자극의 신경 반응 패턴을 비교한다. 이를 위해 각 자극의 신경 반응 패턴을 실험 실행(run) 전체에서 평균을 내어 하나의 대표 패턴을 만든다. 신경 RDM은 일반적으로 피어슨 상관 거리(Pearson correlation distance, 1 - r) 를 사용하여 각 자극 간의 유사성을 측정하지만, 유클리드 거리(Euclidean distance)나 마할라노비스 거리(Mahalanobis distance) 등 다른 거리 측정 방법도 사용할 수 있다(Figure 4A). 
+
+이렇게 계산된 거리 값들은 대칭 행렬 형태의 RDM으로 정리되며 분석 시 하위 삼각 행렬(lower off-diagonal triangle) 만 추출하여 사용한다(Figure 4A). 그다음, 비신경 RDM(Non-Neural RDM) 을 생성하여 신경 RDM과 비교할 수 있다. 예를 들어, 참가자들이 각 얼굴의 나이를 평가했다면, 각 조건 간 인식된 나이(perceived age) 차이를 계산하여 행동 RDM을 생성할 수 있다(Figure 4C). 이는 특정 뇌 영역이 얼굴을 나이에 따라 조직하는지를 테스트하는 데 활용될 수 있다.
+
+<figure class='align-center'>
+    <img src = "/images/2025-03-16-Tools of the Trade Multivoxel pattern analysis in fMRI a practical introduction for social and affective neuroscientists/figure4.jpg" alt="">
+    <figcaption>Fig. 4. Representational similarity analysis</figcaption>
+</figure>
+
+이후, 두 가지 방법 중 하나를 선택하여 분석을 수행할 수 있다. 첫 번째 옵션은 신경 RDM과 비신경 RDM을 비교(Compare Neural and Non-Neural RDMs) 하는 것이다. 이를 위해 두 RDM의 하위 삼각 행렬 간의 상관관계를 계산하는데, 피어슨 상관 대신 비선형 관계까지 포함할 수 있는 스피어만 상관(Spearman correlation) 을 사용하는 것이 일반적이다. 또한 여러 개의 예측 변수가 있는 경우 RSA 회귀 분석(RSA regression) 을 수행하여 특정 예측 변수가 신경 데이터에 미치는 영향을 개별적으로 평가할 수 있다.
+
+두 번째 옵션은 RDM을 시각화(Visualize RDMs) 하는 것이다. RDM을 시각화할 때, 각 셀(cell)의 값에 따라 색을 부여하여, 서로 유사하게 표현되는 조건(예: 밝은 색)과 명확하게 구별되는 조건(예: 어두운 색)을 직관적으로 확인할 수 있다(Figures 2, 4). 예를 들어, 특정 뇌 영역에서 개 얼굴이 한 그룹으로 클러스터링되고, 인간 얼굴이 다른 그룹으로 구별되는 경우, 해당 뇌 영역이 종(species) 정보를 반영하는 방식으로 얼굴을 조직하고 있음을 시사할 수 있다(Figure 4B).
+
 ### Statistical testing
 
+통계적 검정(Statistical Testing)은 MVPA 분석이 완료된 후, 결과의 유의미성을 평가하는 단계이다. 상관 계수(correlation coefficient)와 분류 정확도(classification accuracy) 값은 0에서 1 사이로 제한되어 있기 때문에, 이를 변환(예: 아크사인 변환(arcsine transformation))하거나 비모수 검정(non-parametric testing, 예: 순열 검정(permutation testing)) 을 사용하는 것이 적절할 수 있다.
+
+RSA 및 디코딩 분석 결과의 통계적 유의성을 평가하는 방법은 **개별 참가자 수준(within-subject)**과 **집단 수준(across-subject)**에 따라 각각 **데이터 내 레이블을 무작위로 섞어 null distribution을 생성한 후 실제 실험 데이터를 사용하여 얻은 통계값이 귀무 분포에서 특정 임계값(예: 유의수준 α = 0.05, 단측 검정에서 95번째 백분위수)을 초과하는 경우, 결과가 유의미하다고 판단**하거나 **각 참가자의 데이터를 네이티브 공간(native space - searchlight분석 등)에서 분석한 경우 anatomical template에 정렬하고 추가적인 공간적 스무딩(spatial smoothing)을 적용, 단변량 연구에서 ROI(Region of Interest)나 통계적 파라메트릭 맵을 사용하여 참가자 간 유의성을 평가하는 방법과 유사하게 수행**할 수 있다.
+
+또한, MVPA 데이터(ex. searchlight 분석 결과)의 다중 비교 수정(multiple comparison correction)을 수행할 경우, 분석에 적절한 잔차(residuals)를 기반으로 매끄러움(smoothness) 값을 추정하는 것이 중요하다. 예를 들어, FWE(Family-Wise Error) 보정을 사용할 경우, 단순히 원본 반응 데이터가 아니라 검색라이트 결과의 잔차를 기준으로 매끄러움을 추정해야 한다(Linden et al., 2012).
 
 <br>
 
 # What questions can we ask with MVPA?
 
+MVPA는 다양한 연구 질문을 탐색하는 데 유용한 도구이며, 이를 활용하여 연구자가 답할 수 있는 주요 질문 유형에는 Brain-reading 과 Stages of Neural Processing, Underlying neurocognitive mechanisms, Individual differences가 있다.
+
 ## Brain-reading
+
+참가자가 현재 어떤 생각을 하고 있는지 또는 어떤 자극에 주의를 기울이고 있는지를 해독하는 과정이다. 만약 특정 뇌 영역에서 이 정보를 성공적으로 디코딩할 수 있다면, 해당 영역이 인간과 개의 얼굴을 근본적으로 다르게 인코딩하고 있거나, 특정 공변량(covariate)이 그 차이에 기여하고 있음을 의미할 수 있다.
 
 ## Stages of neural processing
 
+뇌가 다양한 정보를 처리하는 방식은 단순한 감각 정보에서 시작하여 점진적으로 더 추상적인 개념으로 변환되는 계층적 과정을 따른다. 예를 들어, Peelen et al.(2010)의 연구에서는 좌측 상측두구(left STS)와 배내측전전두피질(mPFC)이 감정(emotion)을 전달 매체(예: 얼굴, 몸짓, 목소리)와 무관하게 추상적인 감정적 가치(abstract emotional value)로 표현한다는 증거를 제시했다.
+
+MVPA를 이용하면, 초기 감각 피질(early sensory cortex)에서 처리되는 저차원 감각 속성(예: 자극의 모달리티)과 후반 처리 단계에서 처리되는 고차원 의미적 속성(예: 감정적 내용) 간의 변화를 탐색할 수 있다. 이를 검증하는 한 가지 방법은, 각 뇌 영역의 신경 RDM(Neural RDM)과 모델 RDM(Model RDM, 예: 동일한 모달리티로 제시된 자극인지 여부)을 비교하여, 어떤 모델이 각 신경 처리 단계에서 가장 잘 일치하는지를 확인하는 것 이다. 또한, 다차원 척도법(MDS, Multidimensional Scaling)을 사용하여 신경 RDM을 시각화하면, 특정 자극이 각 신경 처리 단계에서 어떻게 표현되는지를 직관적으로 확인할 수 있다.
+
 ## Underlying neurocognitive mechanisms
+
+RSA를 사용하면 특정 뇌 영역이 연령(age)뿐만 아니라 종(species)에 따라 자극을 클러스터링하는지 를 발견할 수 있으며, 이를 명시적인 모델을 통해 검증할 수 있다. 즉, RSA를 통해 해당 뇌 영역이 상태(state) 또는 자극(stimulus) 표현을 조직하는 방식 을 평가할 수 있다.
+
+디코딩 분석은 RSA와 상호 보완적으로 사용될 수 있으며, 특히 cross-classification을 활용하면 특정 정보가 다른 조건에서도 일관되게 인코딩되는지를 분석할 수 있다. 예를 들어, 인간 얼굴의 연령을 구별하도록 학습한 모델을 개 얼굴의 연령 구별에 적용할 수 있는지 테스트 할 수 있다. 만약 인간 얼굴의 연령을 학습한 모델이 개 얼굴의 연령도 신뢰성 있게 디코딩할 수 있다면, 이 뇌 영역에서 연령 정보가 종을 초월하여 일관된 방식으로 표현됨을 의미한다. 즉, 인간과 개의 얼굴 연령을 동일한 방식으로 표상하는 공통된 신경 패턴이 존재할 가능성이 크다.
 
 ## Individual differences
 
+또한, MVPA는 개인차(Individual Differences) 를 연구하는 데도 유용하다. 사람들이 세상을 인식하고 처리하는 방식이 동일한지 여부를 탐색하기 위해, 단변량 분석과 마찬가지로 MVPA 결과를 개별 차이를 예측하는 데 사용할 수 있다. 예를 들어, Ersner-Hershfield et al.(2009)의 연구에서는 현재 자아(present self)와 미래 자아(future self)의 연속성이 높은 사람들이 더 많은 퇴직 자금을 저축한다는 결과를 발견했다. 이를 fMRI 연구로 확장할 경우, 참가자의 현재 자아와 미래 자아를 표상하는 신경 반응 패턴의 유사성을 분석하고, 그 유사성이 퇴직 저축 행동을 예측하는지 테스트할 수 있다.
+
+MVPA는 개인차 연구에서 특히 유용한데, 이는 개인차가 특정 뇌 영역의 전반적인 활성 크기(overall response magnitude) 가 아니라, 신경 패턴의 차별성(distinctiveness of neural patterns) 으로 나타날 가능성이 높기 때문이다. 즉, 단순한 활성 수준의 차이가 아니라, 개인이 정보를 신경적으로 조직하는 방식 자체가 다를 수 있으며, 이를 MVPA를 통해 보다 정교하게 분석할 수 있다.
 
 <br>
 
 # Issues in MVPA
 
+MVPA는 강력한 분석 도구이지만, 해석과 적용 과정에서 몇 가지 중요한 문제와 잠재적인 한계를 고려해야 한다. 특히 디코딩 분석(decoding analysis) 에서는 단순히 특정 뇌 영역이 자극을 구별할 수 있는지(yes or no)만 확인할 수 있으며, 모델 자체에 대한 심층적인 해석이 어렵다(Carlson & Wardle, 2015).
+
+많은 MVPA 기법들은 특정 ROI의 평균 활성 크기(mean magnitude shift) 를 포착하는 데 민감하지 않지만, 단변량 분석에서는 이를 쉽게 감지할 수 있다(Davis et al., 2014; Naselaris & Kay, 2015). 반대로, 두 조건이 동일한 단변량 반응을 보이지만 다른 다중복셀 반응 패턴(multivoxel response patterns) 을 유발할 수도 있으며, 따라서 MVPA와 단변량 분석을 상호 보완적으로 사용하는 것이 바람직하다.
+
 ## What are we measuring, content or process?
+
+MVPA 해석에서 중요한 문제 중 하나는 우리가 측정하는 것이 '내용(content)'인지 '과정(process)'인지 를 명확히 구분하는 것이다. 즉, 특정 신경 패턴이 자극의 특성을 직접 인코딩(encoding) 하는 것인지, 아니면 자극 인식 이후의 연속적인 처리 과정(downstream processing)의 영향을 반영 하는 것인지 구별하는 것이 쉽지 않다. 예를 들어, 두정엽(parietal cortex)과 전운동 영역(premotor cortex)의 활성화가 도구(tool) 자극과 관련이 있는 이유에 대한 논쟁이 있다. 이는 해당 영역이 **도구의 개념 자체를 인코딩하는 것인지(Mahon & Caramazza, 2008), 아니면 도구를 식별한 이후 발생하는 행동 예측(prediction of future actions) 등의 처리 과정(Martin, 2016)** 을 반영하는 것인지 불분명하기 때문이다. 따라서, MVPA 결과를 해석할 때는 신경 패턴이 단순한 정보 인코딩을 의미하는지, 아니면 연속적인 인지 처리 과정과 관련된 신호인지를 신중하게 고려해야 한다.
 
 ## Beyond static multivoxel response patterns
 
+일부 연구에서는 단순히 특정 시점에서의 신경 반응 패턴을 분석하는 것보다, **시간에 따라 전개되는 심리적 과정의 신경 기제(neural mechanisms of psychological processes unfolding over time)** 를 밝히는 것이 주요 목표가 될 수 있다. 이러한 경우, 시간에 따른 다중복셀 패턴의 변화(mv-pattern dynamics) 또는 기능적 연결성 패턴의 변화(functional connectivity patterns across tasks or conditions) 를 분석하는 것이 적절할 수 있다(Chang et al., 2018; R. Hyon et al., 2020; Richiardi et al., 2011; Shirer et al., 2012).
+
+MVPA에서 사용되는 동일한 방법을 기능적 연결성 분석에 적용할 수도 있다. 예를 들어, 기능적 연결성을 기반으로 한 디코딩 분석에서는, 개별 복셀이 아닌 두 뇌 영역 간의 시간적 상관관계(correlation between time-series data from different brain regions) 를 하나의 특징(feature)로 사용한다.
+
 ## Within- vs between-subject decoding
+
+디코딩 분석에서는 충분한 훈련 데이터(training data)가 확보될수록 모델의 학습 성능이 향상되므로 분석 결과를 위해 다음의 전략을 사용해 볼 수 있다. 예를 들어, 개별 복셀 수준의 신경 반응 패턴이 아닌 기능적 연결성(functional connectivity) 을 사용하면 참가자 간 데이터 정렬 문제를 줄일 수 있다(Richiardi et al., 2011; Shirer et al., 2012). 또한, 기능적 정렬(functional alignment) 기법(Haxby et al., 2011; Chen et al., 2015) 을 활용하거나, RSA 기반 유사성 공간(similarity space)을 활용한 디코딩(Raizada & Connolly, 2012) 을 수행하면, 참가자 간의 데이터 정렬이 보다 효과적으로 이루어질 수 있다.
+
+반면 신경 반응 패턴이 개인별로 고유할 가능성이 높은 경우처럼  참가자 간 분석보다 참가자 내 분석(within-subject decoding)이 더 적합한 경우도 존재한다. 또한, **자극이 본질적으로 개인적인 의미를 포함하는 경우**(예: 개인에게 중요한 사물, Charest et al., 2014; 사회적 관계, Parkinson et al., 2017), 참가자 간 분석보다는 참가자 내 분석이 개인의 신경 패턴을 보다 정확하게 반영할 수 있다.
 
 ## Imaging resolution
 
+MVPA는 단변량 분석보다 더 정밀한 공간적 정보를 탐지할 수 있지만, 개별 뉴런 수준의 신경 활동을 직접 분석하는 기법에 비해 여전히 상대적으로 공간 해상도가 낮다. 단일 뉴런의 활동 패턴은 다양한 정보를 담고 있으며 fMRI에서 하나의 복셀(voxel)은 수십만 개의 뉴런을 포함하고 있다. 따라서 MVPA는 단변량 분석보다 세밀한 신호를 감지할 수 있지만, 훨씬 더 미세한 신경 수준의 정보를 놓칠 가능성 이 존재한다.
+
 ### Examining multivoxel, rather than multi-neuron, patterns can systematically produce both false positives and false negatives
+
+MVPA는 신경 패턴을 복셀 단위에서 분석하므로 공간 해상도가 낮다. 이러한 이유로 FP, FN의 문제가 발생할 위험이 크다. FP의 예시로는 원숭이 연구에서 안와전두피질(orbitofrontal cortex)의 서로 다른 뉴런 집단이 사회적 보상(social rewards)과 비사회적 보상(non-social rewards)을 각각 코딩 한다는 결과가 보고되었다(Watson & Platt, 2012). 그러나, fMRI의 저해상도 특성상, MVPA를 사용하면 이 **두 개의 구별된 신경 집단이 하나의 공통된 인코딩 체계를 가진다고 잘못 결론내릴 가능성**이 있다. 
+
+반대로 MVPA가 신경 수준에서 존재하는 중요한 정보들을 포착하지 못할 수도 있다. FN의 예시로 Dubois et al.(2015)의 연구에서는 원숭이가 얼굴을 볼 때 뉴런 수준에서는 얼굴의 정체성(identity)과 시점(viewpoint) 모두를 디코딩할 수 있었지만, MVPA 분석에서는 얼굴의 시점(viewpoint) 정보만 신뢰성 있게 디코딩할 수 있었다. 이는 시점 정보는 뉴런들이 밀집된 클러스터(cluster)로 조직되어 있지만, **얼굴 정체성 정보는 공간적으로 덜 정렬된 뉴런들에 의해 코딩되었기 때문**이다. 
 
 ## Uncertainty about the timing of social and affective processes
 
+사회적 또는 정서적 과정이 언제 발생하는지 정확히 알기 어려운 경우, MVPA의 적용이 어려울 수 있다. 예를 들어, 참가자가 스트레스 사건을 재평가(reappraisal)할 수 있도록 8초 동안 생각하는 시간을 제공했다면, **재평가 과정이 정확히 언제 시작되고 끝났는지 알 수 없다**(Lieberman & Cunningham, 2009). 이러한 경우, 연구자는 어떤 방식으로 MVPA를 적용해야 할까?
+
+해결 방안 1: 블록 또는 사건 단위로 분석
+첫 번째 방법은, 블록(block) 전체 또는 사건(event) 전체에서 다중복셀 반응 패턴을 평균화하여 분석하는 것 이다. 이는 단변량 분석에서 특정 이벤트의 평균 신경 반응을 측정하는 방식과 유사하다. 이 접근 방식은 시간적 해상도를 희생하더라도 신뢰도 높은 신호를 확보할 수 있다.
+
+해결 방안 2: 시점별 분석 (Time-resolved MVPA)
+두 번째 방법은, 블록 내에서 각 시간 지점별로 다중복셀 패턴을 추정한 후, 시간별로 디코딩 분석 또는 RSA를 수행하여 언제 신경 패턴이 조건 간 차이를 나타내는지 분석하는 것이다(Soon et al., 2008; Cichy et al., 2014). 단, 이 방법은 참가자 간 및 실험 반복(trials) 간에 동일한 시간적 패턴이 존재할 것이라는 가정을 필요로 한다.
+
+해결 방안 3: 시공간 패턴 분석 (Spatiotemporal Pattern Analysis)
+만약 심리 과정의 타이밍이 참가자별로 다를 가능성이 높다면, 이벤트 전체에 대해 단일한 다중복셀 반응 패턴을 추정하는 방식(해결 방안 1)은 적절하지 않을 수 있다. 이를 해결하기 위해, 각 이벤트 내 서로 다른 시간 지점에서의 다중복셀 반응 패턴을 연결(concatenate)하여 하나의 확장된 특성 벡터(feature vector)로 구성한 후, 이를 기계 학습에 적용해볼 수 있다.
+
+이러한 방법은 참가자 내 분석(within-subject decoding)에서는 각 참가자별로 서로 다른 시간 패턴을 허용할 수 있지만, 참가자 간 분석(between-subject decoding)에서는 공통된 시간적 패턴이 존재할 것이라는 가정을 필요로 한다. MVPA를 적용할 때 시간적 해상도(time resolution)가 낮다는 문제를 극복하기 위해, 연구자는 fMRI보다 더 높은 시간 해상도를 제공하는 신경영상 기법을 고려할 수도 있다. 예를 들어, MEG(Magnetoencephalography) 또는 EEG(Electroencephalography)와 같은 기법을 사용하면 시간 해상도를 획기적으로 향상시킬 수 있다. 
 
 <br>
 
 # Conclusion
 
-
-
-<figure class='align-center'>
-    <img src = "/images/2025-03-16-Tools of the Trade Multivoxel pattern analysis in fMRI a practical introduction for social and affective neuroscientists/figure1.jpg" alt="">
-    <figcaption>figure 1. caption</figcaption>
-</figure>
+이 논문에서는 사회 및 감정 신경과학 연구자를 위해 MVPA에 대한 실용적이고 접근 가능한 개요를 제공하는 것을 목표로 했다. 이를 위해, MVPA가 무엇인지, 단변량(univariate) 분석과의 차이점, MVPA를 통해 답할 수 있는 다양한 연구 질문, 그리고 MVPA를 연구에 적용하는 실용적인 절차와 고려 사항을 설명했다.
 
