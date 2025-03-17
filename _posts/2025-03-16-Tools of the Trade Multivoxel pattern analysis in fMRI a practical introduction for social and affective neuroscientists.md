@@ -138,20 +138,128 @@ MVPA에서 사용하는 디코딩 분석(decoding analysis) 은 일반적으로 
 
 # Practical implementation
 
+MVPA를 연구에 적용할 때는 실험 설계와 데이터 분석의 여러 요소를 신중하게 고려해야 한다. 실험 자극을 어떻게 제시할 것인지, 데이터를 어떻게 전처리할 것인지, 어떤 알고리즘을 사용할 것인지, 하이퍼파라미터를 어떻게 조정할 것인지, 어떤 특성을 선택할 것인지 등 여러 결정들이 연구 결과에 큰 영향을 미칠 수 있다. 이러한 결정들은 단순히 분석 기법에 따라 정해지는 것이 아니라, 연구 질문과 실험 패러다임에 따라 달라져야 한다. 따라서 연구자는 자신의 연구 주제를 깊이 이해하고, 적절한 분석 방법을 선택해야 한다.
+
+## Representational spatial scale
+
+### 표상의 공간적 규모 (Representational Spatial Scale)
+
+뇌가 정보를 표상하는 공간적 규모(Spatial Scale)는 실험 설계 및 데이터 분석의 여러 결정에 중요한 영향을 미친다. 연구자가 분석하려는 정보가 세밀한 수준(fine-scale)에서 표상되는지, 혹은 더 넓은 공간적 패턴(coarse-scale)에서 표상되는지를 이해하는 것이 중요하다.
+
+예를 들어서 어떤 정보가 세밀한 공간 패턴에서 인코딩된다면(예: 얼굴 개별성을 구별하는 패턴, Kriegeskorte et al., 2007; Nestor et al., 2011), 참가자 개개인의 뇌 공간에서 분석하는 것이 적절하다. 즉, 데이터를 표준 해부학적 템플릿(MNI, Talairach 등)에 정렬하지 않고, 개별 참가자의 뇌 공간에서 분석하는 것이 바람직하다. 이러한 접근 방식은 공간 정렬 과정에서 미세한 신경 반응 패턴이 왜곡되거나 평균화되는 것을 방지할 수 있다. 따라서 디코딩 분석(Decoding Analysis)과 신경 RDM(Neural Representational Dissimilarity Matrix, Neural RDM) 계산은 개별 참가자의 원래 뇌 공간에서 수행하는 것이 적절하다. 이 경우, 공간적 스무딩(spatial smoothing)을 최소화하거나 수행하지 않는 것이 일반적이다.
+
+반면, 감정 상태와 같은 상대적으로 넓은 영역에서 표상되는 정보를 분석하는 경우에는 더 광범위한 공간 정렬과 데이터 처리 기법을 적용하는 것이 바람직하다. 감정 상태나 사회적 정보 처리는 개별 복셀보다는 여러 뇌 영역의 상대적인 활성도 차이를 반영하는 패턴에서 표상될 가능성이 크기 때문에, 공간적 스무딩을 더 넓은 범위에서 적용하면 이러한 패턴을 보다 안정적으로 추출할 수 있다. 또한, 연구자가 참가자 간 비교(Between-subject analysis)를 수행하려면, 데이터를 표준 해부학적 템플릿(MNI, Talairach 등)에 맞추는 것이 필요하다.
+
+### 실험 설계에서 공간적 규모의 영향
+
+공간적 규모는 단순히 데이터 분석 방법뿐만 아니라, 실험 설계에도 영향을 미친다. 연구자가 분석하려는 정보가 **세밀한 패턴에서 표상된다면, 개별 참가자 내에서 분석할 데이터가 충분히 확보**되어야 한다. 반면, **더 넓은 패턴에서 표상되는 정보라면, 더 많은 참가자를 모집하는 것이 중요**하다. 세밀한 공간적 패턴을 연구할 경우, 개별 참가자가 충분한 반복 실험(trials)을 수행해야 한다. 참가자 간 데이터 비교보다는 참가자 내 데이터 분석을 우선으로 하며, 한 명의 참가자가 수행하는 데이터량을 늘리는 것이 중요하다. 반대로 넓은 공간적 패턴을 연구할 경우, 더 많은 참가자를 모집하는 것이 중요하며, 개별 참가자당 적은 수의 반복 실험(trials)도 가능하다.
+
+## Design considerations
+
+MVPA는 조건 간 신경 활성 패턴이 신뢰할 수 있고 체계적으로 차이가 나는지를 평가하는 분석 기법이므로, 실험 설계가 신경 활성 패턴을 안정적으로 측정할 수 있도록 최적화되어야 한다. 이를 위해 가장 중요한 요소는 잡음(noise)을 최소화하고, 조건 간 균등하게 분포되도록 하는 것이다. 실험 데이터에서 신호 대 잡음 비(signal-to-noise ratio, SNR)를 최대화하는 것이 신뢰할 수 있는 결과를 얻는 핵심이 된다.
+
+### Minimizing noise
+
+#### 1. 충분한 실험 반복 횟수(trials) 확보
+
+MVPA 연구에서는 특정 조건에서 나타나는 신경 활성 패턴을 안정적으로 측정하기 위해, 각 조건에 대한 충분한 실험 반복 횟수(trials)가 필요하다. 단변량 분석에서도 소규모 표본 연구에서 발생하는 잡음을 줄이기 위해 참가자 수를 늘리는 것이 중요하듯, MVPA에서도 각 조건의 샘플 수(trials)를 충분히 확보하는 것이 중요하다.
+
+각 참가자에게 가능한 한 많은 실험 반복을 제공하는 것은 참가자 내 분석(within-subject analysis) 이 수행되는 경우 특히 중요하다. 참가자별로 독립적인 신경 반응 패턴을 학습하는 분석에서는 충분한 반복 실험이 필요하며, 그렇지 않으면 신경 패턴의 안정성이 떨어질 수 있다.
+
+그러나 실험 반복 횟수의 최적 개수는 연구의 신호 대 잡음 비(SNR)에 따라 달라진다. 일반적으로 더 많은 반복이 바람직하지만, 신경 반응이 충분히 모델링될 수 있도록 자극 간 간격(interstimulus interval, ISI)을 확보하는 것이 중요하다. 이러한 이유로, MVPA에서 필요한 반복 횟수를 일반적으로 정해진 기준으로 제안하는 것은 어렵다. 마치 t-검정을 수행할 때, 효과 크기를 모른 채 무조건 20개의 데이터 포인트가 충분하다고 말할 수 없는 것과 같다. 다만, 더 세밀한 차이를 탐색하는 분석일수록 더 많은 반복 실험이 필요 하며, 실험 조건 간 신경 패턴이 명확히 구별될 경우 상대적으로 적은 반복 실험으로도 구분이 가능하다. 
+
+#### 2. 샘플 수와 특성(feature) 수의 균형 유지
+
+MVPA에서 디코딩 분석을 수행할 때는, 샘플 수(반복 실험 횟수, trials)와 특성(feature) 수(보통은 복셀 개수)의 비율이 중요한 역할을 한다. 일반적으로 머신러닝 알고리즘에서 훈련 데이터의 샘플 수는 특성(feature) 수보다 충분히 많아야 한다. Jain & Chandrasekaran (1982)에 따르면, 샘플 수는 특성(feature) 수보다 최소 5~10배 많아야 한다는 것이 일반적인 경험 법칙이다.
+
+그러나 fMRI 연구에서는 현실적으로 이러한 조건을 충족하기 어려운 경우가 많다. 예를 들어, 100개의 복셀을 포함하는 ROI(뇌 영역)를 분석할 경우, 500~1000개의 반복 실험이 필요하다. 하지만, 참가자를 이렇게 오랜 시간 동안 스캔하는 것은 현실적으로 어렵다. 이 문제를 해결하는 방법 중 하나는 가능한 한 많은 반복 실험을 포함하는 것이며, 다른 방법으로는 샘플 수를 유지하면서 특성(feature) 수를 줄이는 것이 있다. 특성 수를 줄이는 방법에는 특성 선택(feature selection), 차원 축소(dimensionality reduction) 등이 있다.
+
+또한, 참가자 간 세밀한 신경 반응 패턴을 일치시키는 하이퍼얼라인먼트(Hyperalignment, Haxby et al., 2011), 또는 다수의 참가자로부터 공통적인 신경 반응 패턴을 추출하는 공유 반응 모델(Shared Response Model, Chen et al., 2015) 등의 방법도 있다. 일부 알고리즘(SVM 등)은 상대적으로 많은 특성(feature)을 포함하더라도 잘 작동하지만, 데이터를 훈련 및 테스트 세트로 나누어야 하는 디코딩 분석에서는 충분한 반복 실험이 필요하다. 반면, RSA(표상 유사성 분석)와 같은 방법은 데이터를 훈련 및 테스트 세트로 나눌 필요가 없으므로 상대적으로 적은 샘플로도 분석이 가능하다.
+
+#### 3. 기타 잡음 완화 전략 (Other Ways to Mitigate Noise)
+
+충분한 반복 실험을 포함하는 것 외에도, 자극과 관련 없는 잡음을 최소화하는 또 다른 방법은 짧은 스캔 세션(runs)을 여러 번 수행하는 것이다. 짧은 세션을 여러 번 수행하면, 실험 세션마다 독립적인 잡음이 발생하기 때문에 여러 세션을 평균내면 신경 RDM(Representational Dissimilarity Matrix)의 신뢰도가 높아지고, 패턴 분류기(classifier)의 성능이 향상될 수 있다(Coutanche & Thompson-Schill, 2012). 또한, 단일 세션 내에서 조건을 비교할 경우 발생할 수 있는 편향(bias) 을 줄이는 데도 도움이 된다(Mumford et al., 2014).
+
+### Even sampling of noise
+
+fMRI 연구에서 발생할 수 있는 중요한 문제 중 하나는 특정 조건과 체계적으로 공변하는 잡음(noise) 이 존재할 가능성이다. 이는 MVPA 분석에서 특히 중요한데, MVPA는 조건 간 신경 반응 패턴을 구별하는 데 민감하기 때문에, 특정 조건과 잡음이 함께 변하면 연구 결과가 왜곡될 가능성이 크다. 잡음의 원인은 외부 요인일 수도 있고 참가자의 행동이나 인지적 차이때문일 수도 있지만 이러한 요인들은 잘못된 결과나 해석 오류를 초래할 수도 있으므로 최대한 통제해야 한다.(Todd et al., 2013). 
+
+MVPA 연구에서는 모든 조건에서 잡음이 균등하게 분포하도록 실험을 설계해야 한다. 실험을 여러 번 반복하는 경우, 특정 조건이 특정 run에만 존재하면 해당 조건이 시행에 의한 잡음과 함께 변할 가능성이 있다. 따라서 모든 시행에서 조건을 균등하게 포함해 신호 변화를 균등하게 샘플링하는 것이 중요하다. 또한 각 시행에서 모든 조건의 반복 횟수를 동일하게 유지해야 하며 순서 효과를 최소화할 수 있도록 순서를 최적화해야 한다.(앞의 사항들이 조건이나 결과와 공변할 수 있기 때문이다) 그리고 특정 조건이 인지적 난이도와 반응 시간 차이를 유발하는 경우 이는 결과 해석에 어려움을 겪을 수 있다.
+
+#### MVPA가 단변량 분석보다 잡음에 민감한 이유
+
+MVPA는 모든 정보를 학습하여 조건을 구별하려고 하므로, 연구자가 의도하지 않은 잡음 정보도 학습할 가능성이 있다. 단변량 분석에서는 일반적으로 특정 뇌 영역에서 신호의 강도 변화 만을 평가하지만, MVPA에서는 신경 반응 패턴의 차이를 분석하므로 신호 강도뿐만 아니라 미묘한 패턴 변화도 분석 대상이 된다. 이러한 문제를 방지하기 위해, 전통적인 잡음 샘플링 방법 외에도 MVPA 연구에 특화된 방법을 추가로 적용하는 것이 필요하다(Görgen et al., 2018).
+
+#### 장비 관련 잡음과 순서 효과 최소화 전략
+
+MRI 실험에서 흔히 발생하는 잡음 중 하나는 스캐너 드리프트(scanner drift) 이다. 이는 스캔 세션 동안 신호가 서서히 변화하는 현상으로, 특정 조건이 특정 시간대에 집중적으로 등장하면 신호 변화가 실험 조건과 함께 변할 수 있다. 이를 해결하는 가장 일반적인 방법은 실험 내에서 자극 순서를 무작위화(randomization)하는 것이다(Mumford et al., 2014).
+
+일부 연구에서는 실험 순서를 최적화하는 데 수학적 알고리즘을 활용하여 최적의 실험 설계를 도출하는 방법을 사용한다. 대표적인 기법은 다음과 같다. de Bruijn cycles (Aguirre et al., 2011)은 일정한 규칙을 유지하면서 모든 가능한 자극 조합이 고르게 나타나도록 설계하는 알고리즘으로, 특정 조건이 특정 다른 조건과 연속적으로 등장하는 빈도를 최소화할 수 있다. m-sequences (Buračas & Boynton, 2002)는 자극의 순서를 결정할 때, 특정 패턴이 반복되지 않도록 최적화하는 방법으로 주어진 실험 조건에서 가능한 모든 조합을 고르게 포함하도록 설계할 수 있다.
+
+## Analytical considerations
+
+### Analytical considerations specific to decoding analyses
+
+#### Types of algorithms
+
+#### Overfitting
+
+#### Hyperparameter tuning
+
+### Analytical considerations specific to RSA.
+
+### General analytical considerations: processing and selecting features
+
+### How and when to smooth
+
+### Feature selection
+
+### Dimension reduction
+
+## Analytical steps
+
+### First steps
+
+### Classification analysis
+
+### Representational similarity analysis
+
+### Statistical testing
+
 
 <br>
 
 # What questions can we ask with MVPA?
 
+## Brain-reading
+
+## Stages of neural processing
+
+## Underlying neurocognitive mechanisms
+
+## Individual differences
+
+
 <br>
 
 # Issues in MVPA
 
+## What are we measuring, content or process?
+
+## Beyond static multivoxel response patterns
+
+## Within- vs between-subject decoding
+
+## Imaging resolution
+
+### Examining multivoxel, rather than multi-neuron, patterns can systematically produce both false positives and false negatives
+
+## Uncertainty about the timing of social and affective processes
+
+
 <br>
 
 # Conclusion
-
-
 
 
 
