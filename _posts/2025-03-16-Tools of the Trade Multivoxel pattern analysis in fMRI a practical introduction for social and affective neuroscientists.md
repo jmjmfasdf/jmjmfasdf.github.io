@@ -6,6 +6,7 @@ tags:
     - Machine Learning
     - MVPA
     - RSA
+    - Neuroimaging
 categories: 
     - Paper Review
 toc: true
