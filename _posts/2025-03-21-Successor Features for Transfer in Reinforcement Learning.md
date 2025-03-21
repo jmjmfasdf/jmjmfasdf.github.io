@@ -48,26 +48,38 @@ $$
 Q^\pi(s,a) = \psi^\pi(s,a)^\top w
 $$
 
-
-만약 ϕ(s, a, s')가 (s, a)에 따라 one-hot 벡터라고 가정해 보자. 이 말은 특정 (s', a')가 주어졌을 때 ϕ(s, a, s')는 벡터의 특정 위치에서만 1이고 나머지는 0이라는 뜻이다. 이 경우 ϕ는 미래에 방문할 state (혹은 state-action) pair의 인디케이터 역할을 하게 된다. 이때 ψ^π(s,a)는 미래에 각 (s', a')에 도달할 할인된 기대 방문 횟수로 해석될 수 있으며, 이는 정확히 SR 행렬 M(s, s')의 정의와 동일하다:
-
-$$
-M(s, s') = \mathbb{E}^\pi \left[ \sum_{t=0}^{\infty} \gamma^t \mathbb{I}[s_t = s'] \mid s_0 = s \right]
-$$
-
-또는 행동을 고려하면 state-action SR은 다음과 같이 일반화될 수 있다. 
+ϕ(s, a, s')는 feature vector로 보통은 어떤 임의의 함수 ϕ = S × A × S → ℝⁿ 형태다. 그런데 지금 상황에서는 ϕ가 one-hot 벡터라고 가정해 보자.
+만약 ϕ(s, a, s')가 (s, a)에 따라 one-hot 벡터라고 가정해 보자. 이 말은 특정 (s', a')가 주어졌을 때 ϕ(s, a, s')는 벡터의 특정 위치에서만 1이고 나머지는 0이라는 뜻이다. 즉, 각 (s, a, s′) 쌍마다 feature vector ϕ(s, a, s′)는 다음과 같은 벡터다:
 
 $$
-\psi^\pi(s, a) = \mathbb{E}^\pi \left[ \sum_{t=0}^{\infty} \gamma^t \mathbb{I}[s_t = s', a_t = a'] \mid s_0 = s, a_0 = a \right]
+\phi(s, a, s') = e_{(s', a')} \quad \text{(some fixed index depending on } s', a')
 $$
 
-이는 SR이 상태 방문 횟수를 나타낸다면, SF는 feature 방문 횟수를 나타내는 것으로 볼 수 있다. 그런데 ϕ가 one-hot이면 feature와 state는 1:1 대응되므로 같은 의미가 된다. 즉 피처 함수 ϕ(s,a,s')가 one-hot이면, 각 피처는 특정 상태(또는 상태-행동 쌍)를 그대로 표현하므로, 이 경우 SF는 단순히 SR을 그대로 복제한 구조와 같아진다:
+여기서 $$e_{(s', a')}$$는 feature vector의 특정 위치가 1이고 나머지는 0인 standard basis vector다. 이 의미는 곧, ϕ가 어떤 **미래 state-action pair (s′, a′)**가 발생했는지를 인디케이터 벡터로 나타낸다는 뜻이다. Barreto et al.의 SF 정의를 다시 보자:
 
 $$
-\psi^\pi(s,a) \equiv M(s,s')
+\psi^\pi(s, a) = \mathbb{E}_\pi \left[ \sum_{t=0}^{\infty} \gamma^t \phi(s_t, a_t, s_{t+1}) \mid s_0 = s, a_0 = a \right]
 $$
 
-이러한 논리는 Barreto et al. 논문에서도 명시적으로 언급되며, SR이 SF의 특수한 경우임을 보여준다. SF는 SR의 구조를 일반화해 feature space로 확장하며, 이로써 transfer learning에 더 적합한 구조를 갖추게 된다.
+이 정의는, 시작점 (s, a)에서 출발해 policy π를 따라 행동할 때, 미래에 발생하는 (s′, a′) pair들의 ϕ값을 누적한 것이다. **그런데 만약 ϕ가 one-hot이라면?** 각 시점 t에서 ϕ(s_t, a_t, s_{t+1})는 다음과 같다:
+
+$$
+\phi(s_t, a_t, s_{t+1}) = e_{(s_{t+1}, a_{t+1})}
+$$
+
+여기서 a_{t+1}는 policy π에 따라 확률적으로 정해지므로, expectation 안에서는 e_{(s', a')}의 기대값으로 남는다. 중요한 것은, 이 기대값은 결국, 현재 (s, a)에서 시작했을 때, (s', a')가 미래에 몇 번 등장하는지의 할인된 기대값이다. 따라서, ψ^π(s, a)의 각 원소는 다음을 나타낸다:
+
+$$
+\psi^\pi(s, a)[(s', a')] = \mathbb{E}^\pi \left[ \sum_{t=0}^{\infty} \gamma^t \mathbb{I}[s_t = s', a_t = a'] \mid s_0 = s, a_0 = a \right]
+$$
+
+이는 정확히 (s, a)에서 시작했을 때 미래에 (s′, a′)를 방문할 할인된 기대 횟수를 뜻한다. 이 정의는 우리가 SR에서 사용한 정의와 구조적으로 동일하다. 그리고 Stachenfeld et al.에서의 Successor Representation은 다음과 같다:
+
+$$
+M(s, s') = \mathbb{E}_\pi \left[ \sum_{t=0}^{\infty} \gamma^t \mathbb{I}[s_t = s'] \mid s_0 = s \right]
+$$
+
+이 정의는 미래에 상태 s′에 몇 번 방문하는지를 나타낸다. 여기서는 action은 명시적으로 고려되지 않지만, 만약 (s, a)-pair를 상태로 간주하면 구조는 완전히 같다. 이러한 논리는 Barreto et al. 논문에서도 명시적으로 언급되며, SR이 SF의 특수한 경우임을 보여준다. SF는 SR의 구조를 일반화해 feature space로 확장하며, 이로써 transfer learning에 더 적합한 구조를 갖추게 된다.
 
 <figure class='align-center'>
     <img src = "/images/2025-03-21-Successor Features for Transfer in Reinforcement Learning/figure1.png" alt="">
