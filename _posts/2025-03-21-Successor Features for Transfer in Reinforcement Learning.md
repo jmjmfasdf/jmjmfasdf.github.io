@@ -24,6 +24,8 @@ $$
 Q^\pi(s, a) = \mathbb{E}_\pi \left[ \sum_{t=0}^{\infty} \gamma^t r(s_t, a_t, s_{t+1}) \mid s_0 = s, a_0 = a \right]
 $$
 
+또한 Barreto et al.에서 r은 다음과 같이 표현할 수 있다고 가정하겠다.
+
 $$
 r(s, a, s') = \phi(s, a, s')^\top w
 $$
@@ -45,11 +47,16 @@ $$
 $$
 
 $$
-Q^\pi(s,a) = \psi^\pi(s,a)^\top w
+\begin{aligned}
+Q^\pi(s, a) 
+&= \mathbb{E}_\pi \left[ r_{t+1} + \gamma r_{t+2} + \gamma^2 r_{t+3} + \cdots \mid S_t = s, A_t = a \right] \\
+&= \mathbb{E}_\pi \left[ \phi_{t+1}^\top w + \gamma \phi_{t+2}^\top w + \gamma^2 \phi_{t+3}^\top w + \cdots \mid S_t = s, A_t = a \right] \\
+&= \left( \mathbb{E}_\pi \left[ \sum_{i=t}^{\infty} \gamma^{i - t} \phi_{i+1} \mid S_t = s, A_t = a \right] \right)^\top w \\
+&= \psi^\pi(s, a)^\top w
+\end{aligned}
 $$
 
-ϕ(s, a, s')는 feature vector로 보통은 어떤 임의의 함수 ϕ = S × A × S → ℝⁿ 형태다. 그런데 지금 상황에서는 ϕ가 one-hot 벡터라고 가정해 보자.
-만약 ϕ(s, a, s')가 (s, a)에 따라 one-hot 벡터라고 가정해 보자. 이 말은 특정 (s', a')가 주어졌을 때 ϕ(s, a, s')는 벡터의 특정 위치에서만 1이고 나머지는 0이라는 뜻이다. 즉, 각 (s, a, s′) 쌍마다 feature vector ϕ(s, a, s′)는 다음과 같은 벡터다:
+ϕ(s, a, s')는 feature vector로 보통은 어떤 임의의 함수 ϕ = S × A × S → ℝⁿ 형태다. 그런데 지금 상황에서는 ϕ가 one-hot 벡터라고 가정해 보자. 이 말은 특정 (s', a')가 주어졌을 때 ϕ(s, a, s')는 벡터의 특정 위치에서만 1이고 나머지는 0이라는 뜻이다. 즉, 각 (s, a, s′) 쌍마다 feature vector ϕ(s, a, s′)는 다음과 같은 벡터다:
 
 $$
 \phi(s, a, s') = e_{(s', a')} \quad \text{(some fixed index depending on } s', a')
