@@ -10,8 +10,6 @@ toc: true
 toc_sticky:  true
 ---
 
-# Preliminary
-
 이전의 'The hippocampus as a predictive map' 논문에서도 SR에 관련된 내용을 다루었고, 이 논문에서도 그럴 것이다. 하지만 두 논문이 Successor feature/representation을 다루는 방식에는 약간의 차이가 있기에, 이 부분을 먼저 짚고 넘어가려고 한다. Stachenfeld et al. (2017, 이전 논문)에서 상태 가치 함수 (State Value Function)는 다음과 같이 표현될 수 있다.
 
 $$
@@ -88,11 +86,62 @@ $$
 
 이 정의는 미래에 상태 s′에 몇 번 방문하는지를 나타낸다. 여기서는 action은 명시적으로 고려되지 않지만, 만약 (s, a)-pair를 상태로 간주하면 구조는 완전히 같다. 이러한 논리는 Barreto et al. 논문에서도 명시적으로 언급되며, SR이 SF의 특수한 경우임을 보여준다. SF는 SR의 구조를 일반화해 feature space로 확장하며, 이로써 transfer learning에 더 적합한 구조를 갖추게 된다.
 
+<br>
+
+# 1. Introduction
+
+이 논문은 강화학습(Reinforcement Learning, RL)의 전이 학습(transfer learning)에 초점을 맞추며, 특히 동일한 환경 내에서 보상 함수만 달라지는 다양한 하위 과제(subtask) 간의 전이를 다룬다. 논문에서 제안하는 방법은 다음 두 가지 개념적 기반 위에 세워져 있다:
+
+Successor feature는 기존 Dayan의 Successor Representation(SR)을 일반화한 개념으로, 상태를 미래의 상태 방문 확률이 아닌 feature space에서의 예측으로 표현한다. 이는 연속적인 상태 공간(continuous state space)에도 적용 가능하며, 환경의 dynamics와 보상을 분리해서 표현할 수 있다는 점에서 전이 학습에 유리하다. 즉, 환경이 동일하고 보상 구조만 달라질 때, dynamics에 해당하는 SF만 재활용하면 새로운 가치 함수(Q)를 빠르게 계산할 수 있다. 또한 기존 Bellman 이론은 단일 정책에 대해 정의되었으나, 이 논문에서는 다수의 기존 정책들로부터 새로운 과제에서의 성능 보장을 제공하는 일반화된 이론을 제시한다. 이를 통해 새로운 과제에 대해 학습을 수행하기 전부터 어느 정도 성능을 예측할 수 있으며, 이를 기반으로 **재사용 가능한 스킬 라이브러리(skill library)**를 구축할 수 있다.
+
+논문이 다루는 동일한 환경(즉, 동일한 transition dynamics)을 공유하면서 보상 구조만 다른 과제들 간의 전이 시나리오는 다음과 같다. 에를 들어서 운전 과제를 운전대 조작 → 우회전 → 목적지 도달의 계층적 하위 과제로 나눌 수 있다면, 이들 간의 지식 공유가 가능해야 한다고 말하고 있다. 이러한 전이 과정은 별도의 모듈이 아닌 강화학습 내부 구조에 자연스럽게 통합되어야 하며, 과제 간 정보를 유연하게 공유할 수 있어야 한다고 주장한다.
+
+<br>
+
+# 2. Background and problem formulation
+
+MDP는 다음과 같은 5-튜플로 정의된다:
+
+- $\mathcal{S}$: 상태(state)의 집합  
+- $\mathcal{A}$: 행동(action)의 집합  
+- $p(\cdot|s, a)$: 상태 $s$에서 행동 $a$를 취했을 때 다음 상태로의 확률 분포 (transition dynamics)  
+- $R(s, a, s')$: 전이 $s \xrightarrow{a} s'$ 에서 얻는 보상 (보통 기대값 $r(s,a,s')$를 사용)  
+- $\gamma \in [0,1)$: 미래 보상에 대한 할인 계수 (discount factor)  
+  
+<br>
+
+# 3. Successor features
+
+<br>
+
+# 4. Transfer via successor features
+
+## 4.1. Generalized policy improvement
+
+## 4.2. Generalized policy improvement with successor features
+
+<br>
+
+# 5. Experiments
+
+<br>
+
+# 6. Related work
+
+<br>
+
+# 7. Conclusion
+
+
+
+
+
+
+
 <figure class='align-center'>
     <img src = "/images/2025-03-21-Successor Features for Transfer in Reinforcement Learning/figure1.png" alt="">
     <figcaption>figure 1. caption</figcaption>
 </figure>
-
 
 <figure class='align-center'>
     <img src = "/images/2025-03-21-Successor Features for Transfer in Reinforcement Learning/figure2.png" alt="">
