@@ -254,37 +254,61 @@ $$
 
 # 5. Experiments
 
+저자들의 첫 번째 실험 환경은 2차원 연속 공간의 네 개 방으로 구성된 네비게이션 환경이다. 에이전트는 한 방에서 시작해 가장 멀리 떨어진 방에 위치한 목표 지점(goal)에 도달해야 한다. 환경에는 ‘좋은(good)’ 객체와 ‘나쁜(bad)’ 객체가 있고, 이 객체들을 지나가면서 집을 수 있다. 객체의 클래스는 세 가지이며, 각 클래스에 따라 보상이 주어진다. 에이전트의 목표는 좋은 객체를 수집하고 나쁜 객체는 피하면서 목표 지점까지 도달하는 것이다. 중요한 점은 객체 클래스에 따른 보상이 매 20,000 트랜지션마다 바뀌기 때문에, 보상 구조가 계속 변하는 다수의 태스크로 이루어진다는 것이다. 총 250개의 태스크가 주어지고, 각 태스크의 보상은 $[-1, 1]^3$ 범위에서 균등하게 샘플된다.
 
+<figure class='align-center'>
+    <img src = "/images/2025-03-21-Successor Features for Transfer in Reinforcement Learning/figure1.png" alt="">
+    <figcaption>figure 1. Environment layout and some examples of optimal trajectories associated with specific tasks. The shapes of the objects represent their classes; ‘S’ is the start state and ‘G’ is the goal.</figcaption>
+</figure>
+
+제안된 방법은 **SFQL(Successor Feature Q-learning)**로, $\tilde{w}$와 $\tilde{\psi}\pi$를 (보상 근사식과 SF 벨만 방정식에 기반하여) 점진적으로 업데이트하는 방식이다. 보상이 바뀔 때마다 현재의 $\tilde{\psi}{\pi_i}$를 저장하고 새로운 $\tilde{\psi}{\pi{i+1}}$를 학습하기 시작한다. 비교 대상은 기본 Q-learning(QL)과 정책 재사용 기법인 PRQL(Probabilistic Policy Reuse)이다.
+
+여기서는 SFQL의 두 가지 버전이 비교되었다. 하나는 보상을 정확히 예측할 수 있는 피처 $\phi$에 접근할 수 있는 SFQL-ϕ이다. 이 버전은 에이전트가 사전에 정의된 정확한 feature 함수 $\phi$를 알고 있다는 가정하에 작동한다. 다시 말해, 이 $\phi(s, a, s')$는 보상을 완전히 정확히 설명할 수 있는 feature로, reward function $r(s, a, s') = \phi(s, a, s')^\top w$ 를 완전히 복원할 수 있다. 이 경우, SF는 실제 보상 구조에 딱 맞는 정보만을 담게 되므로 이론적으로는 이상적인 조건이다.
+
+다른 하나는 초기 태스크들로부터 데이터를 수집해 $\tilde{\phi} \in \mathbb{R}^h$를 직접 학습한 SFQL-h이다. 이 버전에서는 feature $\phi$를 모른다고 가정하고, Q-learning을 통해 수집한 초반 20개 태스크의 데이터를 바탕으로 피처 $\tilde{\phi} \in \mathbb{R}^h$를 학습한다. 여기서 $h$는 실제 $\phi$의 차원(실험에서는 4차원)과 다를 수 있으며, $\tilde{\phi}$는 다소 부정확하거나 과잉 또는 부족한 차원의 근사 feature일 수 있다. 이 feature 학습은 다중태스크 학습(multi-task learning) 프로토콜에 기반하여 이루어졌고, 이는 Caruana (1997)와 Baxter (2000)가 제안한 방식에 따른 것이다. Figure 2에 따르면, 모든 버전의 SFQL이 PRQL 및 QL보다 우수한 성능을 보였다. 특히 평균 누적 보상(return) 측면에서 SFQL은 PRQL보다 두 배 이상, QL보다 네 배 이상 더 높은 성과를 냈다.
+
+더욱 흥미로운 점은, SFQL-h가 SFQL-ϕ보다 빠르게 좋은 성능을 보이기 시작했다는 것이다. 이는 다소 역설적으로 보일 수 있다. 왜냐하면 SFQL-ϕ는 정확한 feature를 사용하고 있는 반면, SFQL-h는 학습을 통해 근사 feature $\tilde{\phi}$를 사용하기 때문이다. 이 현상의 주요 원인은 **$\tilde{\phi}$의 활성화 범위(activation support)**에 있다. SFQL-ϕ에서의 $\phi$는 주어진 상태-행동-전이 $(s, a, s')$ 조합 중 극히 일부에서만 비제로 값을 가지는 sparse feature일 수 있다. 즉, 특정 상황에서만 보상에 기여한다. 반면, 학습된 $\tilde{\phi}$는 대부분의 상태-행동 전이 쌍에 대해 비제로 값을 갖는 더 dense한 피처로 작동한다. 이 말은, Q-learning 방식의 TD 학습에서 $\tilde{\phi}$가 더 풍부한 학습 신호를 제공한다는 뜻이다. 결국 이는 pseudo-reward signal이 더 조밀(dense)하게 퍼져 있어서 학습 속도를 높이는 효과를 낳는다.
+
+<figure class='align-center'>
+    <img src = "/images/2025-03-21-Successor Features for Transfer in Reinforcement Learning/figure2.png" alt="">
+    <figcaption>figure 2. Average and cumulative return per task in the four-room domain. SFQL-h receives no reward during the first 20 tasks while learning φ ̃ . Error-bands show one standard error over 30 runs.</figcaption>
+</figure>
+
+
+두 번째 실험 환경은 MuJoCo 물리 엔진을 사용한 로봇 제어 환경으로, "reacher domain"이라 불린다. 두 관절을 가진 로봇 팔을 특정 목표 지점으로 이동시키는 과제다. 총 12개의 태스크가 있지만, 학습은 그 중 4개에 대해서만 수행되며, 나머지 8개는 테스트용 unseen tasks로 남겨진다. 에이전트는 이처럼 경험하지 않은 태스크에서도 성능을 발휘해야 한다.
+
+실험에서는 앞서 제시한 Successor Features 기반 알고리즘을 DQN(Deep Q-Network)에 접목시킨 SFDQN 알고리즘을 제안한다. 이 알고리즘은 SF를 딥러닝 기반으로 확장하여 복잡한 환경에서도 적용할 수 있도록 만든 것이다. 비교 기준으로는 기본 DQN과 SFDQN이 사용되었다. SSFDQN에서 사용된 **feature vector $\phi_i$는 목표 위치까지의 거리의 음수(negated distances)**로 정의된 피처를 사용하며, SF는 신경망을 통해 학습된다. 각 태스크는 one-hot 벡터 $w_t \in \mathbb{R}^{12}$로 주어지며, DQN은 목표 좌표를 입력으로 받는 반면 SFDQN은 $w_t$를 활용한다.
+
+이 실험의 중요한 특징은 모든 전이 경험이 네 개의 SF 함수 $\tilde{\psi}_{\pi_i}$를 동시에 업데이트하는 데 사용된다는 점이다. 이로 인해 한 태스크에서 수집한 경험이 다른 태스크에도 일반화 가능하게 된다. 각 SF는 아래의 GPI (Generalized Policy Improvement) 방식으로 정책에 사용된다:
+
+<img src = "/images/2025-03-21-Successor Features for Transfer in Reinforcement Learning/figure3.png" alt="">
+    <figcaption>figure 3. Normalized return on the reacher domain: ‘1’ corresponds to the average result achieved by DQN after learning each task separately and ‘0’ corresponds to the average performance of a randomly-initialized agent (see Appendix B for details). SFDQN’s results were obtained using the GPI policies πi(s) defined in the text. Shading shows one standard error over 30 runs.</figcaption>   
+</figure>
+
+실험 결과는 Figure 3a, 3b에 나타나 있다. 학습 중인 태스크에서 SFDQN은 빠르게 높은 성능에 도달하며, 더 흥미로운 점은 학습하지 않은 테스트 태스크들에서도 성능이 향상된다는 점이다. 이는 SF와 GPI 구조가 경험의 전이를 유도하는 데 효과적이라는 것을 보여준다. 즉, 하나의 태스크에서 학습된 SF가 공유된 dynamics를 바탕으로 다른 태스크의 정책 추정에도 기여할 수 있다.
 
 <br>
 
 # 6. Related work
 
+Barreto 등은 이 논문에서 제안한 방법과 가장 유사한 선행 연구로 **Mehta et al. (2012)**의 접근을 꼽는다. 그러나 중요한 차이점이 존재한다. Mehta의 연구에서는 feature 벡터 $\phi$와 가중치 벡터 $w$가 항상 환경으로부터 관측 가능한 값으로 주어진다고 가정한다. 또한 평균 보상(average reward)을 기반으로 하는 강화학습 문제를 다루며, 이는 정책 선택이 단 한 번의 결정으로 귀결된다는 점에서 Generalized Policy Improvement(GPI)와는 대조적이다.
 
+이외에도 여러 전이 학습(transfer learning) 알고리즘들이 존재하지만, 특히 기존 정책을 재사용하는 방식으로 이 논문과 관련이 깊은 두 가지 접근법이 있다. 첫째는 실험에 활용된 **Fernández et al. (2006)**의 **Probabilistic Policy Reuse (PPR)**이고, 둘째는 **Bernstein (1999)**의 방법인데, 후자는 매번 새로운 태스크에서 SF를 처음부터 다시 학습하는 방식이다.
+
+Successor Features(SFs)를 단순한 표현 방식으로 본다면, 이들은 **Littman et al. (2001)**의 **Predictive State Representations (PSRs)**와 유사한 점이 있다. 다만 PSR은 단일 정책이 아니라 전체 환경의 dynamics를 요약한다는 점에서 차이가 있다. 오히려 SFs는 Inverse Reinforcement Learning에서 사용되는 value function 기반 표현들과 더 유사하다.
+
+또한 SFs는 **Sutton et al. (2011)**의 **General Value Functions (GVFs)**와도 관련이 있다. GVFs는 pseudo-reward를 기반으로 하는 확장된 가치 함수로, 이 관점에서 보면 feature $\phi_i$를 pseudo-reward로 보고 SF는 특정 GVF의 한 형태로 해석될 수 있다. 이러한 연결은 두 모델이 공유하는 핵심 철학을 조명한다. 예를 들어 GVF는 “세상의 중요한 지식은 다양한 예측의 형태로 표현될 수 있다”는 가정을 가지며, SFs는 이를 활용하여 어떤 보상 함수든 표현 가능하게 해준다. 반대로 SFs는 어떤 feature $\phi_i$가 유용한지를 선택하는 기준도 제공한다. 즉, 우리가 관심 있는 보상 $r(s,a,s')$를 근사하는 데 도움이 되는 feature만 필요하다는 점이다.
+
+이와 관련된 또 다른 일반화는 **Schaul et al. (2015)**의 **Universal Value Function Approximators (UVFAs)**다. UVFAs는 value function의 입력으로 goal representation을 추가함으로써 전이 학습에 유리한 구조를 제공한다. 이 논문에서 사용하는 식 $\max_j \tilde{\psi}_{\pi_j^*}(s,a)^\top \tilde{w}$ 역시 $(s, a, \tilde{w})$를 입력으로 하는 함수로 해석될 수 있으며, 이는 사실상 UVFA의 구조를 따르는 셈이다. 이 해석은 특히 $\tilde{w}$를 환경 관측값의 함수로 직접 추정할 수 있는 가능성을 시사한다.
+
+마지막으로, SF와 신경망을 결합하려는 시도들도 이전에 존재했다. 예컨대 **Kulkarni et al. (2016)**과 **Zhang et al. (2017)**은 SF와 관련된 모듈을 신경망을 통해 공동으로 학습하는 아키텍처를 제안했다. 이들은 GPI를 적용하지는 않았지만, SF를 활용한 전이 학습 측면에서 본 논문과 관련이 깊다. 따라서 이러한 구조들은 이 논문에서 제안한 프레임워크 내에서도 충분히 활용 가능하다.
 
 <br>
 
 # 7. Conclusion
 
+이 논문의 결론에서는 두 가지 핵심 개념이 논의된다. 첫 번째는 **Successor Features (SFs)**로, 이는 **Dayan (1993)**의 **Successor Representation (SR)**을 일반화한 개념이다. SFs는 기존의 이산 상태 공간(discrete space)에서 정의되던 SR을 연속 공간(continuous space)으로 확장하고, 함수 근사(function approximation)를 보다 자연스럽게 적용할 수 있도록 만든다. 두 번째는 **Generalized Policy Improvement (GPI)**로, 이는 Bellman의 policy improvement를 하나의 정책(policy)이 아닌 복수의 정책들에 대해 일반화한 개념이며, 본문에서 **정리 1(Theorem 1)**로 공식화되었다.
 
+이 두 개념은 각각 독립적으로도 흥미롭지만, 논문은 이 둘을 결합하여 **전이 학습(transfer learning)**을 실현하는 데 초점을 맞춘다. 이러한 조합은 동적계획법(Dynamic Programming, DP)의 기본 틀을 확장하면서, 강화학습에서의 전이를 위한 이론적 기반을 제공한다. 이를 보완하기 위해 논문에서는 **정리 2(Theorem 2)**를 도출하였는데, 이는 유사한 과거의 작업을 경험한 에이전트가 새로운 작업에서도 좋은 성능을 보일 수 있다는 직관을 수학적으로 정형화한 것이다.
 
-
-
-
-
-
-
-<figure class='align-center'>
-    <img src = "/images/2025-03-21-Successor Features for Transfer in Reinforcement Learning/figure1.png" alt="">
-    <figcaption>figure 1. caption</figcaption>
-</figure>
-
-<figure class='align-center'>
-    <img src = "/images/2025-03-21-Successor Features for Transfer in Reinforcement Learning/figure2.png" alt="">
-    <figcaption>figure 2. caption</figcaption>
-</figure>
-
-<figure class='align-center'>
-    <img src = "/images/2025-03-21-Successor Features for Transfer in Reinforcement Learning/figure3.png" alt="">
-    <figcaption>figure 3. caption</figcaption>
-</figure>
+이론적 기초 외에도, 본 논문은 다양한 실험들을 통해 SFs와 GPI의 결합이 실제 전이 학습 상황에서 어떻게 효과를 발휘하는지를 실증적으로 보여준다. 저자들은 이 프레임워크가 RL 내에서 전이를 위한 일반적인 틀을 제시하며, 이를 토대로 보다 다양한 태스크를 다룰 수 있는 강력한 에이전트를 구성할 수 있다고 주장한다.
