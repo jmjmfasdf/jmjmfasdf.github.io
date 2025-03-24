@@ -254,7 +254,7 @@ figure 3에서는 시뮬레이션한 파라미터 값과 복원된 파라미터 
     <figcaption>figure 3. Parameter recovery for the Rescorla Wagner model (model 3) in the bandit task with 1000 trials.</figcaption>
 </figure>
 
-소프트맥스 파라미터 $$ \beta $$의 경우, $$ 1 < \beta < 10 $$ 범위에서는 매우 정확하게 복원되나 $$ \beta $$ 값이 1보다 작거나 10보다 크면 복원 성능이 떨어졌다. 즉, 극단적으로 낮거나 높은 $$ \beta $$ 값에서는 모델이 올바르게 파라미터를 복원하지 못할 가능성이 높다고 할 수 있다. 학습률 $$ \alpha $$ 의 복원 성능의 경워, 특정 상황에서 학습률 $$ \alpha $$ 의 복원 성능이 낮아지는 경우가 관찰되었는데, 복원된 $$ \alpha $$ 값과 실제 시뮬레이션된 값 사이의 오차 $$ |\alpha_{\text{sim}} - \alpha_{\text{fit}}| > 0.25 $$ 가 되는 경우를 회색 점(grey dots)으로 표시하였다.
+소프트맥스 파라미터 $$ \beta $$의 경우, $$ 1 < \beta < 10 $$ 범위에서는 매우 정확하게 복원되나 $$ \beta $$ 값이 1보다 작거나 10보다 크면 복원 성능이 떨어졌다. 즉, 극단적으로 낮거나 높은 $$ \beta $$ 값에서는 모델이 올바르게 파라미터를 복원하지 못할 가능성이 높다고 할 수 있다. 학습률 $$ \alpha $$ 의 복원 성능의 경워, 특정 상황에서 학습률 $$ \alpha $$ 의 복원 성능이 낮아지는 경우가 관찰되었는데, 복원된 $$ \alpha $$ 값과 실제 시뮬레이션된 값 사이의 오차 $$ \left| \alpha_{\text{sim}} - \alpha_{\text{fit}} \right| > 0.25 $$ 가 되는 경우를 회색 점(grey dots)으로 표시하였다.
 
 이러한 회색 점을 분석해보면, $$ \beta $$ 값이 특정 범위(1~10)를 벗어날 때 $$ \alpha $$ 의 복원 성능이 나빠지는 경향이 관찰되었다. 즉, $$ \beta $$ 값이 너무 크거나 너무 작을 경우, 학습률 $$ \alpha $$ 를 신뢰할 수 있는 방식으로 추정하는 것이 어려울 수 있다.
 
@@ -280,7 +280,7 @@ figure 3에서는 시뮬레이션한 파라미터 값과 복원된 파라미터 
 
 ## 2. 혼동 행렬(Confusion Matrix) 분석
 
-figure 4의 (A)와 (B)는 모델 복원 실험을 수행한 후 얻어진 혼동 행렬(confusion matrix) 을 보여준다. 혼동 행렬의 각 셀은 $$ p(\text{fit model} | \text{simulated model}) $$, 즉 특정 모델이 생성한 데이터를 다른 모델들이 얼마나 잘 설명하는지 확률적으로 나타낸 것이다. 읽는 방법은 simulated model (여기서 만들어진 데이터가) -> fitted model (어디서 가장 설명이 잘 되는지) 방향으로 읽으면 된다.(즉 row의 합이 1이다.) 완벽한 경우(이상적인 모델 복원)라면, 혼동 행렬은 단위 행렬(identity matrix) 이어야 한다.
+figure 4의 (A)와 (B)는 모델 복원 실험을 수행한 후 얻어진 혼동 행렬(confusion matrix) 을 보여준다. 혼동 행렬의 각 셀은 $$ p(\text{fit model} \mid \text{simulated model}) $$, 즉 특정 모델이 생성한 데이터를 다른 모델들이 얼마나 잘 설명하는지 확률적으로 나타낸 것이다. 읽는 방법은 simulated model (여기서 만들어진 데이터가) -> fitted model (어디서 가장 설명이 잘 되는지) 방향으로 읽으면 된다.(즉 row의 합이 1이다.) 완벽한 경우(이상적인 모델 복원)라면, 혼동 행렬은 단위 행렬(identity matrix) 이어야 한다.
 
 이 실험에서는 소프트맥스 파라미터 $$ b $$ 및 $$ \beta_c $$ 가 작은 값도 포함되었다. $$ b $$ 값이 작으면, 모델의 행동이 랜덤하게 변하면서 모델 간 차이가 흐려지므로 구별이 어려워진다. 결과적으로, Model 3~5가 서로 구별되지 않으며, 혼동 행렬이 뚜렷한 대각선 형태를 띠지 않게 된다.
 
@@ -288,7 +288,7 @@ figure 4의 (A)와 (B)는 모델 복원 실험을 수행한 후 얻어진 혼동
 
 <figure class='align-center'>
     <img src = "/images/2025-03-12-Ten simple rules for the computational modeling of behavioral data/figure4.jpg" alt="">
-    <figcaption>figure 4. Confusion matrices in the bandit task showing the effect of prior parameter distributions on model recovery. Numbers denote the probability that data generated with model X are best fit by model Y, thus the confusion matrix represents $$ p(\text{fit model} | \text{simulated model}) $$.</figcaption>
+    <figcaption>figure 4. Confusion matrices in the bandit task showing the effect of prior parameter distributions on model recovery. Numbers denote the probability that data generated with model X are best fit by model Y, thus the confusion matrix represents $$ p(\text{fit model} \mid \text{simulated model}) $$</figcaption>
 </figure>
 
 ## 3. 역행렬(Inversion Matrix) 분석
