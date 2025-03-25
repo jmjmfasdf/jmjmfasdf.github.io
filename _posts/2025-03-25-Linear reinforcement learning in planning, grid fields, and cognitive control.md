@@ -72,6 +72,32 @@ DR은 SR과 비슷하지만, SR이 특정 정책 $\pi$에 종속된 반면 DR은
 
 <br>
 
+## Model performance
+
+핵심 아이디어는 이 모델이 최적 정책을 계산할 때 **기대 보상(reward)**과 제어 비용(control cost) 사이의 균형을 추구한다는 점이다. 이로 인해 linear RL은 deterministic한 정책이 아니라 softmax와 유사한 stochastic policy를 생성하게 된다(Fig. 1a, b).
+
+<figure class='align-center'>
+    <img src = "/images/2025-03-25-Linear reinforcement learning in planning, grid fields, and cognitive control/figure1.jpg" alt="">
+    <figcaption>figure 1. The linear RL model. a, b The model optimizes the decision policy by considering the reward and the control cost, which is defined as the KL divergence between the decision policy and a default policy. Assuming an unbiased (uniform) distribution as the default policy, the optimal decision policy balances the expected reward with the control cost. Although the expected reward is maximum when probability of choosing A is close to 1 (and therefore probability of choosing B is about zero), this decision policy has maximum control cost due to its substantial deviation from the default policy. The optimal value instead maximized expected reward minus the control cost, which here occurs when probability of choosing A is 0.73. c, d The model accurately approximates optimal choice. We compared its performance on a seven-level decision tree task (with random one-step costs at each state) to six pruned model-based RL algorithms, which evaluate the task to a certain depth (D = 1,..,6; D7 is optimal; D1 is equivalent to the successor representation for the random walk policy) and use average values at the leaves. Linear RL (LRL) achieved near-optimal average costs (y-axis is additional cost relative to the optimum). Local costs of all states were randomly chosen in the range of 0–10, and simulations were repeated 100 times. Mean, standard error of the mean, and distribution of data across 100 simulations are plotted. Source data are provided as a Source Data file.</figcaption>
+</figure>
+
+모델 성능을 평가하기 위해 저자들은 7단계로 구성된 어려운 의사결정 트리 환경을 사용했다. 이 환경에서 각 상태는 두 개의 후속 상태로 전이될 수 있으며, 각 상태에는 무작위 비용이 할당된다. 목표는 루트 상태에서 리프까지 도달하는 최소 비용 경로를 찾는 것이다. Linear RL은 다음과 같은 다양한 baseline 모델들과 비교되었다:
+
+- 정확한 모델 기반 계획 (exact model-based solution)
+
+- **깊이에 따른 가지치기(planning with pruning)**를 수행하는 근사적 모델 기반 에이전트들: 이들은 특정 깊이까지는 정확하게 평가하지만, 그 이후에는 남은 서브트리의 평균값을 대체하여 계산을 단순화한다. 이 방식은 1-step 가지치기 시 **SR (Successor Representation)**과 동일하며, SR은 uniform random policy를 따르는 것으로 해석된다(Fig. 1c).
+
+Linear RL에서는 default policy $\pi_d$를 uniform distribution으로 고정하고, 이를 모든 시뮬레이션에 공통적으로 사용하였다. 이는 SR처럼 매 task에서 default policy를 다시 학습하거나 업데이트해야 하는 필요성을 제거하고, linear RL이 얼마나 일반화된 재계획(replanning)을 가능하게 하는지를 보여준다. 그 결과, linear RL은 거의 최적에 가까운 평균 비용 성능을 달성했다(Fig. 1d).
+
+중요한 점은 linear RL에서 사용하는 **Default Representation (DR) 행렬 $M$**은 task의 구조(즉, nonterminal state 간의 거리 정보 등)를 반영하며, reward 값 $r$이나 특정 목표(goal)에 종속되지 않는다는 점이다(Fig. 2). 따라서 DR을 한 번 계산하거나 학습해 두면, goal reward가 변하거나 새로운 목표가 생겼을 때도 재계획이 매우 효율적으로 수행될 수 있다. 이는 공간적 과제(spatial tasks)에서 임의의 상태에서 임의의 목표 상태로의 최단 경로를 찾는 것과 같은 역할을 한다.
+
+<figure class='align-center'>
+    <img src = "/images/2025-03-25-Linear reinforcement learning in planning, grid fields, and cognitive control/figure2.jpg" alt="">
+    <figcaption>figure 2. Default representation. a The DR corresponding to a three-level decision tree task is shown. Each row of the DR represents weighted future expectancies starting from the corresponding state and following the default policy. Therefore, the DR is independent of the goals and optimized policy. b, c The optimized path for planning from home (H) to the food (F) state is computed based on the DR. The linear RL model is efficient because the same DR is sufficient for planning towards a new goal, such as the water (W) state. d The path between every two states in a 10 × 10 maze environment (d) computed by linear RL exactly matches the optimal (shortest) path computed by exhaustive search. The DR has been computed once and reused (in combination with techniques from matrix identities) to compute each optimal path.</figcaption>
+</figure>
+
+<br>
+
 ## Replanning
 
 
@@ -119,15 +145,9 @@ DR은 SR과 비슷하지만, SR이 특정 정책 $\pi$에 종속된 반면 DR은
 
 
 
-<figure class='align-center'>
-    <img src = "/images/2025-03-25-Linear reinforcement learning in planning, grid fields, and cognitive control/figure1.jpg" alt="">
-    <figcaption>figure 1. caption</figcaption>
-</figure>
 
-<figure class='align-center'>
-    <img src = "/images/2025-03-25-Linear reinforcement learning in planning, grid fields, and cognitive control/figure2.jpg" alt="">
-    <figcaption>figure 2. caption</figcaption>
-</figure>
+
+
 
 <figure class='align-center'>
     <img src = "/images/2025-03-25-Linear reinforcement learning in planning, grid fields, and cognitive control/figure3.jpg" alt="">
