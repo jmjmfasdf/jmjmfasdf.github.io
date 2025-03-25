@@ -133,6 +133,24 @@ critic이 자신의 예측값을 다시 학습 target으로 삼기 때문에, �
 
 ## Actor learning
 
+DreamerV3에서 actor는 주어진 상태에서 return을 최대화하도록 행동을 학습하며, 이 과정에서 entropy regularizer를 사용해 탐색을 유도한다. 그러나 환경마다 보상의 스케일과 빈도가 다르기 때문에, 고정된 entropy scale을 사용하려면 보상의 크기에 따라 탐색량이 지나치게 민감해지는 문제를 해결해야 한다. 이를 위해 return 값을 정규화(normalization)하여 약 $$[0, 1]$$구간에 포함되도록 조정한다. 구체적으로, actor의 손실 함수는 다음과 같은 surrogate objective로 정의된다:
+
+$$
+\mathcal{L}(\theta) = - \sum_{t=1}^{T} \text{sg}\left(\frac{R_t^\lambda - v_\psi(s_t)}{\max(1, S)}\right) \log \pi_\theta(a_t \mid s_t) + \eta \, \mathcal{H}[\pi_\theta(a_t \mid s_t)]
+$$
+
+여기서 $$\eta = 3 \times 10^{-4}$$는 고정된 entropy 스케일이며, $$\text{sg}(\cdot)$$는 stop-gradient 연산, $$R_t^\lambda$$는 λ-return, $$v_\psi(s_t)$$는 critic의 예측값이다. 정규화 분모인 $$S$$는 전체 return 배치에서 95번째 백분위수와 5번째 백분위수의 차이로 정의되며, 지수 이동 평균으로 부드럽게 갱신된다:
+
+$$
+S = \text{EMA}\left(\text{Per}(R_t^\lambda, 95) - \text{Per}(R_t^\lambda, 5), 0.99\right)
+$$
+
+이처럼 백분위수를 사용한 이유는 극단적인 이상값(outlier)에 대한 민감도를 줄이기 위함이다. 반면, 단순히 최소값과 최대값을 사용하면 이상치 때문에 전체 return이 과도하게 축소되어 성능 저하가 발생할 수 있다.
+
+기존 연구들은 일반적으로 return이 아니라 advantage를 정규화했으며, $$A_t = R_t^\lambda - v_\psi(s_t)$$ 이 경우, 보상이 드문 환경에서는 작은 advantage의 variance를 키우는 과정에서 entropy 항보다 노이즈가 커져 탐색이 정체될 수 있다. 또한, reward를 표준편차로 정규화하는 방식은 sparse reward 환경에서 분모가 거의 0에 가까워질 수 있어 보상의 왜곡이 심해진다.
+
+또한, constrained optimization 접근법은 상태 평균의 entropy를 일정 수준으로 유지하도록 하지만, sparse reward 환경에서는 탐색 속도가 느리고 dense reward 환경에서는 수렴 성능이 낮아지는 문제가 있다. 이에 비해 DreamerV3의 return normalization은 이러한 기존 방식들의 한계를 극복하고, 다양한 도메인에서 안정적인 탐색과 높은 성능 수렴을 동시에 달성한다.
+
 <br>
 
 ## Robust predictions
@@ -156,7 +174,6 @@ critic이 자신의 예측값을 다시 학습 target으로 삼기 때문에, �
     <img src = "/images/2025-03-25-Mastering Diverse Domains through World Models/figure1.png" alt="">
     <figcaption>figure 1. Benchmark summary. a, Using fixed hyperparameters across all domains, Dreamer outperforms tuned expert algorithms across a wide range of benchmarks and data budgets. Dreamer also substantially outperforms a high-quality implementation of the widely applicable PPO algorithm. b, Applied out of the box, Dreamer learns to obtain diamonds in the popular video game Minecraft from scratch given sparse rewards, a long-standing challenge in artificial intelligence for which previous approaches required human data or domain-specific heuristics.</figcaption>
 </figure>
-
 
 <figure class='align-center'>
     <img src = "/images/2025-03-25-Mastering Diverse Domains through World Models/figure5.png" alt="">
