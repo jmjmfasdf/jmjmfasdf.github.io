@@ -240,7 +240,7 @@ $$
 
 이렇게 계산된 여러 정책들의 Q-function 중 가장 높은 값을 기준으로 행동을 선택하면, GPI를 통해 기존 정책 중 어떤 것보다도 성능이 떨어지지 않는 새로운 정책 $\pi$를 생성할 수 있다. 이 방식은 새로운 task에 대해 RL을 처음부터 다시 수행하는 것보다 훨씬 효율적이다.
 
-이 접근법의 성능은 Theorem 2를 통해 수학적으로 보장된다. 이 정리는 주어진 task $M_i$에 대해, 다른 과제들 $M_j$에서 유도된 최적 정책 $\pi_j^*$를 실행했을 때의 성능 $Q_i^{\pi_j^*}$와 SF 기반 근사값 $\tilde{Q}_i^{\pi_j^*}$ 간 오차 $\epsilon$이 작을 경우, $\pi$가 $M_i$에서 최적 정책 대비 얼마나 성능이 떨어질지를 다음과 같이 상한할 수 있다고 보장한다:
+이 접근법의 성능은 Theorem 2를 통해 수학적으로 보장된다. 이 정리는 주어진 task $M_i$에 대해, 다른 과제들 $M_j$에서 유도된 최적 정책 $$\pi_j^*$$를 실행했을 때의 성능 $$Q_i^{\pi_j^*}$$와 SF 기반 근사값 $$\tilde{Q}_i^{\pi_j^*}$$ 간 오차 $\epsilon$이 작을 경우, $\pi$가 $M_i$에서 최적 정책 대비 얼마나 성능이 떨어질지를 다음과 같이 상한할 수 있다고 보장한다:
 
 $$
 Q_i^{\pi_i^*}(s,a) - Q_i^{\pi}(s,a) \leq \frac{2}{1 - \gamma} \left( \phi_{\text{max}} \min_j \| w_i - w_j \| + \epsilon \right)
@@ -261,7 +261,7 @@ $$
     <figcaption>figure 1. Environment layout and some examples of optimal trajectories associated with specific tasks. The shapes of the objects represent their classes; ‘S’ is the start state and ‘G’ is the goal.</figcaption>
 </figure>
 
-제안된 방법은 **SFQL(Successor Feature Q-learning)**로, $\tilde{w}$와 $\tilde{\psi}\pi$를 (보상 근사식과 SF 벨만 방정식에 기반하여) 점진적으로 업데이트하는 방식이다. 보상이 바뀔 때마다 현재의 $\tilde{\psi}{\pi_i}$를 저장하고 새로운 $\tilde{\psi}{\pi{i+1}}$를 학습하기 시작한다. 비교 대상은 기본 Q-learning(QL)과 정책 재사용 기법인 PRQL(Probabilistic Policy Reuse)이다.
+제안된 방법은 **SFQL(Successor Feature Q-learning)**로, $\tilde{w}$와 $\tilde{\psi}^{\pi}$를 (보상 근사식과 SF 벨만 방정식에 기반하여) 점진적으로 업데이트하는 방식이다. 보상이 바뀔 때마다 현재의 $\tilde{\psi}^{\pi_i}$를 저장하고 새로운 $\tilde{\psi}^{\pi_{i+1}}$를 학습하기 시작한다. 비교 대상은 기본 Q-learning(QL)과 정책 재사용 기법인 PRQL(Probabilistic Policy Reuse)이다.
 
 여기서는 SFQL의 두 가지 버전이 비교되었다. 하나는 보상을 정확히 예측할 수 있는 피처 $\phi$에 접근할 수 있는 SFQL-ϕ이다. 이 버전은 에이전트가 사전에 정의된 정확한 feature 함수 $\phi$를 알고 있다는 가정하에 작동한다. 다시 말해, 이 $\phi(s, a, s')$는 보상을 완전히 정확히 설명할 수 있는 feature로, reward function $r(s, a, s') = \phi(s, a, s')^\top w$ 를 완전히 복원할 수 있다. 이 경우, SF는 실제 보상 구조에 딱 맞는 정보만을 담게 되므로 이론적으로는 이상적인 조건이다.
 
