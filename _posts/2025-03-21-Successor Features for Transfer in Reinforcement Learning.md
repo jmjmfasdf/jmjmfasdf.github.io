@@ -246,7 +246,7 @@ $$
 Q_i^{\pi_i^*}(s,a) - Q_i^{\pi}(s,a) \leq \frac{2}{1 - \gamma} \left( \phi_{\text{max}} \min_j \| w_i - w_j \| + \epsilon \right)
 $$
 
-이 식에서 중요한 요소는 $\min_j \mid w_i - w_j |$이다. 즉, 현재 과제 $w_i$와 가장 가까운 과제 $w_j$ 간의 거리(distance)가 작을수록 성능 손실이 적다는 것이다. 이는 곧 **유사한 과제를 과거에 본 경험이 있다면, 새로운 과제도 잘 해결할 수 있다는 직관**을 수학적으로 뒷받침해 준다.
+이 식에서 중요한 요소는 $$\min_j \vert w_i - w_j \vert$$이다. 즉, 현재 과제 $w_i$와 가장 가까운 과제 $w_j$ 간의 거리(distance)가 작을수록 성능 손실이 적다는 것이다. 이는 곧 **유사한 과제를 과거에 본 경험이 있다면, 새로운 과제도 잘 해결할 수 있다는 직관**을 수학적으로 뒷받침해 준다.
 
 실제 구현에서 SF를 메모리에 저장해야 하므로, 어떤 SF를 유지할지 결정하는 기준도 이론적으로 도출된다. 예를 들어, 새 과제의 $w_i$가 기존의 어떤 $w_j$와 충분히 멀다면 새로운 SF를 생성하고, 아니라면 기존 것을 재활용하거나 교체할 수 있다.
 
@@ -281,7 +281,8 @@ $$
 
 이 실험의 중요한 특징은 모든 전이 경험이 네 개의 SF 함수 $\tilde{\psi}_{\pi_i}$를 동시에 업데이트하는 데 사용된다는 점이다. 이로 인해 한 태스크에서 수집한 경험이 다른 태스크에도 일반화 가능하게 된다. 각 SF는 아래의 GPI (Generalized Policy Improvement) 방식으로 정책에 사용된다:
 
-<img src = "/images/2025-03-21-Successor Features for Transfer in Reinforcement Learning/figure3.png" alt="">
+<figure class='align-center'>
+    <img src = "/images/2025-03-21-Successor Features for Transfer in Reinforcement Learning/figure3.png" alt="">
     <figcaption>figure 3. Normalized return on the reacher domain: ‘1’ corresponds to the average result achieved by DQN after learning each task separately and ‘0’ corresponds to the average performance of a randomly-initialized agent (see Appendix B for details). SFDQN’s results were obtained using the GPI policies πi(s) defined in the text. Shading shows one standard error over 30 runs.</figcaption>   
 </figure>
 
