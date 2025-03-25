@@ -277,7 +277,7 @@ $$
 
 두 번째 실험 환경은 MuJoCo 물리 엔진을 사용한 로봇 제어 환경으로, "reacher domain"이라 불린다. 두 관절을 가진 로봇 팔을 특정 목표 지점으로 이동시키는 과제다. 총 12개의 태스크가 있지만, 학습은 그 중 4개에 대해서만 수행되며, 나머지 8개는 테스트용 unseen tasks로 남겨진다. 에이전트는 이처럼 경험하지 않은 태스크에서도 성능을 발휘해야 한다.
 
-실험에서는 앞서 제시한 Successor Features 기반 알고리즘을 DQN(Deep Q-Network)에 접목시킨 SFDQN 알고리즘을 제안한다. 이 알고리즘은 SF를 딥러닝 기반으로 확장하여 복잡한 환경에서도 적용할 수 있도록 만든 것이다. 비교 기준으로는 기본 DQN과 SFDQN이 사용되었다. SSFDQN에서 사용된 **feature vector $\phi_i$는 목표 위치까지의 거리의 음수(negated distances)**로 정의된 피처를 사용하며, SF는 신경망을 통해 학습된다. 각 태스크는 one-hot 벡터 $w_t \in \mathbb{R}^{12}$로 주어지며, DQN은 목표 좌표를 입력으로 받는 반면 SFDQN은 $w_t$를 활용한다.
+실험에서는 앞서 제시한 Successor Features 기반 알고리즘을 DQN(Deep Q-Network)에 접목시킨 SFDQN 알고리즘을 제안한다. 이 알고리즘은 SF를 딥러닝 기반으로 확장하여 복잡한 환경에서도 적용할 수 있도록 만든 것이다. 비교 기준으로는 기본 DQN과 SFDQN이 사용되었다. SFDQN에서 사용된 **feature vector $\phi_i$는 목표 위치까지의 거리의 음수(negated distances)**로 정의된 피처를 사용하며, SF는 신경망을 통해 학습된다. 각 태스크는 one-hot 벡터 $w_t \in \mathbb{R}^{12}$로 주어지며, DQN은 목표 좌표를 입력으로 받는 반면 SFDQN은 $w_t$를 활용한다.
 
 이 실험의 중요한 특징은 모든 전이 경험이 네 개의 SF 함수 $\tilde{\psi}_{\pi_i}$를 동시에 업데이트하는 데 사용된다는 점이다. 이로 인해 한 태스크에서 수집한 경험이 다른 태스크에도 일반화 가능하게 된다. 각 SF는 아래의 GPI (Generalized Policy Improvement) 방식으로 정책에 사용된다:
 
