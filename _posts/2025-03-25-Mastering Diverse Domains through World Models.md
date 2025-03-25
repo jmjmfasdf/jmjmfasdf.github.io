@@ -20,6 +20,11 @@ toc_sticky:  true
 
 이러한 배경에서 Dreamer는 "한 번의 설정으로 다양한 도메인을 학습 가능한 일반 알고리즘"이라는 핵심 목표를 가진다. Dreamer의 핵심 아이디어는 ‘world model’을 학습하는 것이다. 이 world model은 에이전트가 환경을 인식하고 미래를 상상할 수 있게 해주는 역할을 하며, world model을 이용한 접근 방식은 이론적으로 매력적이지만, 실제로는 안정적으로 학습하고 강력한 성능을 내는 것이 난제로 여겨져 왔다.
 
+<figure class='align-center'>
+    <img src = "/images/2025-03-25-Mastering Diverse Domains through World Models/figure2.jpg" alt="">
+    <figcaption>figure 2. Diverse visual domains used in the experiments. Dreamer succeeds across these domains, ranging from robot locomotion and manipulation tasks over Atari games, procedurally generated ProcGen levels, and DMLab tasks, that require spatial and temporal reasoning, to the complex and infinite world of Minecraft. We also evaluate Dreamer on non-visual domains.</figcaption>
+</figure>
+
 Dreamer는 이를 극복하기 위해 정규화, 균형 조정, 데이터 변환 등 다양한 강인성(robustness) 기법을 도입한다. 이러한 기법은 단순한 이론적 가능성을 넘어서, 실제로 150개 이상의 다양한 과제들에서 일관되게 강력한 성능을 보여주며 모델 크기나 학습 예산이 다르더라도 성능이 안정적으로 향상된다는 패턴을 보여준다. 특히 모델이 클수록 더 적은 상호작용만으로도 더 높은 점수를 얻을 수 있다는 점이 강조된다.
 
 이러한 Dreamer의 가능성을 극단적으로 시험해보기 위해 저자들은 오픈월드 게임인 Minecraft에 Dreamer를 적용하였다. Minecraft는 희소 보상, 긴 시간 지연, 복잡한 탐색, 다양한 환경 변화 등으로 인해 AI 분야에서 ‘다이아몬드 수집’이라는 과제가 대표적인 난제로 간주되어 왔다. 지금까지의 접근 방식은 전문가 데이터나 맞춤형 커리큘럼에 의존해왔으나, Dreamer는 이러한 도움 없이도 '처음부터' 다이아몬드를 수집하는 데 성공한 최초의 알고리즘이다. 
@@ -38,6 +43,11 @@ DreamerV3의 주요 목표는 단일 설정(fixed hyperparameters)으로 다양�
 
 DreamerV3의 world model은 센서 입력을 autoencoding 방식으로 압축하여 표현하고, 이후 가능한 행동들의 결과를 예측함으로써 planning을 가능하게 한다. 이를 위해 사용된 모델은 **Recurrent State-Space Model (RSSM)**이며, Figure 3에 그 구조가 시각화되어 있다.
 
+<figure class='align-center'>
+    <img src = "/images/2025-03-25-Mastering Diverse Domains through World Models/figure3.jpg" alt="">
+    <figcaption>figure 3. Training process of Dreamer. The world model encodes sensory inputs into discrete representations zt that are predicted by a sequence model with recurrent state ht given actions at. The inputs are reconstructed to shape the representations. The actor and critic predict actions at and values vt and learn from trajectories of abstract representations predicted by the world model.</figcaption>
+</figure>
+
 RSSM에서는 먼저 encoder가 현재 센서 입력 $$x_t$$를 확률적 표현 $$z_t$$로 변환한다. 이어서 recurrent state $$h_t$$를 유지하는 sequence model이 이전 상태 $$h_{t-1}$$, $$z_{t-1}$$, 행동 $$a_{t-1}$$를 기반으로 다음 상태를 예측한다. 이때 $$h_t$$와 $$z_t$$의 결합이 현재의 모델 상태가 되며, 이 상태로부터 reward $$r_t$$, episode의 계속 여부 $$c_t ∈ {0, 1}$$, 그리고 입력 $$x_t$$를 재구성하게 된다.
 
 모델 구조는 다음 수식으로 요약된다:
@@ -53,19 +63,24 @@ $$
 
 Figure 4는 이 모델이 수행하는 장기 비디오 예측의 시각화를 보여준다. encoder와 decoder는 CNN을 통해 이미지 입력을 처리하고, MLP를 사용해 벡터 입력을 처리한다. reward, continue predictor, dynamics predictor는 모두 MLP로 구현되어 있다. 표현 $$z_t$$는 softmax 분포에서 샘플링되며, gradient는 straight-through 방식으로 전달된다.
 
+<figure class='align-center'>
+    <img src = "/images/2025-03-25-Mastering Diverse Domains through World Models/figure4.jpg" alt="">
+    <figcaption>figure 4. Multi-step video predictions of a DMLab maze (top) and a quadrupedal robot (bottom). Given 5 context images and the full action sequence, the model predicts 45 frames into the future without access to intermediate images. The world model learns an understanding of the underlying structure of each environment.</figcaption>
+</figure>
+
 학습은 입력 $$x_{1:T}$$, 행동 $$a_{1:T}$$, 보상 $$r_{1:T}$$, 플래그 $$c_{1:T}$$로 구성된 시퀀스를 받아 이루어지며, 손실 함수는 다음과 같다:
 
 $$
 L(\phi) = \mathbb{E}_{q_\phi} \left[ \sum_{t=1}^T (\beta_{\text{pred}} L_{\text{pred}}(\phi) + \beta_{\text{dyn}} L_{\text{dyn}}(\phi) + \beta_{\text{rep}} L_{\text{rep}}(\phi)) \right]
 $$
 
-여기서 각 항의 weight는 $$β_pred$$ = 1, $$β_dyn$$ = 1, $$β_rep$$ = 0.1이다. 예측 손실 $$L_pred$$는 symlog 제곱 손실을 사용하여 decoder, reward, continue predictor를 학습한다. dynamics 손실 $$L_dyn$$는 KL divergence를 통해 다음 표현을 예측하는 sequence model을 학습한다:
+여기서 각 항의 weight는 $$β_{pred}$$ = 1, $$β_{dyn}$$ = 1, $$β_{rep}$$ = 0.1이다. 예측 손실 $$L_{pred}$$는 symlog 제곱 손실을 사용하여 decoder, reward, continue predictor를 학습한다. dynamics 손실 $$L_{dyn}$$는 KL divergence를 통해 다음 표현을 예측하는 sequence model을 학습한다:
 
 $$
 L_{\text{dyn}}(\phi) = \max(1, \text{KL}[ \text{sg}(q_\phi(z_t | h_t, x_t)) || p_\phi(z_t | h_t) ])
 $$
 
-표현 손실 L_rep는 표현을 더 예측 가능하게 만들도록 학습한다:
+표현 손실 L_{rep}는 표현을 더 예측 가능하게 만들도록 학습한다:
 
 $$
 L_{\text{rep}}(\phi) = \max(1, \text{KL}[ q_\phi(z_t | h_t, x_t) || \text{sg}(p_\phi(z_t | h_t)) ])
@@ -73,13 +88,46 @@ $$
 
 degenerate solution을 피하기 위해, free bits 기법을 사용하여 KL 손실을 1 nat (≈ 1.44 bits) 이하로는 반영하지 않는다. 이는 dynamics나 representation 손실이 이미 잘 수렴된 경우 학습의 중점을 prediction loss로 전환하기 위함이다.
 
-또한, 다양한 환경의 시각적 복잡도에 대응하기 위해 이전에는 $$β_rep$$를 조절해야 했지만, 여기서는 free bits와 소규모 representation loss를 결합하여 고정된 하이퍼파라미터로도 안정적인 학습이 가능하게 하였다. 추가적으로 symlog 변환을 통해 벡터 입력의 큰 값과 그로 인한 reconstruction gradient 폭주를 방지하였다.
+또한, 다양한 환경의 시각적 복잡도에 대응하기 위해 이전에는 $$β_{rep}$$를 조절해야 했지만, 여기서는 free bits와 소규모 representation loss를 결합하여 고정된 하이퍼파라미터로도 안정적인 학습이 가능하게 하였다. 추가적으로 symlog 변환을 통해 벡터 입력의 큰 값과 그로 인한 reconstruction gradient 폭주를 방지하였다.
 
 마지막으로 KL 손실의 스파이크를 방지하기 위해 encoder와 dynamics predictor의 categorical distribution은 1%의 균일 분포와 99%의 neural net 출력을 섞은 방식으로 파라미터화된다. 이로 인해 모델은 결정론적으로 변할 수 없으며 KL 손실이 안정적으로 유지된다.
 
 <br>
 
 ## Critic learning
+
+DreamerV3에서의 critic 학습은 world model이 생성한 상상 trajectory를 기반으로 수행된다. actor와 critic은 recurrent world model이 제공하는 Markov 표현인 
+
+$$
+s_t = \{h_t, z_t\}
+$$
+
+를 입력으로 받아 동작하며, actor는 상태별 누적 보상인 return 
+
+$$
+R_t = \sum_{\tau=0}^{\infty} \gamma^\tau r_{t+\tau}
+$$
+
+을 최대화하는 행동을 선택한다. 여기서 할인율은 $$\gamma = 0.997$$로 고정된다. critic은 현재 정책에 따른 상태별 return 분포를 예측하는데, 이를 위해 bootstrapped λ-return을 사용하며, 아래와 같이 정의된다:
+
+$$
+R_t^\lambda = r_t + \gamma c_t \left[(1 - \lambda) v_t + \lambda R_{t+1}^\lambda\right], \quad R_T^\lambda = v_T
+$$
+
+critic은 이 값을 최대우도법에 기반해 학습하며 손실 함수는 다음과 같다:
+
+$$
+\mathcal{L}(\psi) = -\sum_{t=1}^T \log p_\psi(R_t^\lambda \mid s_t)
+$$
+
+예측값 $$v_t = \mathbb{E}[v_\psi(\cdot \mid s_t)]$$은 분포의 기대값으로 정의된다. 다양한 환경에서 return의 분포는 다봉(multi-modal)이거나 값의 범위가 커질 수 있기 때문에, DreamerV3는 critic의 출력 분포를 정규분포 대신 지수 간격의 categorical distribution으로 파라미터화한다. 이 방식은 gradient의 크기를 target의 크기와 분리하여 안정성을 높인다.
+
+보상 예측이 어려운 환경에서도 value prediction을 향상시키기 위해 critic loss는 두 종류의 trajectory에 대해 계산된다. 상상 trajectory에는 손실 가중치를 $$\beta_{\text{val}} = 1$$로, replay buffer에서 샘플링한 trajectory에는 $$\beta_{\text{repval}} = 0.3$$을 적용한다. replay trajectory의 λ-return 계산 시, imagination rollout의 시작 지점에서 계산된 $$
+R_t^\lambda$$ 를 on-policy value로 사용한다.
+
+critic이 자신의 예측값을 다시 학습 target으로 삼기 때문에, 학습 안정성을 위해 critic의 출력이 **자신의 EMA(exponential moving average)**에 수렴하도록 regularization을 적용한다. 이는 기존 target network 기법과 유사하지만, DreamerV3는 현재 critic 네트워크를 그대로 사용하면서도 안정적인 return 계산이 가능하다는 특징이 있다.
+
+또한, 학습 초기 reward predictor와 critic이 무작위로 초기화되었을 때 과도한 보상을 예측하는 문제가 발생할 수 있다. 이를 방지하기 위해 두 네트워크의 출력 weight matrix를 0으로 초기화하여 초반 학습을 안정화하고 빠르게 진행되도록 한다.
 
 <br>
 
@@ -109,20 +157,6 @@ degenerate solution을 피하기 위해, free bits 기법을 사용하여 KL 손
     <figcaption>figure 1. Benchmark summary. a, Using fixed hyperparameters across all domains, Dreamer outperforms tuned expert algorithms across a wide range of benchmarks and data budgets. Dreamer also substantially outperforms a high-quality implementation of the widely applicable PPO algorithm. b, Applied out of the box, Dreamer learns to obtain diamonds in the popular video game Minecraft from scratch given sparse rewards, a long-standing challenge in artificial intelligence for which previous approaches required human data or domain-specific heuristics.</figcaption>
 </figure>
 
-<figure class='align-center'>
-    <img src = "/images/2025-03-25-Mastering Diverse Domains through World Models/figure2.jpg" alt="">
-    <figcaption>figure 2. Diverse visual domains used in the experiments. Dreamer succeeds across these domains, ranging from robot locomotion and manipulation tasks over Atari games, procedurally generated ProcGen levels, and DMLab tasks, that require spatial and temporal reasoning, to the complex and infinite world of Minecraft. We also evaluate Dreamer on non-visual domains.</figcaption>
-</figure>
-
-<figure class='align-center'>
-    <img src = "/images/2025-03-25-Mastering Diverse Domains through World Models/figure3.jpg" alt="">
-    <figcaption>figure 3. Training process of Dreamer. The world model encodes sensory inputs into discrete representations zt that are predicted by a sequence model with recurrent state ht given actions at. The inputs are reconstructed to shape the representations. The actor and critic predict actions at and values vt and learn from trajectories of abstract representations predicted by the world model.</figcaption>
-</figure>
-
-<figure class='align-center'>
-    <img src = "/images/2025-03-25-Mastering Diverse Domains through World Models/figure4.jpg" alt="">
-    <figcaption>figure 4. Multi-step video predictions of a DMLab maze (top) and a quadrupedal robot (bottom). Given 5 context images and the full action sequence, the model predicts 45 frames into the future without access to intermediate images. The world model learns an understanding of the underlying structure of each environment.</figcaption>
-</figure>
 
 <figure class='align-center'>
     <img src = "/images/2025-03-25-Mastering Diverse Domains through World Models/figure5.jpg" alt="">
