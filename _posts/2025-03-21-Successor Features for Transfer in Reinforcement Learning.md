@@ -230,7 +230,7 @@ $$
 
 이 부분에서는 Successor Features(SFs) 를 활용한 Generalized Policy Improvement(GPI) 기법을 통해, 어떻게 효율적인 transfer learning이 가능한지를 설명한다. 핵심 아이디어는 여러 과제(task)에 대한 최적 정책을 학습한 이후, 새로운 과제에 대한 정책을 이들로부터 유도할 수 있다는 것이다.
 
-우선, 각 과제 $M_i \in \mathcal{M}\phi$는 고유한 weight vector $w_i \in \mathbb{R}^d$에 의해 정의된다. 이때, 과제 $M_i$의 최적 정책을 $$\pi_i^*$$라고 하고, 그에 따른 action-value function을 $Q_i^{\pi^*}(s,a)$라고 하자. 새로운 과제 $M{n+1}$이 등장했을 때, 기존에 학습된 ${\pi_i^*}$들을 $M_{n+1}$에 대해 재사용하는 방식으로 정책을 구성할 수 있다. 단, reward가 $w_{n+1}$로 바뀌었다면, 기존 정책 ${\pi_i^*}$의 성능을 다시 계산해야 한다.
+우선, 각 과제 $M_i \in \mathcal{M}\phi$는 고유한 weight vector $w_i \in \mathbb{R}^d$에 의해 정의된다. 이때, 과제 $M_i$의 최적 정책을 $$\pi_i^*$$라고 하고, 그에 따른 action-value function을 $$Q_i^{\pi^*}(s,a)$$라고 하자. 새로운 과제 $M{n+1}$이 등장했을 때, 기존에 학습된 $$\pi_i^*$$들을 $M_{n+1}$에 대해 재사용하는 방식으로 정책을 구성할 수 있다. 단, reward가 $w_{n+1}$로 바뀌었다면, 기존 정책 $$\pi_i^*$$의 성능을 다시 계산해야 한다.
 
 이때 SF가 유용하게 작동한다. 이미 학습된 $\psi^{\pi_i^*}(s,a)$가 존재하고, 새로운 reward vector $w_{n+1}$만 주어지면, 다음과 같이 즉시 Q-function을 계산할 수 있다:
 
