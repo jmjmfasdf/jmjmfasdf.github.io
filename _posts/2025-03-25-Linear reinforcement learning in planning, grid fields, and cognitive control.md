@@ -100,19 +100,84 @@ Linear RL에서는 default policy $\pi_d$를 uniform distribution으로 고정�
 
 ## Replanning
 
+이 부분에서는 선형 강화학습(linear RL) 모델이 다양한 재계획(replanning) 과제를 어떻게 해결할 수 있는지를 다룬다. 이 과제들은 주로 보상 또는 목표의 변경(revaluation, devaluation, latent learning) 혹은 **전이 구조의 변경(shortcut, detour)**을 포함하는데, 이런 변화에 대해 빠르고 효과적으로 행동을 조정할 수 있는 능력은 인간과 동물의 지능적 행동을 평가하는 중요한 척도로 간주된다.
 
+일반적으로 인간과 동물은 이러한 환경 변화에 대해 학습 없이도 즉각적으로 반응할 수 있다. 이러한 능력을 재현하려면 알고리즘적으로 효율적인 지식 전이(transfer) 메커니즘이 필요하다. 기존의 모델 프리(model-free) 강화학습 알고리즘은 보상이 바뀐 경로를 직접 경험해야만 그 보상 정보를 반영해 정책을 수정할 수 있기 때문에, 이러한 재계획 과제를 제대로 해결하지 못한다.
+
+논문에서는 선형 RL 모델이 보상 재평가와 같은 과제를 어떻게 해결하는지를 보여준다. 핵심은, 선형 RL이 사용하는 **기본 표현(default representation, DR)**은 훈련 시점에 계산되며, 이후에는 보상이 바뀌더라도 이 DR을 그대로 사용할 수 있다는 것이다. 이는 수식적으로 보상 벡터 $\mathbf{r}$만 수정하고 DR을 곱하는 것만으로 새로운 가치 함수를 계산할 수 있음을 의미한다. 즉, 구조 $M$는 유지되면서, 새로운 보상으로 업데이트된 정책을 빠르게 계산할 수 있는 것이다.
+
+예를 들어 Tolman의 잠재 학습(latent learning) 과제를 보면, 쥐는 처음에는 두 개의 보상 구역이 있는 미로를 탐색하게 된다. 이후 그 중 하나의 보상 구역에서 전기 충격을 받게 되는데, 쥐는 해당 경로를 다시 경험하지 않고도 그 경로를 피할 수 있었다. 이는 미리 학습된 DR이 새로운 보상 정보에 따라 즉시 업데이트되어 새로운 정책을 유도할 수 있기 때문이다.
+
+<figure class='align-center'>
+    <img src = "/images/2025-03-25-Linear reinforcement learning in planning, grid fields, and cognitive control/figure3.jpg" alt="">
+    <figcaption>figure 3. Linear RL can explain flexible replanning. a–c Performance of linear RL on a version of Tolman’s latent learning task (a). We simulated the model in a maze representing this task (b) and plotted the probability of choosing each end-box during the training and test phases. The model correctly (c) reallocates choices away from the devalued option. d, e Performance of linear RL in another reward revaluation task5,6, termed policy revaluation (d). Choices from state 1: during the training phase, the model prefers to go to state 3 rather than state 2. Revaluation of the bottom level state reverses this preference (e) similar to human subjects6. f–h Performance of the model in Tolman’s detour task. The structure of the environment changes in this task due to the barrier placed into the maze (g), which blocks the straight path. The model is able to compute the optimized policy using the old DR (following a single, inexpensive update to it) and correctly choose the left path in the test phase (h).</figcaption>
+</figure>
+
+SR(Successor Representation)도 보상 재평가와 같은 단일 단계 과제에서는 작동할 수 있다. 하지만 Russek et al.과 Momennejad et al.이 제안한 정책 재평가(policy revaluation) 과제처럼 여러 단계에 걸친 의사결정이 필요한 경우에는 SR의 한계가 드러난다.
+
+figure 3d의 policy revaluation 과제에서 피험자들은 세 단계를 거쳐 하나의 말단 상태(terminal state)에 도달하게 되는데, 훈련 이후 특정 말단 상태에 높은 보상이 주어지는 구조로 바뀐다. 이 경우, 피험자는 과거에 경험하지 않았던 경로를 선택해야 최적의 보상을 얻을 수 있다. 그러나 SR은 과거 정책에 기반한 상태 전이 예측만을 저장하므로, 새롭게 등장한 보상 경로를 고려하지 못하고 부정확한 정책을 산출하게 된다.
+
+반면 선형 RL은 기본 정책 $\pi_d$에 대한 의존성이 약하고, DR은 다양한 정책 변화에도 안정적이므로, 이러한 과제에서도 새로운 보상 구조에 맞춘 최적 정책을 계산할 수 있다. DR은 여러 가지 기본 정책(예: uniform, 과거에 최적화된 정책 등)을 바탕으로 구성될 수 있으며, 그 자체로도 유용한 정책 업데이트를 가능하게 한다.
+
+다음으로는 환경의 전이 구조(transition structure) 자체가 변화하는 재계획(replanning) 과제—예를 들어 미로에 장벽(barrier)을 추가하여 이전에 선호되던 경로를 차단하는 경우—에 대해 선형 강화학습(linear RL) 모델이 어떻게 대응하는지를 설명한다. 이러한 변화는 환경의 상태 전이 그래프를 변경하게 되며, 이는 SR(successor representation)의 $S_\pi$ 행렬이나 DR(default representation)의 $M$ 행렬이 기존 전이 구조에 기반해 학습되었기 때문에, 이 변화가 반영되지 않으면 정확한 재계획이 불가능하다.
+
+하지만 실험적으로는 인간과 동물이 이러한 전이 구조 변경에도 빠르게 적응하는 능력을 보이며, 이는 기존 강화학습 모델로 설명하기 어렵다. 이를 해결하기 위해, 저자들은 선형 RL을 확장하여 환경 구조 변경에 따른 효율적인 DR 업데이트 방법을 제안한다. 핵심 아이디어는 **행렬 항등식(matrix identity)**을 이용하여 기존의 DR, 즉 $M_{\text{old}}$에 새로운 변화만 반영한 **저차원(low-rank) 행렬 $M_B$**를 덧붙이는 방식이다:
+
+$$
+M = M_{\text{old}} + M_B
+$$
+
+여기서 $M_B$는 환경의 전이 구조가 변한 상태들에 대해서만 정의되며, 그 rank는 전이가 변경된 상태의 수에 비례한다. 이 방식은 전체 DR을 처음부터 다시 계산하는 것보다 훨씬 효율적이며, 이전에 학습한 DR 구조를 최대한 보존하면서 필요한 수정만 적용할 수 있다. 이를 통해 바뀐 환경에 대해 최적의 가치 함수와 정책을 빠르게 재계산할 수 있다(Fig. 3h).
+
+흥미롭게도 SR 또한 이와 유사한 방식으로 $S_\pi$를 업데이트할 수 있지만, SR은 정책 $\pi$에 의존적이기 때문에 새로운 문제 상황에서 정확한 재계획을 위해서는 정책 자체도 재학습이 필요하다. 반면 DR은 기본 정책 $\pi_d$에 독립적으로 설계되어 있어, 한 번의 간단한 행렬 연산으로 재계획이 가능하다는 점에서 중요한 장점을 갖는다.
 
 <br>
 
 ## Grid fields
 
+기존 이론들은 grid cell이 공간적 또는 추상적인 상태 공간에서의 주기적 관계를 표현하고, 장기적인 계획(planning)이나 탐색(navigation)에 핵심적인 역할을 한다고 주장해왔다. 그러나 grid cell의 계산적 기능이 구체적으로 무엇인지, 그리고 그것이 어떻게 유연한 계획(flexible planning)을 가능하게 하는지에 대해서는 명확하지 않았다.
 
+기존의 고전적 강화학습 이론에서 가치 함수 $$v^*(s)$$를 계산하려면, 현재 상태에서 출발하여 가능한 모든 미래 행동을 고려해야 하며, 이 과정은 매우 비효율적이다. 이를 해결하기 위한 아이디어 중 하나는 단기 전이 정보(예: $$P(s_{t+1}|s_t, a_t)$$)뿐 아니라, **장기적인 전이 구조(long-range transition structure)**를 반영하는 지도 형태의 표현을 사용하는 것이다. SR(successor representation) 모델은 이런 목적을 위해 개발되었으며, 특정 정책 $\pi$ 하에서 미래 상태 방문 기대치를 행렬 $S^\pi$로 저장한다. 이 SR의 고유벡터는 그래프 라플라시안의 고유벡터(eigenvectors of the graph Laplacian)와 동일하며, 이는 주기적이며 grid field와 유사한 공간적 주파수 기반 함수들을 제공한다. 이들 **고유함수는 상태 공간 전체에 걸쳐 값 함수나 상태 방문 예측 등을 빠르게 근사할 수 있는 기저 함수(basis functions)**로 해석된다.
+
+하지만 SR에는 중요한 한계가 있다. 핵심 문제는 SR이 특정 정책 $\pi$에 따라 구축된다는 점에서 비롯된다. 최적 가치 함수의 벨만 방정식(Eq. (2))에는 각 단계에서의 "max" 연산이 포함되어 있어, 선택된 행동이 후속 상태로의 전이를 결정하며, 이로 인해 장거리 상태 간 전이 지도(long-range transition map)는 정책과 목표에 따라 달라지게 된다. 다시 말해, 목표가 바뀌면 최적 행동도 바뀌고, 그에 따라 후속 상태의 경험 분포 역시 달라져 순수한 공간 구조로서의 안정성이 무너진다.
+
+이러한 구조에서는 고정된 정책 $\pi$를 기준으로 만든 고유벡터 기반의 표현(예: SR의 고유벡터)이 새로운 과제로의 전이에 있어서 제한적인 유용성만을 가지게 된다. 이에 따라 컴퓨터 과학에서는 "representation policy iteration"과 같은 알고리즘이 등장했는데, 이는 각 새로운 과제를 학습할 때마다 정책과 값 함수의 변화에 맞춰 고유벡터 기반 표현을 반복적으로 갱신하는 방식이다. 하지만 이런 반복적인 갱신 방식이 단발(one-shot) 전이 학습에 실제로 효과적인가에 대해서는 여전히 의문이 제기된다. 
+
+이에 반해 **선형 RL에서 제안된 DR(default representation)**은 이러한 단점을 보완한다. DR은 SR과 유사한 구조를 가지면서도, 기본 정책 $\pi_d$에 대해서만 고정되어 있고, 새로운 목표에 대해서도 그대로 사용할 수 있다. 선형 RL에서는 가치 함수가 다음과 같이 계산된다:
+
+$$
+\exp(v^*) = M P \exp(r)
+$$
+
+여기서 $M$은 DR로, SR과 유사하지만 정책에 덜 민감하며, 다양한 목표 보상 $r$에 대해 안정적으로 값을 계산할 수 있다. 이것은 grid cell이 실제로 나타내는 것이 DR의 고유벡터일 가능성을 제시한다. 즉, grid cell의 firing pattern은 SR이 아니라 DR의 고유벡터에 해당하는 주기적 함수라는 주장이다. 이 가설은 여러 실험적 결과와 부합한다.
+
+<figure class='align-center'>
+    <img src = "/images/2025-03-25-Linear reinforcement learning in planning, grid fields, and cognitive control/figure4.jpg" alt="">
+    <figcaption>figure 4. The DR as a model of grid fields. a, b Grid fields are sensitive to the geometry of the environment, but are stable with respect to behavior (adapted with permission from Derdikman et al.30). Derdikman and colleagues tested grid fields in a hairpin maze formed by actual barriers, and compared them to those recorded in a “virtual” hairpin maze, in which rats were trained to show hairpin-like behavior in an open field without constraining side walls. Grid fields in the virtual hairpin differ from those in the hairpin maze but are similar to the open field. b This similarity is quantified by the correlation between grid fields in a baseline from an initial open field test and those from the three tasks (hairpin maze, virtual hairpin, the second control open field). This plot is adapted from Derdikman et al.30. Error bars are standard error of the mean. c Grid fields are sensitive to the presence of the home cage only insofar as it introduces new barriers in space, but not through the changes it produces in behavior (Adapted from Sanguinetti-Scheck and Brecht31 licensed under CC BY 4.0). In particular, introducing a plain box (the same shape as the home cage) affects grid fields compared to the open field (left); but substuting the home cage for the box (right) does not further affect the grid code, although it changes behavior. The maps show the correlation between grid fields in the two scenarios. d All eigenvectors of the DR are independent from behavioral policies and periodic, similar to grid fields. Three example eigenvectors from a 50 × 50 maze are plotted. See Supplementary Fig. 1 for other eigenvectors. Source data are provided as a Source Data file.</figcaption>
+</figure>
+
+이러한 주장을 뒷받침하는 실험적 증거는 Figure 4에 제시되어 있다. Figure 4a–b에서는 벽을 세워 hairpin maze를 만들었을 때 grid field가 변화하지만, 벽 없이 동일한 행동 경로를 학습한 경우 grid field에는 변화가 없었다. 이는 정책 변화는 grid field에 영향을 주지 않으며, 오직 **환경의 전이 구조(transition structure)**만이 영향을 미친다는 것을 시사한다.
+Figure 4c는 벽의 형태가 동물의 집과 동일할 때 grid field가 반응하지만, 그것이 실제 집인지 여부는 중요하지 않다는 것을 보여주며, grid cell이 객관적인 환경 구조에 더 민감하다는 점을 강조한다.
+Figure 4d는 DR의 고유벡터가 2D 공간에서 주기적인 grid-like 패턴을 형성한다는 것을 시각적으로 보여준다. 이는 grid cell이 DR의 고유벡터를 바탕으로 공간 구조를 표현한다는 주장을 뒷받침한다.
+
+이러한 결과는 기존 SR 기반 모델들이 가지는 정책 의존성과 그에 따른 불안정성 문제를 해결할 수 있으며, grid field가 다양한 목표와 행동 전략 변화 속에서도 정상적으로 유지될 수 있는 계산 기제로서 DR의 역할을 정당화해준다. 더불어 DR은 경로상의 지역적 비용(local cost)도 반영할 수 있기 때문에, 험한 지형이나 장애물과 같은 환경적 특성에 따라 grid field의 강도나 구조가 달라질 수 있다는 예측도 가능하게 한다. 
+
+마지막으로 DR은 **경로상의 지역적 비용(local cost)**도 고려한다는 점에서 SR보다 더 현실적이다. 이로 인해 **지형의 난이도(예: 경사진 지형, 험지 등)**가 grid cell의 반응에 영향을 미칠 수 있다는 예측도 가능하다.
 
 <br>
 
 ## Border cells
 
+이 문단은 entorhinal cortex의 border cells가 선형 강화학습(linear RL) 프레임워크 내에서 어떤 계산적 역할을 가질 수 있는지 설명한다. 앞서 설명된 것처럼, 환경 내 **장애물(barriers)**과 같은 변화는 기본 전이 구조를 변경시켜 DR(Default Representation)을 갱신해야 한다. Tolman의 detour task(Fig. 3f–h)를 통해 이 문제를 다룰 때, 저자들은 전체 DR을 재계산하지 않고, 원래의 DR에 **저랭크(low-rank) 보정 행렬 $M_B$**를 더하는 방식으로 새로운 DR을 표현했다(Eq. (5)). 이 방식은 공간 거리 맵(DR)을 여러 **구성 요소(component)**들의 합으로 표현할 수 있는 구조적 가능성을 제시한다.
 
+<figure class='align-center'>
+    <img src = "/images/2025-03-25-Linear reinforcement learning in planning, grid fields, and cognitive control/figure5.jpg" alt="">
+    <figcaption>figure 5. The model explains border cells. a Rate maps for a representative border cell in different boxes; adapted from Solstad et al.41 with permission from AAAS. b Columns of the matrix required to update the DR matrix to account for the wall resemble border cells. Four example columns from a 20 × 20 maze are plotted. See also Supplementary Fig. 2. Source data are provided as a Source Data file.</figcaption>
+</figure>
+
+이 맥락에서 entorhinal border cells는 중요한 계산적 단서로 제시된다(Fig. 5a). 이 세포들은 동물이 환경의 경계 근처에 있을 때만 강하게 반응하며, 환경 구조가 바뀌어도 이러한 경계 민감성은 유지된다. 흥미롭게도, DR의 보정 행렬 $M_B$의 열벡터는 border cells의 활성 패턴과 유사한 특성을 보인다(Fig. 5b). 즉, 이들은 기존 DR의 저차원(eigenvector 기반) 표현과 함께 **지도(map)**를 구성하는 또 다른 기저 함수(basis function)로 해석될 수 있으며, grid cells와 함께 공통된 표현 체계로 통합될 수 있다.
+
+이러한 구조는 DR을 장애물과 같은 환경적 특징의 조합으로 나타내는 두 가지 방식을 함의한다. 첫째는 $M_B$를 별도의 가산 요소로 유지하는 방식(예: border cells로 표현), 둘째는 기존 맵(예: grid cells, $M_{old}$) 자체를 업데이트하여 변경사항을 통합하는 방식이다. 두 번째 방식은 grid cells의 공간적 주기성이 장애물에 의해 변할 수 있음을 시사하며, 첫 번째 방식은 장애물이 grid map에 영향을 주지 않음을 시사한다. 실험적으로는 grid cells 중 일부는 장애물에 민감하게 반응하고, 일부는 반응하지 않으며, 이러한 차이는 환경에서의 학습 정도에 따라 달라질 수 있음이 보고되었다【29】. 따라서 DR의 보정 항 $M_B$는 초기에는 별도로 표현되지만, 환경이 안정적이라면 이후 전체 맵에 통합될 수 있다는 가능성이 제시된다.
 
 <br>
 
@@ -149,20 +214,11 @@ Linear RL에서는 default policy $\pi_d$를 uniform distribution으로 고정�
 
 
 
-<figure class='align-center'>
-    <img src = "/images/2025-03-25-Linear reinforcement learning in planning, grid fields, and cognitive control/figure3.jpg" alt="">
-    <figcaption>figure 3. caption</figcaption>
-</figure>
 
-<figure class='align-center'>
-    <img src = "/images/2025-03-25-Linear reinforcement learning in planning, grid fields, and cognitive control/figure4.jpg" alt="">
-    <figcaption>figure 4. caption</figcaption>
-</figure>
 
-<figure class='align-center'>
-    <img src = "/images/2025-03-25-Linear reinforcement learning in planning, grid fields, and cognitive control/figure5.jpg" alt="">
-    <figcaption>figure 5. caption</figcaption>
-</figure>
+
+
+
 
 <figure class='align-center'>
     <img src = "/images/2025-03-25-Linear reinforcement learning in planning, grid fields, and cognitive control/figure6.jpg" alt="">
