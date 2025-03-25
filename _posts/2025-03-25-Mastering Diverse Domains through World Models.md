@@ -21,7 +21,7 @@ toc_sticky:  true
 이러한 배경에서 Dreamer는 "한 번의 설정으로 다양한 도메인을 학습 가능한 일반 알고리즘"이라는 핵심 목표를 가진다. Dreamer의 핵심 아이디어는 ‘world model’을 학습하는 것이다. 이 world model은 에이전트가 환경을 인식하고 미래를 상상할 수 있게 해주는 역할을 하며, world model을 이용한 접근 방식은 이론적으로 매력적이지만, 실제로는 안정적으로 학습하고 강력한 성능을 내는 것이 난제로 여겨져 왔다.
 
 <figure class='align-center'>
-    <img src = "/images/2025-03-25-Mastering Diverse Domains through World Models/figure2.jpg" alt="">
+    <img src = "/images/2025-03-25-Mastering Diverse Domains through World Models/figure2.png" alt="">
     <figcaption>figure 2. Diverse visual domains used in the experiments. Dreamer succeeds across these domains, ranging from robot locomotion and manipulation tasks over Atari games, procedurally generated ProcGen levels, and DMLab tasks, that require spatial and temporal reasoning, to the complex and infinite world of Minecraft. We also evaluate Dreamer on non-visual domains.</figcaption>
 </figure>
 
@@ -44,7 +44,7 @@ DreamerV3의 주요 목표는 단일 설정(fixed hyperparameters)으로 다양�
 DreamerV3의 world model은 센서 입력을 autoencoding 방식으로 압축하여 표현하고, 이후 가능한 행동들의 결과를 예측함으로써 planning을 가능하게 한다. 이를 위해 사용된 모델은 **Recurrent State-Space Model (RSSM)**이며, Figure 3에 그 구조가 시각화되어 있다.
 
 <figure class='align-center'>
-    <img src = "/images/2025-03-25-Mastering Diverse Domains through World Models/figure3.jpg" alt="">
+    <img src = "/images/2025-03-25-Mastering Diverse Domains through World Models/figure3.png" alt="">
     <figcaption>figure 3. Training process of Dreamer. The world model encodes sensory inputs into discrete representations zt that are predicted by a sequence model with recurrent state ht given actions at. The inputs are reconstructed to shape the representations. The actor and critic predict actions at and values vt and learn from trajectories of abstract representations predicted by the world model.</figcaption>
 </figure>
 
@@ -64,7 +64,7 @@ $$
 Figure 4는 이 모델이 수행하는 장기 비디오 예측의 시각화를 보여준다. encoder와 decoder는 CNN을 통해 이미지 입력을 처리하고, MLP를 사용해 벡터 입력을 처리한다. reward, continue predictor, dynamics predictor는 모두 MLP로 구현되어 있다. 표현 $$z_t$$는 softmax 분포에서 샘플링되며, gradient는 straight-through 방식으로 전달된다.
 
 <figure class='align-center'>
-    <img src = "/images/2025-03-25-Mastering Diverse Domains through World Models/figure4.jpg" alt="">
+    <img src = "/images/2025-03-25-Mastering Diverse Domains through World Models/figure4.png" alt="">
     <figcaption>figure 4. Multi-step video predictions of a DMLab maze (top) and a quadrupedal robot (bottom). Given 5 context images and the full action sequence, the model predicts 45 frames into the future without access to intermediate images. The world model learns an understanding of the underlying structure of each environment.</figcaption>
 </figure>
 
@@ -153,17 +153,17 @@ critic이 자신의 예측값을 다시 학습 target으로 삼기 때문에, �
 
 
 <figure class='align-center'>
-    <img src = "/images/2025-03-25-Mastering Diverse Domains through World Models/figure1.jpg" alt="">
+    <img src = "/images/2025-03-25-Mastering Diverse Domains through World Models/figure1.png" alt="">
     <figcaption>figure 1. Benchmark summary. a, Using fixed hyperparameters across all domains, Dreamer outperforms tuned expert algorithms across a wide range of benchmarks and data budgets. Dreamer also substantially outperforms a high-quality implementation of the widely applicable PPO algorithm. b, Applied out of the box, Dreamer learns to obtain diamonds in the popular video game Minecraft from scratch given sparse rewards, a long-standing challenge in artificial intelligence for which previous approaches required human data or domain-specific heuristics.</figcaption>
 </figure>
 
 
 <figure class='align-center'>
-    <img src = "/images/2025-03-25-Mastering Diverse Domains through World Models/figure5.jpg" alt="">
+    <img src = "/images/2025-03-25-Mastering Diverse Domains through World Models/figure5.png" alt="">
     <figcaption>figure 5. Fraction of trained agents that discover each of the three latest items in the Minecraft Diamond task. Although previous algorithms progress up to the iron pickaxe, Dreamer is the only compared algorithm that manages to discover a diamond, and does so reliably.</figcaption>
 </figure>
 
 <figure class='align-center'>
-    <img src = "/images/2025-03-25-Mastering Diverse Domains through World Models/figure6.jpg" alt="">
+    <img src = "/images/2025-03-25-Mastering Diverse Domains through World Models/figure6.png" alt="">
     <figcaption>figure 6. Ablations and robust scaling of Dreamer. a, All individual robustness techniques contribute to the performance of Dreamer on average, although each individual technique may only affect some tasks. Training curves of individual tasks are included in the supplementary material. b, The performance of Dreamer predominantly rests on the unsupervised reconstruction loss of its world model, unlike most prior algorithms that rely predominantly on reward and value prediction gradients7,5,8. c, The performance of Dreamer increases monotonically with larger model sizes, ranging from 12M to 400M parameters. Notably, larger models not only increase task performance but also require less environment interaction. d, Higher replay ratios predictably increase the performance of Dreamer. Together with model size, this allows practitioners to improve task performance and data-efficiency by employing more computational resources.</figcaption>
 </figure>
