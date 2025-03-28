@@ -395,16 +395,134 @@ $$
 | **Policy Gradient** | `∇_θ^μ J ≈ ∇_a Q(s,a) · ∇_θ^μ μ(s)` |
 
 
-### TRPO
+### Advanced actor-critic
 
+Advanced actor-critic(A2C)라는 이름은 상대적으로 나중에 정의되었다. 많은 강화학습 논문에서 A2C를 차용하고 있지만 이는 이전까지 설명했던 여러 기법들의 종합적인 방법론에 가깝다. 그 중 핵심은 **actor-critic 구조, Advantage 함수 사용 그리고 batch 기반 동기화**이다. 보통 연구자들이 인용을 할 때에는 Mnih et al.의 A3C(Asynchronous Advantage Actor-Critic) 의 동기화된 버전 (Synchronous) 으로 많이 이야기한다.
+
+밑의 흐름도에서, adavantage function의 개념이 나온다. 이는 어떤 상태 𝑠에서 어떤 행동 𝑎를 취하는 것이 얼마나 더 (or 덜) 좋은지를 측정하는 함수이다. 즉 **그 행동이 평균보다 얼마나 나았는가?**를 의미하기도 한다.
+
+이전의 policy gradient는 다음과 같이 정의되었다.
+
+$$
+\nabla_\theta J(\theta) = \mathbb{E}_{s,a} \left[ \nabla_\theta \log \pi_\theta(a|s) \cdot Q^\pi(s,a) \right]
+$$
+
+하지만 Q값은 실제로는 높은 분산값을 가질 수 있고, MC 방식으로 추정할 경우 특히 더 불안정해진다는 문제가 있었다.(REINFORCE 참고) Advantage 함수는 그 자체가 variance를 줄이는 baseline 역할을 한다.
+
+$$
+A(s,a) = Q(s,a) - b(s)
+$$
+
+보통 b(s) = V(s)가 가장 일반적인 baseline으로 쓰인다.
+
+$$
+\nabla_\theta J(\theta) = \mathbb{E} \left[ \nabla_\theta \log \pi(a|s) \cdot A(s,a) \right]
+$$
+
+이 형태는 A2C, PPO, TRPO 등 거의 모든 modern PG 알고리즘에서 공통적으로 사용된다. 그리고 A(s, a)는 아래와 같이 근사할 수 있다.
+
+$$
+A(s,a) ≈ G_t - V(s)            ← A2C \\
+A(s,a) ≈ Q(s,a) - V(s)         ← General case \\
+A(s,a) ≈ GAE(λ)                ← PPO, TRPO
+$$
+
+
+```
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ 1. Initialize networks                                                       │
+│   - Actor network:       π(a|s; θ^π) → outputs action probabilities          │
+│   - Critic network:      V(s; θ^V) → outputs scalar state value              │
+└──────────────────────────────────────────────────────────────────────────────┘
+                                  ↓
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ 2. For each episode:                                                         │
+│     - Reset environment and get initial state s₀                             │
+└──────────────────────────────────────────────────────────────────────────────┘
+                                  ↓
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ 3. For each time step t in the episode:                                     │
+│   1) Sample action from current policy:                                      │
+│        aₜ ~ π(a|sₜ; θ^π)                                                    │
+│   2) Execute action aₜ in the environment                                   │
+│        → observe reward rₜ₊₁ and next state sₜ₊₁                             │
+│   3) Store (sₜ, aₜ, rₜ₊₁, sₜ₊₁) in trajectory buffer                        │
+└──────────────────────────────────────────────────────────────────────────────┘
+                                  ↓
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ 4. At update step (after fixed steps or episode end):                       │
+│   For each transition (s, a, r, s') in trajectory:                          │
+│   1) Compute TD target (bootstrapped return):                               │
+│        R = r + γ · V(s'; θ^V)                                               │
+│   2) Compute advantage:                                                     │
+│        A = R - V(s; θ^V)                                                    │
+│   3) Compute actor loss:                                                    │
+│        L_actor = -log π(a|s; θ^π) · A                                       │
+│   4) Compute critic loss:                                                   │
+│        L_critic = (R - V(s))²                                               │
+│   5) Compute total loss:                                                    │
+│        L_total = L_actor + c_v · L_critic - c_e · H[π(a|s)]                 │
+│        (Optional: include entropy bonus H to encourage exploration)         │
+└──────────────────────────────────────────────────────────────────────────────┘
+                                  ↓
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ 5. Backpropagate total loss and update parameters:                          │
+│     θ^π ← θ^π - α_π ∇θ^π L_actor                                             │
+│     θ^V ← θ^V - α_V ∇θ^V L_critic                                            │
+└──────────────────────────────────────────────────────────────────────────────┘
+                                  ↓
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ 6. Repeat for next time step or episode                                     │
+└──────────────────────────────────────────────────────────────────────────────┘
+```
 
 <br>
 
 # 2. 가치를 업데이트 하는 방식에 대한 구분: MC / TD
 
+강화학습에서 에이전트는 주어진 환경과 상호작용하면서 어떤 상태에서 어떤 행동을 선택했을 때 얼마나 좋은 결과를 얻을 수 있을지를 학습한다. 이를 위해 상태 또는 상태-행동 쌍의 가치(value) 를 추정하는데, 그 대표적인 방법이 Monte Carlo 방식과 Temporal Difference 방식이다. 이 두 방법은 서로 다른 학습철학과 수렴 성질을 가지며, 대부분의 강화학습 알고리즘은 이 둘 중 하나 또는 중간 형태를 따른다.
 
+## Monte carlo
 
+Monte Carlo 방식은 한 에피소드가 끝날 때까지 기다린 뒤, 실제로 관측한 보상의 누적 합을 계산하여 학습에 사용한다. 예를 들어, 상태 $$s_t$$에서 시작된 에피소드의 총 리턴 $$G_t$$는 다음과 같이 정의된다:
 
+$$
+G_t = ∑_{k=0}^{T−t−1} γ^k · r_{t+k+1}
+$$
+
+이 리턴을 기반으로 가치 함수 $$V(s_t)$$를 업데이트하는 방식은 다음과 같다:
+
+$$
+V(s_t) ← V(s_t) + α · (G_t − V(s_t))
+$$
+
+이 방식은 리턴을 온전히 관측하기 때문에 bias는 없지만, 보상의 편차가 클 경우 variance가 크고, 전체 에피소드가 끝나야만 업데이트가 가능하다는 점에서 느리고 불안정한 학습이 될 수 있다. 또한 종결되지 않는 환경에서는 사용이 제한된다.
+
+## Temporal difference
+
+TD 방식은 리턴을 끝까지 기다리지 않고, 다음 상태의 예측된 가치를 사용하여 바로 학습한다. 즉, 미래를 직접 관측하는 대신 현재 상태에서 예측된 가치를 이용하는 부트스트랩 방식이다. TD 방식에서의 타깃 값 $$y_t$$는 다음과 같이 계산된다:
+
+$$
+y_t = r_t + γ · V(s_{t+1})
+$$
+
+이를 바탕으로 현재 상태의 가치 업데이트는 다음과 같이 진행된다. 이 수식은 어디선가 매우 많이 본 형태이다. 왜냐하면 거의 모든 value based approach에서 TD loss를 적용하기 때문이다. 어찌 보면 당연한 것.
+
+$$
+V(s_t) ← V(s_t) + α · (y_t − V(s_t))
+$$
+
+이 방식은 빠르고 효율적이며, 오프폴리시 학습에도 적합하다. 하지만 타깃이 예측된 값이기 때문에, 잘못된 예측은 학습 전반에 영향을 줄 수 있어 bias가 존재한다. 
+
+## 중간지점: n-step TD & GAE
+
+MC와 TD 사이의 절충안으로는 n-step TD와 GAE (Generalized Advantage Estimation)이 있다. n-step TD는 일부 리턴을 관측한 뒤 이후는 추정값으로 대체하는 방식이다:
+
+$$
+y_t^{(n)} = r_t + γ r_{t+1} + γ^2 r_{t+2} + ... + γ^n V(s_{t+n})
+$$
+
+이 방식은 variance와 bias 사이의 trade-off를 조절할 수 있으며, GAE는 이 아이디어를 Advantage 추정에 적용하여 PPO, TRPO 등의 최신 알고리즘에 사용된다.
 
 <br>
 
